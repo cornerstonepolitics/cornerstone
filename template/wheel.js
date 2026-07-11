@@ -22,6 +22,9 @@ const centerPieces = ARTICLES.filter(a => a.center);
 const posts = ARTICLES.filter(a => !a.center);
 const allArticles = ARTICLES;
 
+// The branch shown when the site first opens.
+const DEFAULT_BRANCH = 'economics';
+
 const CX = 310, CY = 310;
 const R_IN0 = 110, R_IN1 = 200, R_OUT0 = 202, R_OUT1 = 298;
 
@@ -38,7 +41,7 @@ function outwardArc(r, aStart, aEnd){
   return `M${x0},${y0} A${r},${r} 0 ${large},${sweep} ${x1},${y1}`;
 }
 
-const twoLine = { 'Foreign Policy':['Foreign','Policy'], 'Rule of Law':['Rule of','Law'] };
+const twoLine = { 'Foreign Policy':['Policy','Foreign'], 'Rule of Law':['Rule of','Law'] };
 const oneLineSmall = { 'Institutions': 13 };
 
 function buildWheel(){
@@ -52,18 +55,18 @@ function buildWheel(){
     const center=180+i*120;
     const a0=center-60, a1=center+60;
 
-    svg+=`<path d="${wedge(R_IN0,R_IN1,a0,a1)}" fill="url(#marble)" stroke="#000" stroke-opacity="0.3" stroke-width="1.7" onclick="rotateTo('${bk}')" style="cursor:pointer"/>`;
+    svg+=`<path class="wedge branch-wedge" data-branch="${bk}" d="${wedge(R_IN0,R_IN1,a0,a1)}" fill="url(#marble)" stroke="#000" stroke-opacity="0.3" stroke-width="1.7" onclick="rotateTo('${bk}')" onmouseenter="hoverBranch('${bk}')" onmouseleave="clearHover()"/>`;
     const inR=R_IN0+(R_IN1-R_IN0)*0.45;
     const ipid=`bp${i}`;
     defs+=`<path id="${ipid}" fill="none" d="${outwardArc(inR, center+43, center-43)}"/>`;
     const branchFontSize = bk==='governance' ? 20 : 22;
     const branchLetterSpacing = bk==='governance' ? 2.2 : 3.2;
-    svg+=`<text font-family="Georgia,serif" font-size="${branchFontSize}" letter-spacing="${branchLetterSpacing}" font-weight="600" class="branch-label branch-label-${bk}" fill="${bk==='economics'?b.wheelActive:b.wheelLabel}" onclick="rotateTo('${bk}')" style="cursor:pointer"><textPath href="#${ipid}" startOffset="50%" text-anchor="middle">${b.label.toUpperCase()}</textPath></text>`;
+    svg+=`<text font-family="Georgia,serif" font-size="${branchFontSize}" letter-spacing="${branchLetterSpacing}" font-weight="600" class="branch-label branch-label-${bk}" data-branch="${bk}" fill="${bk==='economics'?b.wheelActive:b.wheelLabel}" pointer-events="none"><textPath href="#${ipid}" startOffset="50%" text-anchor="middle">${b.label.toUpperCase()}</textPath></text>`;
 
     const n=b.parents.length, seg=120/n;
     b.parents.forEach((p,j)=>{
       const pa0=a0+j*seg, pa1=a0+(j+1)*seg, mid=(pa0+pa1)/2;
-      svg+=`<path d="${wedge(R_OUT0,R_OUT1,pa0,pa1)}" fill="url(#marble)" stroke="#000" stroke-opacity="0.30" stroke-width="0.95" onclick="showParent('${bk}','${p[0]}')" style="cursor:pointer"/>`;
+      svg+=`<path class="wedge topic-wedge" data-branch="${bk}" data-topic="${p[0]}" d="${wedge(R_OUT0,R_OUT1,pa0,pa1)}" fill="url(#marble)" stroke="#000" stroke-opacity="0.30" stroke-width="0.95" onclick="rotateToParent('${bk}','${p[0]}')" onmouseenter="hoverTopic('${bk}','${p[0]}')" onmouseleave="clearHover()"/>`;
       const stack = twoLine[p[1]];
       const onBottom = (mid%360>90 && mid%360<270);
       if(stack){
@@ -72,8 +75,8 @@ function buildWheel(){
         const id1=`pp${i}_${j}a`, id2=`pp${i}_${j}b`;
         defs+=`<path id="${id1}" fill="none" d="${outwardArc(firstR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         defs+=`<path id="${id2}" fill="none" d="${outwardArc(secondR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" fill="${bk==='economics'?b.wheelLabel:b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" onclick="showParent('${bk}','${p[0]}')" style="cursor:pointer"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" fill="${bk==='economics'?b.wheelLabel:b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" onclick="showParent('${bk}','${p[0]}')" style="cursor:pointer"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${bk==='economics'?b.wheelLabel:b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${bk==='economics'?b.wheelLabel:b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
       } else {
         const outR=R_OUT0+(R_OUT1-R_OUT0)*0.5;
         const pid=`pp${i}_${j}`;
@@ -81,7 +84,7 @@ function buildWheel(){
         let fs;
         if(oneLineSmall[p[1]]) fs=oneLineSmall[p[1]];
         else { const arcW=(seg-3)*Math.PI/180*outR; fs=Math.max(12, Math.min(17, arcW/(p[1].length*0.62))); }
-        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" fill="${bk==='economics'?b.wheelLabel:b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" onclick="showParent('${bk}','${p[0]}')" style="cursor:pointer"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${bk==='economics'?b.wheelLabel:b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
       }
     });
   });
@@ -93,6 +96,46 @@ function buildWheel(){
   [120,240,360].forEach(d=>{ const [xa,ya]=pol(R_IN0,d),[xb,yb]=pol(R_OUT1,d); svg+=`<line x1="${xa}" y1="${ya}" x2="${xb}" y2="${yb}" stroke="#000" stroke-opacity="0.34" stroke-width="3.8"/>`; });
 
   root.innerHTML=`<defs>${defs}</defs>`+svg;
+}
+
+// ------------------------------------------------------------
+//  Rotation affordance: two carved chevrons that sit OUTSIDE the
+//  rotating wheel (in static screen space), on the lower-left and
+//  lower-right flanks. They signal the wheel turns AND are clickable:
+//  each spins the wheel one branch. Drawn once, on load.
+// ------------------------------------------------------------
+function buildRotateHints(){
+  const layer=document.getElementById('rotateHints');
+  if(!layer) return;
+
+  // Simple horizontal chevrons ( ‹  › ) in plain screen coordinates.
+  // Drawn flat (not on the curve) so they read as clean left/right
+  // arrows, and dropped a little below the midline so they sit at a
+  // natural "grab here to turn" height rather than dead-center.
+  const tipX = 302;             // half-distance of the tip from center, horizontally
+  const armDX = 15;             // how far the arms sit behind the tip (chevron depth)
+  const armDY = 14;             // half-height of the chevron (narrower = tighter arrow)
+  const dropY = 160;            // how far below the midline to place the arrows
+
+  // side 'left' points left (‹); 'right' points right (›).
+  // `dir` drives the arrow's shape/side; `spin` is the rotation it
+  // triggers. They're intentionally opposite: the left arrow spins
+  // counter-clockwise, the right arrow clockwise.
+  function chevron(side){
+    const dir = side==='right' ? 1 : -1;      // geometry: which side / way it points
+    const spin = -dir;                         // rotation: reversed from the arrow side
+    const cy = CY + dropY;                    // vertical center of this chevron
+    const tx = CX + dir*tipX;                 // tip x (left or right of center)
+    const ax = CX + dir*(tipX - armDX);       // arm x, pulled back toward center
+    const topY = cy - armDY, botY = cy + armDY;
+    const [hx,hy] = [CX + dir*(tipX - armDX/2), cy];   // hit-target center
+    return `<g class="rotate-hint rotate-hint-${side}" onclick="spinWheel(${spin})" style="cursor:pointer">`
+      +`<circle cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="24" fill="#000" opacity="0" pointer-events="all"/>`
+      +`<path d="M${ax.toFixed(1)},${topY.toFixed(1)} L${tx.toFixed(1)},${hy.toFixed(1)} L${ax.toFixed(1)},${botY.toFixed(1)}" `
+      +`fill="none" stroke="#8a8378" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`
+      +`</g>`;
+  }
+  layer.innerHTML = chevron('left') + chevron('right');
 }
 
 function updateWheelFocus(branch){
@@ -109,9 +152,59 @@ function updateWheelFocus(branch){
   });
 }
 
-let rotateTimer=null, curRot=0;
+// ------------------------------------------------------------
+//  Hover coordination.
+//   • On a branch that is NOT currently selected, hovering any of
+//     its wedges brightens the WHOLE branch — a "click to spin here"
+//     cue, since a click rotates the wheel to that branch.
+//   • On the branch that IS selected, a click opens the item
+//     directly (no spin), so hovering brightens only the single
+//     wedge under the cursor — clear per-item feedback.
+//  In both cases the hovered item's own label brightens.
+// ------------------------------------------------------------
+function brightenBranch(bk, on){
+  document.querySelectorAll('.wedge[data-branch="'+bk+'"]').forEach(el=>{
+    el.classList.toggle('hot', on);
+  });
+}
+function brightenTopicWedge(bk, key, on){
+  document.querySelectorAll('.topic-wedge[data-branch="'+bk+'"][data-topic="'+key+'"]').forEach(el=>{
+    el.classList.toggle('hot', on);
+  });
+}
+function brightenBranchWedge(bk, on){
+  document.querySelectorAll('.branch-wedge[data-branch="'+bk+'"]').forEach(el=>{
+    el.classList.toggle('hot', on);
+  });
+}
+function tintLabel(bk, key){
+  const b=data[bk];
+  document.querySelectorAll('.parent-label[data-branch="'+bk+'"][data-topic="'+key+'"]').forEach(el=>{
+    el.setAttribute('fill', b.wheelLabel);
+  });
+}
+function hoverBranch(bk){
+  // Hovering the branch center: brighten just that center wedge if it's
+  // the selected branch, otherwise brighten the whole branch (spin cue).
+  if(bk===activeBranch) brightenBranchWedge(bk, true);
+  else brightenBranch(bk, true);
+  // Branch label is always bright; nothing more to tint.
+}
+function hoverTopic(bk, key){
+  if(bk===activeBranch) brightenTopicWedge(bk, key, true);   // per-item feedback
+  else brightenBranch(bk, true);                             // whole-branch spin cue
+  tintLabel(bk, key);
+}
+function clearHover(){
+  document.querySelectorAll('.wedge.hot').forEach(el=>el.classList.remove('hot'));
+  // Restore every label to its correct selected/unselected color.
+  updateWheelFocus(activeBranch);
+}
+
+let rotateTimer=null, curRot=0, activeBranch=DEFAULT_BRANCH;
 function rotateTo(branch){
   show('home');
+  activeBranch=branch;
   const i=order.indexOf(branch);
   let target=-i*120;
   let diff=((target - curRot) % 360 + 540) % 360 - 180;   // SHORTEST PATH
@@ -121,14 +214,42 @@ function rotateTo(branch){
   clearTimeout(rotateTimer);
   rotateTimer=setTimeout(()=>showBranch(branch),920);
 }
+
+// Clicking a topic wedge rotates its parent branch into position,
+// then opens the topic page once the wheel settles.
+function rotateToParent(branch, key){
+  show('home');
+  activeBranch=branch;
+  const i=order.indexOf(branch);
+  let target=-i*120;
+  let diff=((target - curRot) % 360 + 540) % 360 - 180;   // SHORTEST PATH
+  const willRotate = Math.abs(diff) > 0.5;
+  curRot += diff;
+  document.getElementById('wheelRoot').style.transform='rotate('+curRot+'deg)';
+  updateWheelFocus(branch);
+  clearTimeout(rotateTimer);
+  // If the wheel is already on this branch, open immediately; otherwise
+  // wait for the spin to finish so the motion reads clearly.
+  rotateTimer=setTimeout(()=>showParent(branch,key), willRotate ? 920 : 0);
+}
+
+// The left/right chevrons step the wheel one branch at a time.
+// dir = +1 turns toward the next branch, -1 toward the previous.
+function spinWheel(dir){
+  const i=order.indexOf(activeBranch);
+  const next=order[(i + dir + order.length) % order.length];
+  rotateTo(next);
+}
 function show(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); if(id==='recent') buildFeed(); }
 
-function fmtDate(iso){ const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('en-US',{month:'short',year:'numeric'}); }
+function fmtDate(iso){ const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}); }
 function parentKeys(p){ return p.parents || (p.parent ? [p.parent] : []); }
 function parentLabel(branch,parent){ return data[branch].parents.find(x=>x[0]===parent)[1]; }
 function parentLabels(p){ return parentKeys(p).map(k=>parentLabel(p.branch,k)); }
 function sortPosts(list){ return [...list].sort((a,b)=>b.date.localeCompare(a.date)); }
 function articleMeta(p, mode){
+  // The centerpiece has no branch; label it by name in mixed feeds.
+  if(p.center) return 'Cornerstone';
   const b=data[p.branch], labels=parentLabels(p).join(' / ');
   if(mode==='branch') return labels;
   if(mode==='topic') return b.label;
@@ -144,15 +265,18 @@ function renderArticleList(container, list, mode, emptyText){
     container.appendChild(empty); return;
   }
   sorted.forEach(p=>{
-    const b=data[p.branch];
+    const metaColor = p.center ? 'var(--text-muted-on-dark)' : data[p.branch].color;
     const row=document.createElement('div'); row.className='article-row';
-    row.innerHTML='<div class="article-date">'+fmtDate(p.date)+'</div><div class="article-meta" style="color:'+b.color+'">'+articleMeta(p,mode)+'</div><div><div class="article-list-title">'+p.title+'</div>'+(p.dek?'<div class="article-dek">'+p.dek+'</div>':'')+'</div>';
+    row.innerHTML='<div class="article-date">'+fmtDate(p.date)+'</div><div class="article-meta" style="color:'+metaColor+'">'+articleMeta(p,mode)+'</div><div><div class="article-list-title">'+p.title+'</div>'+(p.dek?'<div class="article-dek">'+p.dek+'</div>':'')+'</div>';
     row.onclick=()=>showArticle(p.slug);
     container.appendChild(row);
   });
 }
 function buildFeed(){
-  renderArticleList(document.getElementById('feed-list'), posts, 'recent', 'No articles yet.');
+  // Recent shows everything, including the centerpiece. Because the
+  // centerpiece is the oldest piece and the sort is newest-first, it
+  // lands at the bottom of the list as the first thing published.
+  renderArticleList(document.getElementById('feed-list'), posts.concat(centerPieces), 'recent', 'No articles yet.');
 }
 function showBranch(branch){
   const b=data[branch];
@@ -207,4 +331,7 @@ function showArticle(slug){
 }
 
 buildWheel();
-updateWheelFocus('economics');
+buildRotateHints();
+// Open the site already resolved on the default branch: rotate the
+// wheel into position, set focus, and load that branch's page.
+rotateTo(DEFAULT_BRANCH);
