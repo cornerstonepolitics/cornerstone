@@ -12,7 +12,7 @@
 //    3. Converts the Markdown body to HTML (with footnotes)
 //    4. Injects config + articles + CSS + wheel engine into
 //       the HTML shell
-//    5. Writes the finished site to dist/index.html
+//    5. Writes the finished site to docs/index.html
 // ============================================================
 
 const fs = require('fs');
@@ -26,7 +26,7 @@ marked.use(footnote());
 const ROOT = __dirname;
 const ARTICLES_DIR = path.join(ROOT, 'content', 'articles');
 const TEMPLATE_DIR = path.join(ROOT, 'template');
-const DIST_DIR = path.join(ROOT, 'dist');
+const DIST_DIR = path.join(ROOT, 'docs');
 
 // ---- helpers ------------------------------------------------
 
@@ -130,7 +130,7 @@ function build() {
   fs.writeFileSync(path.join(DIST_DIR, 'index.html'), out, 'utf8');
 
   const sizeKb = (Buffer.byteLength(out, 'utf8') / 1024).toFixed(1);
-  console.log(`Built dist/index.html`);
+  console.log(`Built docs/index.html`);
   console.log(`  ${articles.length} article(s): ${articles.map(a => a.slug).join(', ')}`);
   console.log(`  ${sizeKb} KB`);
 }
