@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cornerstone</title>
+  <meta name="description" content="Evidence-based political analysis. Serve the long-term interests of the American people.">
+  <style>
+/*__STYLES__*/
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="nav">
+    <div class="nav-logo" onclick="show('home')">Cornerstone</div>
+    <div class="nav-links">
+      <span style="color:var(--economics-on-dark)" onclick="rotateTo('economics')">Economics</span>
+      <span style="color:var(--culture-on-dark)" onclick="rotateTo('culture')">Culture</span>
+      <span style="color:var(--governance-on-dark)" onclick="rotateTo('governance')">Governance</span>
+      <span style="color:var(--text-muted-on-dark)" onclick="show('recent')">Recent</span>
+    </div>
+  </div>
+
+  <div id="home" class="view active">
+    <div class="wheel-stage">
+      <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+        <defs>
+          <radialGradient id="marble" gradientUnits="userSpaceOnUse" cx="310" cy="310" r="298">
+            <stop offset="0%" stop-color="#f4f1ea"/><stop offset="18%" stop-color="#e6e1d6"/>
+            <stop offset="34%" stop-color="#cdc7ba"/><stop offset="52%" stop-color="#a8a294"/>
+            <stop offset="70%" stop-color="#79746a"/><stop offset="86%" stop-color="#4c483f"/>
+            <stop offset="100%" stop-color="#2b2823"/>
+          </radialGradient>
+          <radialGradient id="outerMarble" gradientUnits="userSpaceOnUse" cx="310" cy="310" r="298">
+            <stop offset="0%" stop-color="#f4f1ea"/>
+            <stop offset="45%" stop-color="#eee9df"/>
+            <stop offset="68%" stop-color="#e2dbcf"/>
+            <stop offset="84%" stop-color="#d8d0c3"/>
+            <stop offset="100%" stop-color="#d4ccbf"/>
+          </radialGradient>
+          <radialGradient id="centerStone" cx="50%" cy="45%" r="60%">
+            <stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#f0ece3"/><stop offset="100%" stop-color="#d8d2c6"/>
+          </radialGradient>
+          <radialGradient id="selectionGlow" gradientUnits="userSpaceOnUse" cx="310" cy="245" r="330">
+            <stop offset="0%" stop-color="#fff9ee" stop-opacity="0.50"/>
+            <stop offset="36%" stop-color="#fff3df" stop-opacity="0.34"/>
+            <stop offset="68%" stop-color="#ecd8b7" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#e0c499" stop-opacity="0.00"/>
+          </radialGradient>
+          <linearGradient id="selectionBeam" gradientUnits="userSpaceOnUse" x1="310" y1="180" x2="310" y2="610">
+            <stop offset="0%" stop-color="#fffaf0" stop-opacity="0.08"/>
+            <stop offset="35%" stop-color="#fff0d6" stop-opacity="0.18"/>
+            <stop offset="70%" stop-color="#f1dbb4" stop-opacity="0.28"/>
+            <stop offset="100%" stop-color="#e4c595" stop-opacity="0.22"/>
+          </linearGradient>
+          <filter id="softLight" x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur stdDeviation="5"/>
+          </filter>
+        </defs>
+        <g id="wheelRoot"></g>
+        <path id="selectionBeamPath" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionBeam)" opacity="0.50"/>
+        <path id="selectionLight" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
+        <circle cx="310" cy="310" r="108" fill="#cfc9bd"/>
+        <circle cx="310" cy="310" r="100" fill="url(#centerStone)" stroke="#bdb6a8" stroke-width="0.5"/>
+        <g onclick="showArticle('cornerstone')" style="cursor:pointer">
+          <rect x="216" y="216" width="188" height="188" fill="#000" opacity="0" pointer-events="all"/>
+          <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e">SERVE THE</text>
+          <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e">LONG-TERM</text>
+          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823">INTERESTS OF THE</text>
+          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823">AMERICAN PEOPLE</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div id="mission" class="view"><div class="page-wrap">
+    <div class="back-btn" onclick="show('home')">← Home</div>
+    <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted-on-dark);margin-bottom:10px;">Mission</div>
+    <div style="font-size:24px;color:#e8e4dc;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Serve the long-term interests of the American people</div>
+    <div class="page-rule"></div>
+    <p style="font-size:14px;color:var(--text-soft-on-dark);line-height:1.9;max-width:560px;margin-bottom:32px;">The legitimate object of government is to do for a community of people whatever they need to have done, but cannot do at all, or cannot so well do, for themselves.</p>
+    <ul class="principles">
+      <li><span>Serve the long-term</span>Short-term thinking is the default. The platform pushes against it.</li>
+      <li><span>Name who bears the cost</span>Every policy has a tradeoff. We say who pays.</li>
+      <li><span>Fix systems, not people</span>Behavior follows incentives. Change the incentives.</li>
+      <li><span>Fear and outrage are distractions</span>They are tools. We do not use them.</li>
+      <li><span>Let evidence make the argument</span>We present it. You decide.</li>
+      <li><span>No enemies</span>Positions, not people. Interests, not villains.</li>
+    </ul>
+  </div></div>
+
+  <div id="recent" class="view"><div class="page-wrap">
+    <div class="back-btn" onclick="show('home')">← Home</div>
+    <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted-on-dark);margin-bottom:10px;">Recent</div>
+    <div style="font-size:24px;color:#e8e4dc;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Latest from Cornerstone</div>
+    <div class="page-rule"></div>
+    <div id="feed-list"></div>
+  </div></div>
+
+  <div id="branch-page" class="view"><div class="page-wrap">
+    <div class="back-btn" onclick="show('home')">← Home</div>
+    <div id="branch-eyebrow" class="page-eyebrow"></div>
+    <div id="branch-title" class="page-title"></div>
+    <div class="page-rule"></div>
+    <div id="branch-principles-heading" class="principles-heading"></div>
+    <ul id="branch-principles" class="branch-principles"></ul>
+    <div class="children-section"><div class="children-label">Topics within this branch</div><div id="branch-children" class="children-grid"></div></div>
+    <div class="section-block"><div id="branch-articles-label" class="section-label"></div><div id="branch-articles" class="article-list"></div></div>
+  </div></div>
+
+  <div id="parent-page" class="view"><div class="page-wrap">
+    <div id="parent-breadcrumb" class="breadcrumb"></div>
+    <div id="parent-eyebrow" class="page-eyebrow"></div>
+    <div id="parent-title" class="page-title"></div>
+    <div class="page-rule"></div>
+    <div class="section-block" style="margin-top:0"><div id="parent-articles-label" class="section-label"></div><div id="parent-articles" class="article-list"></div></div>
+  </div></div>
+
+  <div id="article-page" class="view article-view"><div class="page-wrap article-shell">
+    <div id="article-breadcrumb" class="breadcrumb"></div>
+    <div id="article-eyebrow" class="page-eyebrow"></div>
+    <div id="article-title" class="article-title-display"></div>
+    <div id="article-subtitle" class="article-subtitle-display"></div>
+    <div class="page-rule"></div>
+    <div id="article-body" class="article-content"></div>
+  </div></div>
+</div>
+
+<script>
+/*__CONFIG__*/
+</script>
+<script>
+/*__ARTICLES__*/
+</script>
+<script>
+/*__WHEEL__*/
+</script>
+</body>
+</html>

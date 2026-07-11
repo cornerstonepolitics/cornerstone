@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cornerstone</title>
+  <meta name="description" content="Evidence-based political analysis. Serve the long-term interests of the American people.">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap');
+
+:root {
+  --font-ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-wheel: Georgia, serif;
+  --font-article: "Newsreader", Georgia, serif;
+
+  --site-bg: #0d0d0d;
+  --text-on-dark: #e8e4dc;
+  --text-soft-on-dark: #b8b2a8;
+  --text-muted-on-dark: #9a968e;
+  --rule-on-dark: #34322e;
+  --rule-on-dark-subtle: #24221f;
+
+  --article-surface: #f3f0e8;
+  --article-title-light: #171512;
+  --article-text-light: #24211d;
+  --article-muted-light: #6f6a62;
+  --article-rule-light: #d8d1c5;
+
+  --economics-on-dark: #c59a32;
+  --culture-on-dark: #d27a52;
+  --governance-on-dark: #6f9ac7;
+
+  --economics-on-light: #6b520f;
+  --culture-on-light: #7c3f22;
+  --governance-on-light: #16293f;
+
+  --wheel-economics: #8a6a14;
+  --wheel-culture: #a0522d;
+  --wheel-governance: #1e3a5f;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--site-bg); }
+#app { font-family: var(--font-ui); background: var(--site-bg); color: var(--text-soft-on-dark); min-height: 760px; }
+.view { display: none; } .view.active { display: block; }
+.nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; border-bottom: 0.5px solid var(--rule-on-dark); background: var(--site-bg); }
+.nav-logo { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-on-dark); cursor: pointer; }
+.nav-links { display: flex; gap: 22px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+.nav-links span { cursor: pointer; } .nav-links span:hover { opacity: 0.75; }
+#home { display: flex; flex-direction: column; align-items: center; padding: 24px 12px; background: var(--site-bg); }
+.wheel-stage { width: 100%; max-width: 620px; aspect-ratio: 1; }
+#wheelRoot { transition: transform 0.9s cubic-bezier(0.22,1,0.36,1); transform-origin: 310px 310px; }
+#wheelRoot text { transition: fill 0.9s cubic-bezier(0.22,1,0.36,1), stroke-opacity 0.9s cubic-bezier(0.22,1,0.36,1); }
+#selectionLight { pointer-events: none; opacity: 0.48; mix-blend-mode: screen; }
+
+.page-wrap { padding: 40px 28px; max-width: 800px; margin: 0 auto; }
+.page-eyebrow { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; color: var(--text-muted-on-dark); }
+.page-title { font-size: 28px; font-weight: 400; color: var(--text-on-dark); letter-spacing: 0.05em; text-transform: uppercase; }
+.page-rule { height: 0.5px; background: var(--rule-on-dark); margin: 20px 0; }
+.page-body { font-size: 15px; line-height: 1.9; color: var(--text-soft-on-dark); max-width: 620px; } .page-body p { margin-bottom: 16px; }
+.children-section { margin-top: 44px; } .children-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted-on-dark); margin-bottom: 18px; }
+.children-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 12px; }
+.child-card { border: 0.5px solid var(--rule-on-dark); padding: 18px 16px; cursor: pointer; transition: border-color 0.2s; }
+.child-card:hover { border-color: var(--text-muted-on-dark); }
+.child-card-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+.child-card-title { font-size: 13px; color: var(--text-soft-on-dark); text-transform: uppercase; letter-spacing: 0.07em; }
+.principles { list-style: none; } .principles li { padding: 15px 0; border-bottom: 0.5px solid var(--rule-on-dark-subtle); font-size: 14px; color: var(--text-soft-on-dark); line-height: 1.75; }
+.principles li span { color: var(--text-on-dark); display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 4px; }
+.breadcrumb { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted-on-dark); margin-bottom: 26px; display: flex; gap: 8px; flex-wrap: wrap; }
+.breadcrumb span { cursor: pointer; } .breadcrumb span:hover { color: var(--text-on-dark); } .breadcrumb .sep { color: #7b766f; cursor: default; }
+.back-btn { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted-on-dark); cursor: pointer; margin-bottom: 26px; display: inline-block; } .back-btn:hover { color: var(--text-on-dark); }
+.feed-item { display: flex; align-items: baseline; gap: 16px; padding: 18px 0; border-bottom: 0.5px solid var(--rule-on-dark-subtle); cursor: pointer; }
+.feed-item:hover .feed-title { color: var(--text-on-dark); }
+.feed-date { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted-on-dark); white-space: nowrap; width: 78px; flex-shrink: 0; }
+.feed-cat { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; width: 130px; flex-shrink: 0; }
+.feed-title { font-size: 16px; color: var(--text-soft-on-dark); transition: color 0.15s; }
+
+.principles-heading { margin-top: 2px; margin-bottom: 10px; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted-on-dark); }
+.branch-principles { list-style: none; max-width: 680px; margin-top: 4px; }
+.branch-principles li { padding: 17px 0; border-bottom: 0.5px solid var(--rule-on-dark-subtle); font-size: 15px; line-height: 1.75; color: var(--text-soft-on-dark); }
+.section-block { margin-top: 46px; }
+.section-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted-on-dark); margin-bottom: 14px; }
+.article-list { border-top: 0.5px solid var(--rule-on-dark-subtle); }
+.article-row { display: grid; grid-template-columns: 86px 142px 1fr; gap: 16px; padding: 20px 0; border-bottom: 0.5px solid var(--rule-on-dark-subtle); cursor: pointer; align-items: baseline; }
+.article-row:hover .article-list-title { color: var(--text-on-dark); }
+.article-date { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted-on-dark); }
+.article-meta { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; }
+.article-list-title { font-size: 17px; color: var(--text-soft-on-dark); transition: color 0.15s; line-height: 1.35; }
+.article-dek { margin-top: 8px; font-size: 13px; line-height: 1.65; color: var(--text-muted-on-dark); max-width: 560px; }
+.empty-state { padding: 20px 0; border-top: 0.5px solid var(--rule-on-dark-subtle); border-bottom: 0.5px solid var(--rule-on-dark-subtle); color: var(--text-muted-on-dark); font-size: 13px; line-height: 1.7; }
+
+/* Full-width warm reading surface for long-form articles and essays. */
+.article-view,
+.longform-view {
+  background: var(--article-surface);
+  color: var(--article-text-light);
+  min-height: calc(100vh - 47px);
+  border-top: 1px solid var(--article-rule-light);
+}
+
+.article-shell,
+.longform-shell {
+  max-width: 760px;
+  padding-top: 46px;
+  padding-bottom: 72px;
+}
+
+.article-view .breadcrumb,
+.article-view .page-eyebrow,
+.longform-view .breadcrumb,
+.longform-view .page-eyebrow {
+  color: var(--article-muted-light);
+}
+
+.article-view .breadcrumb span:hover,
+.longform-view .breadcrumb span:hover {
+  color: var(--article-title-light);
+}
+
+.article-view .breadcrumb .sep,
+.longform-view .breadcrumb .sep {
+  color: #aaa297;
+}
+
+.article-view .page-rule,
+.longform-view .page-rule {
+  background: var(--article-rule-light);
+}
+
+.article-title-display,
+.longform-title {
+  font-family: var(--font-article);
+  font-weight: 600;
+  font-size: clamp(2.1rem, 4vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--article-title-light);
+  text-transform: none;
+  text-align: left;
+  max-width: 700px;
+}
+
+.article-subtitle-display,
+.longform-subtitle {
+  display: none;
+  max-width: 700px;
+  margin-top: 10px;
+  font-family: var(--font-article);
+  font-weight: 400;
+  font-size: clamp(1.18rem, 2vw, 1.45rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--article-muted-light);
+  text-align: left;
+}
+
+.article-content,
+.longform-content {
+  margin-top: 28px;
+  max-width: 700px;
+  font-family: var(--font-article);
+  font-weight: 400;
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+  line-height: 1.66;
+  color: var(--article-text-light);
+  text-align: left;
+}
+
+.article-content p,
+.longform-content p {
+  margin: 0 0 0.95em 0;
+  text-indent: 0;
+}
+
+.article-content em,
+.article-content i,
+.longform-content em,
+.longform-content i {
+  font-style: italic;
+  font-weight: 400;
+}
+
+.article-content strong,
+.longform-content strong {
+  font-weight: 600;
+}
+
+.article-content blockquote,
+.longform-content blockquote {
+  margin: 1.35em 0;
+  padding-left: 1.15em;
+  border-left: 1px solid var(--article-rule-light);
+  color: #3a342e;
+  font-style: italic;
+}
+
+.article-content blockquote p,
+.longform-content blockquote p {
+  margin-bottom: 0.8em;
+}
+
+.article-content h2,
+.longform-content h2 {
+  margin: 2.1em 0 0.8em;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--article-muted-light);
+}
+
+.article-content ol,
+.longform-content ol {
+  margin: 0.5em 0 0 1.3em;
+  padding: 0;
+  color: var(--article-muted-light);
+}
+
+.article-content li,
+.longform-content li {
+  margin-bottom: 0.7em;
+  padding-left: 0.2em;
+}
+
+/* Footnote styling — added to support Markdown-generated footnotes.
+   Keeps reference markers small and the notes block visually quiet. */
+.article-content sup,
+.longform-content sup {
+  font-size: 0.7em;
+  line-height: 0;
+  vertical-align: super;
+}
+.article-content .footnotes,
+.longform-content .footnotes {
+  margin-top: 2.6em;
+  padding-top: 1.4em;
+  border-top: 1px solid var(--article-rule-light);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--article-muted-light);
+}
+.article-content .footnotes ol,
+.longform-content .footnotes ol {
+  margin-left: 1.1em;
+}
+.article-content .footnotes li,
+.longform-content .footnotes li {
+  margin-bottom: 0.55em;
+}
+.article-content .footnotes a,
+.longform-content .footnotes a {
+  color: var(--article-muted-light);
+  text-decoration: none;
+}
+
+@media (max-width: 760px) {
+  .page-wrap { padding: 34px 22px; }
+  .article-shell, .longform-shell { max-width: 100%; padding-top: 40px; padding-bottom: 64px; }
+  .article-title-display, .longform-title { max-width: 100%; letter-spacing: -0.02em; }
+  .article-content, .longform-content { max-width: 100%; line-height: 1.64; }
+
+  /* Give the wheel more room on phones. The wheel and its labels scale
+     together, so a physically larger wheel means larger, legible labels.
+     Reclaim side padding and let the wheel grow toward the viewport width. */
+  #home { padding: 12px 6px 20px; }
+  .wheel-stage { width: min(100%, 96vw); }
+}
+
+@media (max-width: 640px) {
+  .nav { display: block; padding: 13px 18px; }
+  .nav-links { margin-top: 10px; gap: 14px; font-size: 9px; flex-wrap: wrap; }
+  .article-row, .feed-item { display: block; }
+  .article-meta, .feed-cat { margin-top: 8px; }
+  .article-list-title, .feed-title { margin-top: 8px; }
+}
+
+@media (max-width: 420px) {
+  .page-wrap { padding: 30px 18px; }
+  .article-shell, .longform-shell { padding-top: 34px; padding-bottom: 58px; }
+  .article-title-display, .longform-title { font-size: clamp(2rem, 11vw, 2.35rem); line-height: 1.08; }
+  .article-content, .longform-content { font-size: 1.125rem; line-height: 1.62; }
+  .article-subtitle-display, .longform-subtitle { font-size: 1.18rem; line-height: 1.24; }
+  .article-content p, .longform-content p { margin-bottom: 0.9em; }
+}
+
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="nav">
+    <div class="nav-logo" onclick="show('home')">Cornerstone</div>
+    <div class="nav-links">
+      <span style="color:var(--economics-on-dark)" onclick="rotateTo('economics')">Economics</span>
+      <span style="color:var(--culture-on-dark)" onclick="rotateTo('culture')">Culture</span>
+      <span style="color:var(--governance-on-dark)" onclick="rotateTo('governance')">Governance</span>
+      <span style="color:var(--text-muted-on-dark)" onclick="show('recent')">Recent</span>
+    </div>
+  </div>
+
+  <div id="home" class="view active">
+    <div class="wheel-stage">
+      <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+        <defs>
+          <radialGradient id="marble" gradientUnits="userSpaceOnUse" cx="310" cy="310" r="298">
+            <stop offset="0%" stop-color="#f4f1ea"/><stop offset="18%" stop-color="#e6e1d6"/>
+            <stop offset="34%" stop-color="#cdc7ba"/><stop offset="52%" stop-color="#a8a294"/>
+            <stop offset="70%" stop-color="#79746a"/><stop offset="86%" stop-color="#4c483f"/>
+            <stop offset="100%" stop-color="#2b2823"/>
+          </radialGradient>
+          <radialGradient id="outerMarble" gradientUnits="userSpaceOnUse" cx="310" cy="310" r="298">
+            <stop offset="0%" stop-color="#f4f1ea"/>
+            <stop offset="45%" stop-color="#eee9df"/>
+            <stop offset="68%" stop-color="#e2dbcf"/>
+            <stop offset="84%" stop-color="#d8d0c3"/>
+            <stop offset="100%" stop-color="#d4ccbf"/>
+          </radialGradient>
+          <radialGradient id="centerStone" cx="50%" cy="45%" r="60%">
+            <stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#f0ece3"/><stop offset="100%" stop-color="#d8d2c6"/>
+          </radialGradient>
+          <radialGradient id="selectionGlow" gradientUnits="userSpaceOnUse" cx="310" cy="245" r="330">
+            <stop offset="0%" stop-color="#fff9ee" stop-opacity="0.50"/>
+            <stop offset="36%" stop-color="#fff3df" stop-opacity="0.34"/>
+            <stop offset="68%" stop-color="#ecd8b7" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#e0c499" stop-opacity="0.00"/>
+          </radialGradient>
+          <linearGradient id="selectionBeam" gradientUnits="userSpaceOnUse" x1="310" y1="180" x2="310" y2="610">
+            <stop offset="0%" stop-color="#fffaf0" stop-opacity="0.08"/>
+            <stop offset="35%" stop-color="#fff0d6" stop-opacity="0.18"/>
+            <stop offset="70%" stop-color="#f1dbb4" stop-opacity="0.28"/>
+            <stop offset="100%" stop-color="#e4c595" stop-opacity="0.22"/>
+          </linearGradient>
+          <filter id="softLight" x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur stdDeviation="5"/>
+          </filter>
+        </defs>
+        <g id="wheelRoot"></g>
+        <path id="selectionBeamPath" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionBeam)" opacity="0.50"/>
+        <path id="selectionLight" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
+        <circle cx="310" cy="310" r="108" fill="#cfc9bd"/>
+        <circle cx="310" cy="310" r="100" fill="url(#centerStone)" stroke="#bdb6a8" stroke-width="0.5"/>
+        <g onclick="showArticle('cornerstone')" style="cursor:pointer">
+          <rect x="216" y="216" width="188" height="188" fill="#000" opacity="0" pointer-events="all"/>
+          <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e">SERVE THE</text>
+          <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e">LONG-TERM</text>
+          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823">INTERESTS OF THE</text>
+          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823">AMERICAN PEOPLE</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div id="mission" class="view"><div class="page-wrap">
+    <div class="back-btn" onclick="show('home')">← Home</div>
+    <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted-on-dark);margin-bottom:10px;">Mission</div>
+    <div style="font-size:24px;color:#e8e4dc;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Serve the long-term interests of the American people</div>
+    <div class="page-rule"></div>
+    <p style="font-size:14px;color:var(--text-soft-on-dark);line-height:1.9;max-width:560px;margin-bottom:32px;">The legitimate object of government is to do for a community of people whatever they need to have done, but cannot do at all, or cannot so well do, for themselves.</p>
+    <ul class="principles">
+      <li><span>Serve the long-term</span>Short-term thinking is the default. The platform pushes against it.</li>
+      <li><span>Name who bears the cost</span>Every policy has a tradeoff. We say who pays.</li>
+      <li><span>Fix systems, not people</span>Behavior follows incentives. Change the incentives.</li>
+      <li><span>Fear and outrage are distractions</span>They are tools. We do not use them.</li>
+      <li><span>Let evidence make the argument</span>We present it. You decide.</li>
+      <li><span>No enemies</span>Positions, not people. Interests, not villains.</li>
+    </ul>
+  </div></div>
+
+  <div id="recent" class="view"><div class="page-wrap">
+    <div class="back-btn" onclick="show('home')">← Home</div>
+    <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted-on-dark);margin-bottom:10px;">Recent</div>
+    <div style="font-size:24px;color:#e8e4dc;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Latest from Cornerstone</div>
+    <div class="page-rule"></div>
+    <div id="feed-list"></div>
+  </div></div>
+
+  <div id="branch-page" class="view"><div class="page-wrap">
+    <div class="back-btn" onclick="show('home')">← Home</div>
+    <div id="branch-eyebrow" class="page-eyebrow"></div>
+    <div id="branch-title" class="page-title"></div>
+    <div class="page-rule"></div>
+    <div id="branch-principles-heading" class="principles-heading"></div>
+    <ul id="branch-principles" class="branch-principles"></ul>
+    <div class="children-section"><div class="children-label">Topics within this branch</div><div id="branch-children" class="children-grid"></div></div>
+    <div class="section-block"><div id="branch-articles-label" class="section-label"></div><div id="branch-articles" class="article-list"></div></div>
+  </div></div>
+
+  <div id="parent-page" class="view"><div class="page-wrap">
+    <div id="parent-breadcrumb" class="breadcrumb"></div>
+    <div id="parent-eyebrow" class="page-eyebrow"></div>
+    <div id="parent-title" class="page-title"></div>
+    <div class="page-rule"></div>
+    <div class="section-block" style="margin-top:0"><div id="parent-articles-label" class="section-label"></div><div id="parent-articles" class="article-list"></div></div>
+  </div></div>
+
+  <div id="article-page" class="view article-view"><div class="page-wrap article-shell">
+    <div id="article-breadcrumb" class="breadcrumb"></div>
+    <div id="article-eyebrow" class="page-eyebrow"></div>
+    <div id="article-title" class="article-title-display"></div>
+    <div id="article-subtitle" class="article-subtitle-display"></div>
+    <div class="page-rule"></div>
+    <div id="article-body" class="article-content"></div>
+  </div></div>
+</div>
+
+<script>
+// ============================================================
+//  CORNERSTONE — SITE CONFIGURATION
+// ============================================================
+//  This file defines the site's structure: the three branches,
+//  their topics, colors, and key principles.
+//
+//  You will rarely need to touch this. Edit here only when you
+//  want to change a branch principle, rename a topic, or adjust
+//  a color. To add an ARTICLE, you do NOT edit this file —
+//  you add a Markdown file in content/articles/ instead.
+// ============================================================
+
+const siteConfig = {
+  economics: {
+    color: '#c59a32',
+    wheel: '#8a6a14',
+    wheelLabel: '#a98222',
+    wheelActive: '#a98222',
+    light: '#6b520f',
+    dark: '#6b520f',
+    label: 'Economics',
+    principles: [
+      'The economy exists to use limited resources for human good.',
+      'The economy turns work and resources into things people value.',
+      'Free markets have been the most efficient way people have found to create value.',
+      'Markets work best when competition is open, information is clear, and the full costs and benefits are accounted for.'
+    ],
+    parents: [
+      ['labor', 'Labor'],
+      ['monetary', 'Monetary'],
+      ['fiscal', 'Fiscal'],
+      ['markets', 'Markets']
+    ]
+  },
+
+  culture: {
+    color: '#d27a52',
+    wheel: '#a0522d',
+    wheelLabel: '#c16c47',
+    wheelActive: '#c16c47',
+    light: '#7c3f22',
+    dark: '#7c3f22',
+    label: 'Culture',
+    principles: [
+      'People are not born knowing how to live.',
+      'Culture is how one generation forms the next.',
+      'Culture teaches by what it honors and what it shames.',
+      'A country pulls apart when its differences grow deeper than its shared allegiance.'
+    ],
+    parents: [
+      ['education', 'Education'],
+      ['community', 'Community'],
+      ['justice', 'Justice'],
+      ['identity', 'Identity']
+    ]
+  },
+
+  governance: {
+    color: '#6f9ac7',
+    wheel: '#1e3a5f',
+    wheelLabel: '#5e91c4',
+    wheelActive: '#5e91c4',
+    light: '#16293f',
+    dark: '#16293f',
+    label: 'Governance',
+    principles: [
+      'Government exists to do for the people what they cannot do well alone.',
+      'Power must be divided so no faction can rule the whole.',
+      'Power should rise only as far from the people as the problem requires.',
+      'Power over public decisions belongs to the people.'
+    ],
+    parents: [
+      ['elections', 'Elections'],
+      ['institutions', 'Institutions'],
+      ['foreign', 'Foreign Policy'],
+      ['ruleoflaw', 'Rule of Law']
+    ]
+  }
+};
+
+const branchOrder = ['economics', 'culture', 'governance'];
+
+// Exported for the build script (Node) while remaining a plain
+// script when inlined into the browser bundle.
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { siteConfig, branchOrder };
+}
+
+</script>
+<script>
+const ARTICLES = [
+  {
+    "title": "Cornerstone",
+    "slug": "cornerstone",
+    "date": "2026-07-10",
+    "body": "<p>Every system is founded on a set of principles. Factions form around competing visions of how those principles should be applied. Over time, the aim shifts from serving the principles to preserving the faction that claims to serve them. The faction makes compromises to grow. Each deal entrenches its benefactors until their will controls the system the faction was formed to serve. When the drift runs far enough, the system cannot hold. A ruler is removed, a government overthrown, a rebirth paid in blood. What force turns every system away from the principles on which it was founded?</p>\n<p>Americans increasingly believe the system has already begun to drift. A Gallup poll conducted April 1–15, 2026, put disapproval of Congress at 86%, with 10% approving. In a September 2023 Pew survey, 83% of Republicans and Republican-leaning independents and 80% of Democrats and Democratic-leaning independents said major campaign donors have too much influence over congressional decisions.<sup><a id=\"footnote-ref-1\" href=\"#footnote-1\" data-footnote-ref aria-describedby=\"footnote-label\">1</a></sup></p>\n<p>Feeling this, many want a single leader strong enough to cut through it, unbound by the checks that slow change down. They wait for the coming man. A leader with the intelligence to solve their problems, the courage to face them, and the power to defeat them. But who comes after the coming man?</p>\n<p>Augustus inherited the Roman Republic worn down by a century of dysfunction and civil war, and he fixed it. He never called himself king or dictator. He took the modest title of first citizen, kept the old Republican institutions, but held the power of a sole ruler in his own hands. A people worn down by a broken system might reasonably believe this was what they needed. Yet the whole of the state depended on one life. The same throne that made killing for the ruler an act of loyalty made killing the ruler the only path to change.</p>\n<p>Tiberius governed well before he turned cruel. Claudius conquered Britain, then built roads and aqueducts across the empire. Caligula emptied the treasury and was killed by his own guard. Nero murdered his mother, then drove the empire to the revolt that ended his line. The empire survived most of them and prospered through much of it, but the throne was a gamble every generation. The greater the power, the more dangerous the men who chase it. Once they have it, the consequences of their flaws can reach an empire. Even the best rulers fear opposition because their death is the only path to change. Their life is all that holds the state together.<sup><a id=\"footnote-ref-2\" href=\"#footnote-2\" data-footnote-ref aria-describedby=\"footnote-label\">2</a></sup></p>\n<p>George Washington led the country to victory in a war many thought unwinnable. Loyalty ran so deep in the army and the people that he could have made himself something close to the king they had just fought to escape. He refused it, served two terms, and walked away from an office he could have held for life.</p>\n<p>In 1787, fifty-five delegates arrived in Philadelphia carrying the competing interests of their states. The large states had the numbers to dominate the rest, and the small states could hold out for equal representation. Each sacrificed the leverage it held to build a government neither could dominate.<sup><a id=\"footnote-ref-2-2\" href=\"#footnote-2\" data-footnote-ref aria-describedby=\"footnote-label\">2</a></sup></p>\n<p>Victory in war did not make self-government durable. That happened only when the people who could have seized power chose to divide it among separate hands rather than concentrate it in one. Every reign ends. The answer was never a better ruler.</p>\n<p>Who are we to compare ourselves to Augustus and Washington? We must achieve more, not because we are greater, but because the problems we face demand more of us. The world we inherit would have been unimaginable to them. Thinking machines, the whole of human knowledge in a pocket, robots that do our labor, and the first steps beyond Earth. None of it could have been predicted from where the founders stood 250 years ago.</p>\n<p>What divides us has grown alongside what we can build. Factional division has always existed, but the scale has changed. In their time, it ran between farmers and financiers, Jeffersonians and Hamiltonians. Today the country splits more deeply and along more lines: by class, race, religion, region, party, and a thousand identities beneath them, each pulling toward its own interest and looking for room to grow.<sup><a id=\"footnote-ref-3\" href=\"#footnote-3\" data-footnote-ref aria-describedby=\"footnote-label\">3</a></sup></p>\n<p>Money and media have always shaped politics, but never at this scale. In the founding era, that meant free beer to sway a local vote and partisan pamphlets passed by hand. Now it means billions of dollars every election cycle and information reaching every corner of the earth. The system was not built to contain either at this scale. Forces this large are not led. They demand to be followed and break whoever stands against them.<sup><a id=\"footnote-ref-3-2\" href=\"#footnote-3\" data-footnote-ref aria-describedby=\"footnote-label\">3</a></sup></p>\n<p>A system begins to fail when the interests of a faction become stronger than the principles meant to restrain them. The founding promise that all men are created equal was denied from the beginning. Slavery was the contradiction, and ending it cost over half a million lives in the Civil War. The gap between what a system promises and what it provides is the space where discontent grows. That gap is closed by force or by persuasion.<sup><a id=\"footnote-ref-4\" href=\"#footnote-4\" data-footnote-ref aria-describedby=\"footnote-label\">4</a></sup></p>\n<p>Force and persuasion are both gambles. Win with force and you get what you wanted immediately. Lose, and the least you lose is your position; more likely, your people and your life. Once force is chosen, it becomes the only thing that matters. The side that falls behind is cornered and will spend its resources and abandon its morality. Force never touches the belief. It ends the conflict only when the other side is forced into submission or destroyed, because anything less leaves the threat of vengeance alive.</p>\n<p>Persuasion changes the belief itself. Each side gives up part of what it wanted for the thing that matters more. It is slow, and while it works, the other side can prepare force. So it demands strength to defend what you are building without striking first.</p>\n<p>An idea must be planted, given room, and tended. Crowded, starved, or forgotten, it never matures, and what never matures never passes on. Power does not give itself up. Once an idea outgrows the forces against it, the system forms around it.</p>\n<p>What turns every system away from its principles is human nature: the self-interest in every faction pulling away from the whole. The only thing that holds against it is shared sacrifice. Each side gives up something of its own, and they build something new with the parts. No side can destroy it without destroying something it helped build.</p>\n<p>That is the cornerstone. Serve the long-term interests of the American people.</p>\n<section class=\"footnotes\" data-footnotes>\n<h2 id=\"footnote-label\" class=\"sr-only\">Footnotes</h2>\n<ol>\n<li id=\"footnote-1\">\n<p>Gallup, &quot;Disapproval of Congress Ties Record High at 86%,&quot; April 22, 2026; Pew Research Center, &quot;Money, Power and the Influence of Ordinary People in American Politics,&quot; September 19, 2023. <a href=\"#footnote-ref-1\" data-footnote-backref aria-label=\"Back to reference 1\">↩</a></p>\n</li>\n<li id=\"footnote-2\">\n<p>The Metropolitan Museum of Art, &quot;The Julio-Claudian Dynasty&quot;; British Museum, &quot;Nero: The Man Behind the Myth&quot;; George Washington&#39;s Mount Vernon, materials on Washington&#39;s surrender of power; National Archives, &quot;Constitution of the United States—A History.&quot; <a href=\"#footnote-ref-2\" data-footnote-backref aria-label=\"Back to reference 2\">↩</a> <a href=\"#footnote-ref-2-2\" data-footnote-backref aria-label=\"Back to reference 2\">↩<sup>2</sup></a></p>\n</li>\n<li id=\"footnote-3\">\n<p>George Washington&#39;s Mount Vernon, &quot;Beer&quot;; Library of Congress, &quot;Formation of Political Parties&quot; and &quot;The Practical Use of Power&quot;; Federal Election Commission, &quot;Statistical Summary of 24-Month Campaign Activity of the 2023–2024 Election Cycle.&quot; <a href=\"#footnote-ref-3\" data-footnote-backref aria-label=\"Back to reference 3\">↩</a> <a href=\"#footnote-ref-3-2\" data-footnote-backref aria-label=\"Back to reference 3\">↩<sup>2</sup></a></p>\n</li>\n<li id=\"footnote-4\">\n<p>National Archives, &quot;Declaration of Independence: A Transcription&quot;; National Park Service, &quot;Overview: The Civil War.&quot; <a href=\"#footnote-ref-4\" data-footnote-backref aria-label=\"Back to reference 4\">↩</a></p>\n</li>\n</ol>\n</section>",
+    "eyebrow": "Centerpiece",
+    "center": true
+  },
+  {
+    "title": "Unnatural Selection",
+    "slug": "unnatural-selection",
+    "date": "2026-07-10",
+    "body": "<p>Large donors hold influence over politics. People across both parties say it is too much. So do many of the politicians who raise the money.</p>\n<p>The people who hold office are the ones who won at raising that money. They will need it again to keep their seats. We are asking those who climbed the ladder and still stand on it to be the ones who saw it off.</p>\n<p>To a donor whose business hinges on a particular rule, a donation is small next to what that rule is worth. Whether it is a farmer who needs access to water for his land or a drug company that wants to protect its monopoly, both are acting in their own interest. The farmer gives what he can, because his farm depends on the water. The drug company gives far more, because its monopoly is worth far more.</p>\n<p>&quot;This is the most important election of our lifetime.&quot; A first-time candidate is running for an open House seat in a district that could go either way. They came into politics with convictions, and winning is the only way to act on them. The party wants the seat, and treats every race this close as one worth fighting for. Winning a seat like this costs millions, and that money has to be raised. Every dollar counts. In a race this close, refusing the money can cost the seat. Taking it is rational for the same reason giving was rational for the donor. But this is only the beginning of their relationship.</p>\n<p>The first major contribution is the campaign&#39;s first real success. It tells others that the campaign is serious, and that someone believes the candidate can win. Others see the campaign can succeed, and they invest in that success. Money buys visibility, visibility builds momentum, and momentum attracts more money. As each cycle compounds the stakes, winning becomes an obligation. With the finish line in view, the candidate races with blinders on. Winning is all they can see.</p>\n<p>They win. A first-time candidate, an open seat, a race that could have gone either way, and they took it. This is what the whole climb was for. Now they are ready to act on the convictions that brought them in, but when one race ends the next begins. Soon donors are calling to check on progress. The party needs to keep the seat. Money is already flowing toward the next race, and people are starting to say, &quot;this is the most important election of our lifetime.&quot;</p>\n<p>The officeholder does not have to be bought. They just have to need the next check.</p>\n<p>Everyone feels the power of money in politics. It might be nothing more than a quiet sense that money could change a close decision. It might be as much as a standing guarantee, bought in advance and never spoken of again. If we want to understand the effects money has in politics, we have to look at where it is strongest.</p>\n<p>Candidates must raise money, win the backing of party and donors, and survive the primary before they ever reach the general election. Look only at the general, and the money seems to do little. Look at everything before it, and the money is everywhere. It sorts the field before voters get a choice.</p>\n<p>Bills must be drafted, shaped in committee, and scheduled before they ever reach a vote. Look only at the final vote, and the money again seems to do little. Look earlier, and its influence becomes visible. It shapes the agenda before legislators ever say yes or no.</p>\n<p>Each stage demands more to advance and leaves fewer able to refuse. What survives has been shaped by what it needed to advance.</p>\n<p>Everyone in the system acts in their own interest. Democrats and Republicans battle each other. Donors can give across the divide, and that freedom is power.</p>\n<p>Each deal strengthens the donor, the candidate, and the party. To refuse the deal is to work against everyone the deal rewards. The problem is what winning demands: do what keeps the money flowing, and say what wins the vote.</p>\n<p>Donors do not have to control the votes. They just have to shape the options.</p>\n<p>Before those options ever reach the voter, money has already done its work. The vote remains free, but only after money has shaped which candidates can compete, which bills can advance, and which ideas can survive. Donors gain leverage by attaching conditions to their support. The voter is left to choose among what remains.</p>",
+    "subtitle": "Following money through American politics",
+    "dek": "Following money through American politics",
+    "branch": "governance",
+    "parents": [
+      "elections",
+      "institutions"
+    ]
+  }
+];
+</script>
+<script>
+// ============================================================
+//  CORNERSTONE — WHEEL ENGINE & RENDERING
+// ============================================================
+//  This is the site's machinery: the wheel geometry, the
+//  navigation, and the page renderers. You will rarely need
+//  to edit this file.
+//
+//  Data comes from two build-injected globals:
+//    siteConfig, branchOrder  — from content/config.js
+//    ARTICLES                 — parsed from content/articles/*.md
+//
+//  To add or edit an article, change the Markdown files, not
+//  this script.
+// ============================================================
+
+const data = siteConfig;
+const order = branchOrder;
+
+// Articles are split into center pieces and regular posts by the
+// `center` flag in their frontmatter.
+const centerPieces = ARTICLES.filter(a => a.center);
+const posts = ARTICLES.filter(a => !a.center);
+const allArticles = ARTICLES;
+
+const CX = 310, CY = 310;
+const R_IN0 = 110, R_IN1 = 200, R_OUT0 = 202, R_OUT1 = 298;
+
+function pol(r, deg){ const a = (deg - 90) * Math.PI / 180; return [CX + r * Math.cos(a), CY + r * Math.sin(a)]; }
+function wedge(r0, r1, a0, a1){
+  const [x0,y0]=pol(r1,a0),[x1,y1]=pol(r1,a1),[x2,y2]=pol(r0,a1),[x3,y3]=pol(r0,a0);
+  const large=(a1-a0)>180?1:0;
+  return `M${x0},${y0} A${r1},${r1} 0 ${large},1 ${x1},${y1} L${x2},${y2} A${r0},${r0} 0 ${large},0 ${x3},${y3} Z`;
+}
+function outwardArc(r, aStart, aEnd){
+  const [x0,y0]=pol(r,aStart), [x1,y1]=pol(r,aEnd);
+  const sweep = aEnd>aStart ? 1 : 0;
+  const large = Math.abs(aEnd-aStart)>180?1:0;
+  return `M${x0},${y0} A${r},${r} 0 ${large},${sweep} ${x1},${y1}`;
+}
+
+const twoLine = { 'Foreign Policy':['Foreign','Policy'], 'Rule of Law':['Rule of','Law'] };
+const oneLineSmall = { 'Institutions': 13 };
+
+function buildWheel(){
+  const root=document.getElementById('wheelRoot');
+  let svg='', defs='';
+  // Single-stone wheel: light center to dark outer edge. Wedges all use the same radial marble gradient.
+  svg+=`<circle cx="${CX}" cy="${CY}" r="298" fill="url(#marble)"/>`;
+
+  order.forEach((bk,i)=>{
+    const b=data[bk];
+    const center=180+i*120;
+    const a0=center-60, a1=center+60;
+
+    svg+=`<path d="${wedge(R_IN0,R_IN1,a0,a1)}" fill="url(#marble)" stroke="#000" stroke-opacity="0.3" stroke-width="1.7" onclick="rotateTo('${bk}')" style="cursor:pointer"/>`;
+    const inR=R_IN0+(R_IN1-R_IN0)*0.45;
+    const ipid=`bp${i}`;
+    defs+=`<path id="${ipid}" fill="none" d="${outwardArc(inR, center+43, center-43)}"/>`;
+    const branchFontSize = bk==='governance' ? 20 : 22;
+    const branchLetterSpacing = bk==='governance' ? 2.2 : 3.2;
+    svg+=`<text font-family="Georgia,serif" font-size="${branchFontSize}" letter-spacing="${branchLetterSpacing}" font-weight="600" class="branch-label branch-label-${bk}" fill="${bk==='economics'?b.wheelActive:b.wheelLabel}" onclick="rotateTo('${bk}')" style="cursor:pointer"><textPath href="#${ipid}" startOffset="50%" text-anchor="middle">${b.label.toUpperCase()}</textPath></text>`;
+
+    const n=b.parents.length, seg=120/n;
+    b.parents.forEach((p,j)=>{
+      const pa0=a0+j*seg, pa1=a0+(j+1)*seg, mid=(pa0+pa1)/2;
+      svg+=`<path d="${wedge(R_OUT0,R_OUT1,pa0,pa1)}" fill="url(#marble)" stroke="#000" stroke-opacity="0.30" stroke-width="0.95" onclick="showParent('${bk}','${p[0]}')" style="cursor:pointer"/>`;
+      const stack = twoLine[p[1]];
+      const onBottom = (mid%360>90 && mid%360<270);
+      if(stack){
+        const rOuter=R_OUT0+(R_OUT1-R_OUT0)*0.66, rInner=R_OUT0+(R_OUT1-R_OUT0)*0.34;
+        const firstR=onBottom?rInner:rOuter, secondR=onBottom?rOuter:rInner;
+        const id1=`pp${i}_${j}a`, id2=`pp${i}_${j}b`;
+        defs+=`<path id="${id1}" fill="none" d="${outwardArc(firstR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
+        defs+=`<path id="${id2}" fill="none" d="${outwardArc(secondR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" fill="${bk==='economics'?b.wheelLabel:b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" onclick="showParent('${bk}','${p[0]}')" style="cursor:pointer"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" fill="${bk==='economics'?b.wheelLabel:b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" onclick="showParent('${bk}','${p[0]}')" style="cursor:pointer"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
+      } else {
+        const outR=R_OUT0+(R_OUT1-R_OUT0)*0.5;
+        const pid=`pp${i}_${j}`;
+        defs+=`<path id="${pid}" fill="none" d="${outwardArc(outR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
+        let fs;
+        if(oneLineSmall[p[1]]) fs=oneLineSmall[p[1]];
+        else { const arcW=(seg-3)*Math.PI/180*outR; fs=Math.max(12, Math.min(17, arcW/(p[1].length*0.62))); }
+        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" fill="${bk==='economics'?b.wheelLabel:b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" onclick="showParent('${bk}','${p[0]}')" style="cursor:pointer"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
+      }
+    });
+  });
+
+  svg+=`<circle cx="${CX}" cy="${CY}" r="${R_OUT1}" fill="none" stroke="#000" stroke-opacity="0.38" stroke-width="1.6"/>`;
+  svg+=`<circle cx="${CX}" cy="${CY}" r="${R_OUT0}" fill="none" stroke="#000" stroke-opacity="0.28" stroke-width="1.1"/>`;
+  svg+=`<circle cx="${CX}" cy="${CY}" r="${R_IN1}" fill="none" stroke="#000" stroke-opacity="0.3" stroke-width="1.15"/>`;
+  svg+=`<circle cx="${CX}" cy="${CY}" r="${R_IN0}" fill="none" stroke="#000" stroke-opacity="0.26" stroke-width="1.05"/>`;
+  [120,240,360].forEach(d=>{ const [xa,ya]=pol(R_IN0,d),[xb,yb]=pol(R_OUT1,d); svg+=`<line x1="${xa}" y1="${ya}" x2="${xb}" y2="${yb}" stroke="#000" stroke-opacity="0.34" stroke-width="3.8"/>`; });
+
+  root.innerHTML=`<defs>${defs}</defs>`+svg;
+}
+
+function updateWheelFocus(branch){
+  order.forEach(bk=>{
+    const b=data[bk];
+    const active = bk===branch;
+    document.querySelectorAll('.parent-label-'+bk).forEach(el=>{
+      el.setAttribute('fill', active ? b.wheelLabel : b.dark);
+      el.setAttribute('stroke-opacity', '0.16');
+    });
+    document.querySelectorAll('.branch-label-'+bk).forEach(el=>{
+      el.setAttribute('fill', b.wheelLabel);
+    });
+  });
+}
+
+let rotateTimer=null, curRot=0;
+function rotateTo(branch){
+  show('home');
+  const i=order.indexOf(branch);
+  let target=-i*120;
+  let diff=((target - curRot) % 360 + 540) % 360 - 180;   // SHORTEST PATH
+  curRot += diff;
+  document.getElementById('wheelRoot').style.transform='rotate('+curRot+'deg)';
+  updateWheelFocus(branch);
+  clearTimeout(rotateTimer);
+  rotateTimer=setTimeout(()=>showBranch(branch),920);
+}
+function show(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); if(id==='recent') buildFeed(); }
+
+function fmtDate(iso){ const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('en-US',{month:'short',year:'numeric'}); }
+function parentKeys(p){ return p.parents || (p.parent ? [p.parent] : []); }
+function parentLabel(branch,parent){ return data[branch].parents.find(x=>x[0]===parent)[1]; }
+function parentLabels(p){ return parentKeys(p).map(k=>parentLabel(p.branch,k)); }
+function sortPosts(list){ return [...list].sort((a,b)=>b.date.localeCompare(a.date)); }
+function articleMeta(p, mode){
+  const b=data[p.branch], labels=parentLabels(p).join(' / ');
+  if(mode==='branch') return labels;
+  if(mode==='topic') return b.label;
+  return b.label+' · '+labels;
+}
+function isInParent(p, branch, key){ return p.branch===branch && parentKeys(p).includes(key); }
+function renderArticleList(container, list, mode, emptyText){
+  container.innerHTML='';
+  const sorted=sortPosts(list);
+  if(!sorted.length){
+    const empty=document.createElement('div'); empty.className='empty-state';
+    empty.innerHTML=(emptyText || 'First piece coming soon.')+' <span style="cursor:pointer;text-decoration:underline" onclick="showArticle(\'cornerstone\')">Read the centerpiece.</span>';
+    container.appendChild(empty); return;
+  }
+  sorted.forEach(p=>{
+    const b=data[p.branch];
+    const row=document.createElement('div'); row.className='article-row';
+    row.innerHTML='<div class="article-date">'+fmtDate(p.date)+'</div><div class="article-meta" style="color:'+b.color+'">'+articleMeta(p,mode)+'</div><div><div class="article-list-title">'+p.title+'</div>'+(p.dek?'<div class="article-dek">'+p.dek+'</div>':'')+'</div>';
+    row.onclick=()=>showArticle(p.slug);
+    container.appendChild(row);
+  });
+}
+function buildFeed(){
+  renderArticleList(document.getElementById('feed-list'), posts, 'recent', 'No articles yet.');
+}
+function showBranch(branch){
+  const b=data[branch];
+  const e=document.getElementById('branch-eyebrow'); e.style.color=b.color; e.textContent='Branch';
+  const t=document.getElementById('branch-title'); t.style.color=b.color; t.textContent=b.label;
+
+  document.getElementById('branch-principles-heading').textContent='Key principles of '+b.label;
+
+  const principles=document.getElementById('branch-principles'); principles.innerHTML='';
+  b.principles.forEach(line=>{ const li=document.createElement('li'); li.textContent=line; principles.appendChild(li); });
+
+  const grid=document.getElementById('branch-children'); grid.innerHTML='';
+  b.parents.forEach(([k,lbl])=>{ const c=document.createElement('div'); c.className='child-card'; c.innerHTML='<div class="child-card-label" style="color:'+b.color+'">Topic</div><div class="child-card-title">'+lbl+'</div>'; c.onclick=()=>showParent(branch,k); grid.appendChild(c); });
+
+  document.getElementById('branch-articles-label').textContent='Recent in '+b.label;
+  renderArticleList(document.getElementById('branch-articles'), posts.filter(p=>p.branch===branch), 'branch', 'No articles in '+b.label+' yet.');
+  show('branch-page');
+}
+function showParent(branch,key){
+  const b=data[branch]; const lbl=parentLabel(branch,key);
+  document.getElementById('parent-breadcrumb').innerHTML=`<span onclick="show('home')">Home</span><span class="sep">/</span><span onclick="showBranch('${branch}')" style="color:${b.color}">${b.label}</span><span class="sep">/</span><span style="color:${b.color}">${lbl}</span>`;
+  const e=document.getElementById('parent-eyebrow'); e.style.color=b.color; e.textContent=b.label;
+  document.getElementById('parent-title').textContent=lbl;
+  document.getElementById('parent-articles-label').textContent='Articles in '+lbl;
+  renderArticleList(document.getElementById('parent-articles'), posts.filter(p=>isInParent(p, branch, key)), 'topic', 'No articles in '+lbl+' yet.');
+  show('parent-page');
+}
+function showArticle(slug){
+  const p=allArticles.find(x=>x.slug===slug); if(!p) return;
+  const title=document.getElementById('article-title');
+  const subtitle=document.getElementById('article-subtitle');
+  const eyebrow=document.getElementById('article-eyebrow');
+  const breadcrumb=document.getElementById('article-breadcrumb');
+
+  title.style.color=''; title.textContent=p.title;
+  if(p.subtitle){ subtitle.textContent=p.subtitle; subtitle.style.display='block'; } else { subtitle.textContent=''; subtitle.style.display='none'; }
+
+  if(p.center){
+    breadcrumb.innerHTML=`<span onclick="show('home')">Home</span>`;
+    eyebrow.style.color='var(--article-muted-light)';
+    eyebrow.textContent=p.eyebrow || 'Centerpiece';
+  } else {
+    const b=data[p.branch], labels=parentLabels(p);
+    const topicLinks=parentKeys(p).map(k=>`<span onclick="showParent('${p.branch}','${k}')" style="color:${b.light}">${parentLabel(p.branch,k)}</span>`).join('<span class="sep">/</span>');
+    breadcrumb.innerHTML=`<span onclick="show('home')">Home</span><span class="sep">/</span><span onclick="showBranch('${p.branch}')" style="color:${b.light}">${b.label}</span><span class="sep">/</span>${topicLinks}`;
+    eyebrow.style.color=b.light;
+    eyebrow.textContent=fmtDate(p.date)+' · '+b.label+' · '+labels.join(' / ');
+  }
+
+  document.getElementById('article-body').innerHTML=p.body || '<p>Article coming soon.</p>';
+  show('article-page');
+}
+
+buildWheel();
+updateWheelFocus('economics');
+
+</script>
+</body>
+</html>
