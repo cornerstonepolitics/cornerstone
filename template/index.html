@@ -4,39 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cornerstone</title>
-  <meta name="description" content="Evidence-based political analysis. Serve the long-term interests of the American people.">
+  <meta name="description" content="Independent essays on the systems shaping American politics.">
   <style>
 /*__STYLES__*/
   </style>
 </head>
 <body>
 <div id="app">
-  <div class="nav">
-    <div class="nav-logo" onclick="show('home')">Cornerstone</div>
-    <div class="nav-links">
-      <span style="color:var(--economics-on-dark)" onclick="rotateTo('economics')">Economics</span>
-      <span style="color:var(--culture-on-dark)" onclick="rotateTo('culture')">Culture</span>
-      <span style="color:var(--governance-on-dark)" onclick="rotateTo('governance')">Governance</span>
-      <span style="color:var(--text-muted-on-dark)" onclick="show('recent')">Recent</span>
-    </div>
-  </div>
+  <header class="nav">
+    <a class="nav-logo" href="/" data-nav>Cornerstone</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a style="color:var(--economics-on-dark)" href="/economics/" data-nav>Economics</a>
+      <a style="color:var(--culture-on-dark)" href="/culture/" data-nav>Culture</a>
+      <a style="color:var(--governance-on-dark)" href="/governance/" data-nav>Governance</a>
+      <a style="color:var(--text-muted-on-dark)" href="/recent/" data-nav>Recent</a>
+    </nav>
+  </header>
 
-  <div id="home" class="view active">
+  <main id="home" class="view">
     <div class="wheel-stage">
-      <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"
+           role="group" aria-labelledby="wheelTitle wheelDesc">
+        <title id="wheelTitle">Cornerstone navigation</title>
+        <desc id="wheelDesc">A wheel with the Cornerstone mission at the centre, three branches (Economics, Culture, Governance), and four topics within each branch. Every section is also listed as a link below.</desc>
         <defs>
           <radialGradient id="marble" gradientUnits="userSpaceOnUse" cx="310" cy="310" r="298">
             <stop offset="0%" stop-color="#f4f1ea"/><stop offset="18%" stop-color="#e6e1d6"/>
             <stop offset="34%" stop-color="#cdc7ba"/><stop offset="52%" stop-color="#a8a294"/>
             <stop offset="70%" stop-color="#79746a"/><stop offset="86%" stop-color="#4c483f"/>
             <stop offset="100%" stop-color="#2b2823"/>
-          </radialGradient>
-          <radialGradient id="outerMarble" gradientUnits="userSpaceOnUse" cx="310" cy="310" r="298">
-            <stop offset="0%" stop-color="#f4f1ea"/>
-            <stop offset="45%" stop-color="#eee9df"/>
-            <stop offset="68%" stop-color="#e2dbcf"/>
-            <stop offset="84%" stop-color="#d8d0c3"/>
-            <stop offset="100%" stop-color="#d4ccbf"/>
           </radialGradient>
           <radialGradient id="centerStone" cx="50%" cy="45%" r="60%">
             <stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#f0ece3"/><stop offset="100%" stop-color="#d8d2c6"/>
@@ -60,71 +56,109 @@
         <g id="wheelRoot"></g>
         <path id="selectionBeamPath" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionBeam)" opacity="0.50" pointer-events="none"/>
         <path id="selectionLight" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
-        <g id="rotateHints"></g>
-        <circle cx="310" cy="310" r="108" fill="#cfc9bd"/>
-        <circle cx="310" cy="310" r="100" fill="url(#centerStone)" stroke="#bdb6a8" stroke-width="0.5"/>
-        <g onclick="showArticle('cornerstone')" style="cursor:pointer">
-          <rect x="216" y="216" width="188" height="188" fill="#000" opacity="0" pointer-events="all"/>
-          <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e">SERVE THE</text>
-          <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e">LONG-TERM</text>
-          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823">INTERESTS OF THE</text>
-          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823">AMERICAN PEOPLE</text>
-        </g>
+        <circle cx="310" cy="310" r="108" fill="#cfc9bd" pointer-events="none"/>
+        <circle cx="310" cy="310" r="100" fill="url(#centerStone)" stroke="#bdb6a8" stroke-width="0.5" pointer-events="none"/>
+        <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: read the founding essay" data-nav>
+          <circle cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>
+          <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e" pointer-events="none">SERVE THE</text>
+          <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e" pointer-events="none">LONG-TERM</text>
+          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823" pointer-events="none">INTERESTS OF THE</text>
+          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823" pointer-events="none">AMERICAN PEOPLE</text>
+        </a>
       </svg>
     </div>
-  </div>
 
-  <div id="mission" class="view"><div class="page-wrap">
-    <div class="back-btn" onclick="show('home')">← Home</div>
-    <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted-on-dark);margin-bottom:10px;">Mission</div>
-    <div style="font-size:24px;color:#e8e4dc;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Serve the long-term interests of the American people</div>
-    <div class="page-rule"></div>
-    <p style="font-size:14px;color:var(--text-soft-on-dark);line-height:1.9;max-width:560px;margin-bottom:32px;">The legitimate object of government is to do for a community of people whatever they need to have done, but cannot do at all, or cannot so well do, for themselves.</p>
-    <ul class="principles">
-      <li><span>Serve the long-term</span>Short-term thinking is the default. The platform pushes against it.</li>
-      <li><span>Name who bears the cost</span>Every policy has a tradeoff. We say who pays.</li>
-      <li><span>Fix systems, not people</span>Behavior follows incentives. Change the incentives.</li>
-      <li><span>Fear and outrage are distractions</span>They are tools. We do not use them.</li>
-      <li><span>Let evidence make the argument</span>We present it. You decide.</li>
-      <li><span>No enemies</span>Positions, not people. Interests, not villains.</li>
-    </ul>
-  </div></div>
+    <!-- Real semantic hierarchy. The wheel is the visual navigation;
+         this is the same structure as text, for keyboard and screen
+         readers. Visually hidden, but fully focusable and readable. -->
+    <nav class="wheel-index" aria-label="All sections">
+      <ul>
+        <li><a href="/cornerstone/" data-nav>Cornerstone</a></li>
+        <li><a href="/economics/" data-nav>Economics</a>
+          <ul>
+            <li><a href="/economics/labor/" data-nav>Labor</a></li>
+            <li><a href="/economics/monetary/" data-nav>Monetary</a></li>
+            <li><a href="/economics/fiscal/" data-nav>Fiscal</a></li>
+            <li><a href="/economics/markets/" data-nav>Markets</a></li>
+          </ul>
+        </li>
+        <li><a href="/culture/" data-nav>Culture</a>
+          <ul>
+            <li><a href="/culture/education/" data-nav>Education</a></li>
+            <li><a href="/culture/community/" data-nav>Community</a></li>
+            <li><a href="/culture/justice/" data-nav>Justice</a></li>
+            <li><a href="/culture/identity/" data-nav>Identity</a></li>
+          </ul>
+        </li>
+        <li><a href="/governance/" data-nav>Governance</a>
+          <ul>
+            <li><a href="/governance/elections/" data-nav>Elections</a></li>
+            <li><a href="/governance/institutions/" data-nav>Institutions</a></li>
+            <li><a href="/governance/foreign-policy/" data-nav>Foreign Policy</a></li>
+            <li><a href="/governance/rule-of-law/" data-nav>Rule of Law</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </main>
 
-  <div id="recent" class="view"><div class="page-wrap">
-    <div class="back-btn" onclick="show('home')">← Home</div>
-    <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted-on-dark);margin-bottom:10px;">Recent</div>
-    <div style="font-size:24px;color:#e8e4dc;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Latest from Cornerstone</div>
+  <main id="recent" class="view"><div class="page-wrap">
+    <a class="back-btn" href="/" data-nav>&larr; Home</a>
+    <div class="page-eyebrow">Recent</div>
+    <h1 id="recent-title" class="page-title">Latest from Cornerstone</h1>
     <div class="page-rule"></div>
     <div id="feed-list"></div>
-  </div></div>
+  </div></main>
 
-  <div id="branch-page" class="view"><div class="page-wrap">
-    <div class="back-btn" onclick="show('home')">← Home</div>
+  <main id="branch-page" class="view"><div class="page-wrap">
+    <a class="back-btn" href="/" data-nav>&larr; Home</a>
     <div id="branch-eyebrow" class="page-eyebrow"></div>
-    <div id="branch-title" class="page-title"></div>
+    <h1 id="branch-title" class="page-title"></h1>
     <div class="page-rule"></div>
     <div id="branch-principles-heading" class="principles-heading"></div>
     <ul id="branch-principles" class="branch-principles"></ul>
-    <div class="children-section"><div class="children-label">Topics within this branch</div><div id="branch-children" class="children-grid"></div></div>
-    <div class="section-block"><div id="branch-articles-label" class="section-label"></div><div id="branch-articles" class="article-list"></div></div>
-  </div></div>
+    <div class="children-section">
+      <div class="children-label">Topics within this branch</div>
+      <div id="branch-children" class="children-grid"></div>
+    </div>
+    <div class="section-block">
+      <div id="branch-articles-label" class="section-label"></div>
+      <div id="branch-articles" class="article-list"></div>
+    </div>
+  </div></main>
 
-  <div id="parent-page" class="view"><div class="page-wrap">
-    <div id="parent-breadcrumb" class="breadcrumb"></div>
+  <main id="parent-page" class="view"><div class="page-wrap">
+    <nav id="parent-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
     <div id="parent-eyebrow" class="page-eyebrow"></div>
-    <div id="parent-title" class="page-title"></div>
+    <h1 id="parent-title" class="page-title"></h1>
     <div class="page-rule"></div>
-    <div class="section-block" style="margin-top:0"><div id="parent-articles-label" class="section-label"></div><div id="parent-articles" class="article-list"></div></div>
-  </div></div>
+    <div class="section-block" style="margin-top:0">
+      <div id="parent-articles-label" class="section-label"></div>
+      <div id="parent-articles" class="article-list"></div>
+    </div>
+  </div></main>
 
-  <div id="article-page" class="view article-view"><div class="page-wrap article-shell">
-    <div id="article-breadcrumb" class="breadcrumb"></div>
+  <main id="article-page" class="view article-view"><div class="page-wrap article-shell">
+    <nav id="article-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
     <div id="article-eyebrow" class="page-eyebrow"></div>
-    <div id="article-title" class="article-title-display"></div>
+    <h1 id="article-title" class="article-title-display"></h1>
     <div id="article-subtitle" class="article-subtitle-display"></div>
     <div class="page-rule"></div>
     <div id="article-body" class="article-content"></div>
-  </div></div>
+  </div></main>
+
+  <main id="notfound-page" class="view"><div class="page-wrap">
+    <div class="page-eyebrow">Not found</div>
+    <h1 id="notfound-title" class="page-title">This page could not be found.</h1>
+    <div class="page-rule"></div>
+    <ul class="notfound-links">
+      <li><a href="/" data-nav>Home</a></li>
+      <li><a href="/recent/" data-nav>Recent</a></li>
+      <li><a href="/economics/" data-nav>Economics</a></li>
+      <li><a href="/culture/" data-nav>Culture</a></li>
+      <li><a href="/governance/" data-nav>Governance</a></li>
+    </ul>
+  </div></main>
 </div>
 
 <script>
