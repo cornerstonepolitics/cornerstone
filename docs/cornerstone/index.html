@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cornerstone — Cornerstone</title>
+  <title>Cornerstone</title>
   <link rel="canonical" href="https://cornerstonepolitics.org/cornerstone/">
   <meta name="description" content="Independent essays on the systems shaping American politics.">
   <style>
@@ -50,8 +50,8 @@ body { background: var(--site-bg); }
 .nav-links span { cursor: pointer; } .nav-links span:hover { opacity: 0.75; }
 #home { display: flex; flex-direction: column; align-items: center; padding: 24px 12px; background: var(--site-bg); }
 .wheel-stage { width: 100%; max-width: 620px; aspect-ratio: 1; }
-#wheelRoot { transition: transform 0.9s cubic-bezier(0.22,1,0.36,1); transform-origin: 310px 310px; }
-#wheelRoot text { transition: fill 0.9s cubic-bezier(0.22,1,0.36,1), stroke-opacity 0.9s cubic-bezier(0.22,1,0.36,1); }
+#wheelRoot { transition: transform 560ms cubic-bezier(0.22,1,0.36,1); transform-origin: 310px 310px; }
+#wheelRoot text { transition: fill 200ms ease, stroke-opacity 200ms ease; }
 /* Labels recolor quickly on hover for responsive feedback. Higher
    specificity than the rule above so hover feels immediate; a fast
    recolor during rotation reads crisp, not broken. */
@@ -401,6 +401,321 @@ h1:focus { outline: none; }
 /* Empty states now use the exact approved wording and carry no link. */
 .empty-state { padding: 22px 0; }
 
+
+/* ============================================================
+   PHASE 2 — SURFACE SYSTEM, HOMEPAGE STATES, MOBILE WHEEL
+   ============================================================ */
+
+:root {
+  /* The warm reading surface, named for use anywhere on the site. */
+  --warm-surface: #f3f0e8;
+  --warm-title:   #171512;
+  --warm-text:    #24211d;
+  --warm-muted:   #6f6a62;
+  --warm-rule:    #d8d1c5;
+}
+
+/* ---- the black / warm split -------------------------------- */
+/* Near-black: navigation, structure, headings, the wheel.
+   Warm beige: everything you read. The edge between them is a
+   clean full-width horizontal line. No cards, no corners, no
+   shadows. */
+.warm-surface {
+  background: var(--warm-surface);
+  color: var(--warm-text);
+  border-top: 1px solid var(--warm-rule);
+  width: 100%;
+}
+.warm-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 72px 28px 88px;
+  transition: opacity 180ms ease;
+}
+.warm-inner.fading { opacity: 0; }
+
+/* Dark heading strip above a warm section (Recent, 404). */
+.page-head { background: var(--site-bg); padding: 40px 0 34px; }
+.page-head .page-wrap { padding-top: 0; padding-bottom: 0; }
+
+/* ---- homepage hero ----------------------------------------- */
+.wheel-hero {
+  text-align: center;
+  padding: 44px 24px 40px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.hero-line {
+  font-family: var(--font-article);
+  font-weight: 400;
+  font-size: clamp(1.1rem, 2.2vw, 1.42rem);
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  color: var(--text-on-dark);
+}
+.hero-hint {
+  margin-top: 16px;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted-on-dark);
+}
+
+/* The wheel keeps its own scale; the hero adds the breathing room. */
+#wheel-view { background: var(--site-bg); }
+#wheel-view .wheel-stage { margin: 0 auto 56px; }
+
+/* ---- the centre stone -------------------------------------- */
+.center-text { transition: fill 160ms ease; }
+.center-text-soft   { fill: #5a564e; }
+.center-text-strong { fill: #2b2823; }
+.center-link:hover .center-text-soft   { fill: #46423b; }
+.center-link:hover .center-text-strong { fill: #14120f; }
+.center-link:hover ~ * { }              /* no-op, keeps specificity honest */
+#centerHit { transition: none; }
+.center-link:hover #centerHit {
+  opacity: 0.06;
+  fill: #ffffff;
+}
+
+/* ---- content states beneath the wheel ---------------------- */
+.content-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.content-eyebrow a:hover { text-decoration: underline; }
+.content-title {
+  font-family: var(--font-article);
+  font-weight: 600;
+  font-size: clamp(1.9rem, 3.4vw, 2.35rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--warm-title);
+}
+.content-section { margin-top: 46px; }
+.content-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  margin-bottom: 18px;
+}
+
+/* Latest-essay / centrepiece feature. No image, no card, no border. */
+.feature-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.feature-date {
+  margin-top: 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--warm-muted);
+}
+.feature-title {
+  margin-top: 14px;
+  font-family: var(--font-article);
+  font-weight: 600;
+  font-size: clamp(1.65rem, 3vw, 2.05rem);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  color: var(--warm-title);
+  max-width: 620px;
+}
+.feature-dek {
+  margin-top: 12px;
+  font-family: var(--font-article);
+  font-size: 1.06rem;
+  line-height: 1.55;
+  color: var(--warm-muted);
+  max-width: 600px;
+}
+.feature-link {
+  display: inline-block;
+  margin-top: 22px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-title);
+  border-bottom: 1px solid var(--warm-rule);
+  padding-bottom: 3px;
+}
+.feature-link:hover { border-bottom-color: var(--warm-title); }
+
+/* Branch principles: four bullets, Newsreader, generous air, no boxes. */
+.principles-list {
+  list-style: none;
+  margin-top: 30px;
+  max-width: 680px;
+}
+.principles-list li {
+  position: relative;
+  padding: 20px 0 20px 22px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  font-family: var(--font-article);
+  font-size: 1.14rem;
+  line-height: 1.6;
+  color: var(--warm-text);
+}
+.principles-list li:last-child { border-bottom: none; }
+.principles-list li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 32px;
+  width: 7px; height: 1px;
+  background: var(--accent, var(--warm-muted));
+}
+
+/* Topic links: two columns on desktop, thin rules, no cards. */
+.topic-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 44px;
+}
+.topic-link {
+  display: block;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  color: var(--warm-title);
+}
+.topic-link-name {
+  font-family: var(--font-article);
+  font-size: 1.12rem;
+  line-height: 1.3;
+}
+.topic-link:hover .topic-link-name {
+  color: var(--accent, var(--warm-title));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Quiet link back to the parent branch. */
+.back-link {
+  display: inline-block;
+  margin-top: 40px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.back-link:hover { color: var(--warm-title); }
+
+/* ---- editorial index on warm surfaces ---------------------- */
+.warm-surface .article-list { border-top: 1px solid rgba(0,0,0,0.08); }
+.warm-surface .article-row {
+  display: grid;
+  grid-template-columns: 118px 142px 1fr;
+  gap: 16px;
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  align-items: baseline;
+  color: inherit;
+}
+.warm-surface .article-date {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  white-space: nowrap;
+}
+.warm-surface .article-meta {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.warm-surface .article-list-title {
+  font-family: var(--font-article);
+  font-size: 1.2rem;
+  line-height: 1.3;
+  color: var(--warm-title);
+}
+.warm-surface .article-row:hover .article-list-title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.warm-surface .article-dek {
+  margin-top: 7px;
+  font-family: var(--font-article);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--warm-muted);
+  max-width: 560px;
+}
+.warm-surface .empty-state {
+  padding: 24px 0;
+  font-family: var(--font-article);
+  font-size: 1.05rem;
+  color: var(--warm-muted);
+  border: none;
+}
+.warm-surface .notfound-links li { border-bottom: 1px solid rgba(0,0,0,0.08); }
+.warm-surface .notfound-links a { color: var(--warm-title); }
+.warm-surface .notfound-links a:hover { text-decoration: underline; }
+
+/* ---- mobile topic links (wheel's outer labels are hidden) --- */
+.mobile-topics { display: none; }
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+@media (max-width: 760px) {
+  .warm-inner { padding: 48px 22px 64px; }
+  .wheel-hero { padding: 30px 20px 26px; }
+
+  /* Do not shrink twelve unreadable labels: hide the outer ring's
+     text entirely and move wayfinding to real links below. */
+  #wheelRoot .parent-label { display: none; }
+
+  .mobile-topics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 18px;
+    max-width: 520px;
+    margin: 4px auto 8px;
+    padding: 0 20px;
+  }
+  .mobile-topics a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;                 /* practical tap target */
+    font-family: var(--font-article);
+    font-size: 1.05rem;
+    color: var(--text-on-dark);
+    border-bottom: 1px solid var(--rule-on-dark-subtle);
+  }
+  .mobile-topics a:active { color: var(--accent, var(--text-on-dark)); }
+
+  /* Editorial index stacks on phones. */
+  .warm-surface .article-row { display: block; }
+  .warm-surface .article-meta { margin-top: 8px; }
+  .warm-surface .article-list-title { margin-top: 8px; }
+
+  .topic-links { grid-template-columns: 1fr; }
+}
+
+/* Touch feedback: a brief contrast lift, no hover dependency. */
+@media (hover: none) {
+  .wedge { transition: filter 160ms ease, stroke-opacity 160ms ease; }
+  .wedge:active { filter: brightness(1.13); stroke-opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #wheelRoot { transition: none; }
+  .warm-inner { transition: none; }
+}
+
   </style>
 </head>
 <body>
@@ -415,7 +730,19 @@ h1:focus { outline: none; }
     </nav>
   </header>
 
-  <main id="home" class="view">
+  <!-- ============================================================
+       WHEEL VIEW
+       The wheel is permanent. Home, branch and topic are all states
+       of THIS view: the wheel stays put and only the warm section
+       beneath it changes. Articles and Recent are separate views.
+       ============================================================ -->
+  <main id="wheel-view" class="view">
+
+    <div class="wheel-hero">
+      <p class="hero-line">Independent essays on the systems shaping American politics.</p>
+      <p class="hero-hint">Select a branch.</p>
+    </div>
+
     <div class="wheel-stage">
       <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"
            role="group" aria-labelledby="wheelTitle wheelDesc">
@@ -452,19 +779,22 @@ h1:focus { outline: none; }
         <path id="selectionLight" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
         <circle cx="310" cy="310" r="108" fill="#cfc9bd" pointer-events="none"/>
         <circle cx="310" cy="310" r="100" fill="url(#centerStone)" stroke="#bdb6a8" stroke-width="0.5" pointer-events="none"/>
-        <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: read the founding essay" data-nav>
-          <circle cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>
-          <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e" pointer-events="none">SERVE THE</text>
-          <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e" pointer-events="none">LONG-TERM</text>
-          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823" pointer-events="none">INTERESTS OF THE</text>
-          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823" pointer-events="none">AMERICAN PEOPLE</text>
+        <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: the founding essay" data-nav>
+          <circle id="centerHit" cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>
+          <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">SERVE THE</text>
+          <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">LONG-TERM</text>
+          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">INTERESTS OF THE</text>
+          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">AMERICAN PEOPLE</text>
         </a>
       </svg>
     </div>
 
-    <!-- Real semantic hierarchy. The wheel is the visual navigation;
-         this is the same structure as text, for keyboard and screen
-         readers. Visually hidden, but fully focusable and readable. -->
+    <!-- Mobile-only topic links. The twelve outer labels are hidden on
+         phones; after a branch is chosen its topics appear here as
+         large, readable links. -->
+    <nav id="mobile-topics" class="mobile-topics" aria-label="Topics in this branch" hidden></nav>
+
+    <!-- Real semantic hierarchy for keyboard and screen readers. -->
     <nav class="wheel-index" aria-label="All sections">
       <ul>
         <li><a href="/cornerstone/" data-nav>Cornerstone</a></li>
@@ -494,43 +824,33 @@ h1:focus { outline: none; }
         </li>
       </ul>
     </nav>
+
+    <!-- ==========================================================
+         THE WARM SECTION. Never blank. Swapped in place by the
+         router. Full-width, hard black-to-beige edge, no card.
+         ========================================================== -->
+    <section id="wheel-content" class="warm-surface" aria-live="polite">
+      <div class="warm-inner" id="wheel-content-inner"></div>
+    </section>
   </main>
 
-  <main id="recent" class="view"><div class="page-wrap">
-    <a class="back-btn" href="/" data-nav>&larr; Home</a>
-    <div class="page-eyebrow">Recent</div>
-    <h1 id="recent-title" class="page-title">Latest from Cornerstone</h1>
-    <div class="page-rule"></div>
-    <div id="feed-list"></div>
-  </div></main>
-
-  <main id="branch-page" class="view"><div class="page-wrap">
-    <a class="back-btn" href="/" data-nav>&larr; Home</a>
-    <div id="branch-eyebrow" class="page-eyebrow"></div>
-    <h1 id="branch-title" class="page-title"></h1>
-    <div class="page-rule"></div>
-    <div id="branch-principles-heading" class="principles-heading"></div>
-    <ul id="branch-principles" class="branch-principles"></ul>
-    <div class="children-section">
-      <div class="children-label">Topics within this branch</div>
-      <div id="branch-children" class="children-grid"></div>
+  <!-- ============================================================
+       READING VIEWS (wheel not shown)
+       ============================================================ -->
+  <main id="recent" class="view">
+    <div class="page-head">
+      <div class="page-wrap">
+        <a class="back-btn" href="/" data-nav>&larr; Home</a>
+        <div class="page-eyebrow">Recent</div>
+        <h1 id="recent-title" class="page-title">Latest from Cornerstone</h1>
+      </div>
     </div>
-    <div class="section-block">
-      <div id="branch-articles-label" class="section-label"></div>
-      <div id="branch-articles" class="article-list"></div>
-    </div>
-  </div></main>
-
-  <main id="parent-page" class="view"><div class="page-wrap">
-    <nav id="parent-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
-    <div id="parent-eyebrow" class="page-eyebrow"></div>
-    <h1 id="parent-title" class="page-title"></h1>
-    <div class="page-rule"></div>
-    <div class="section-block" style="margin-top:0">
-      <div id="parent-articles-label" class="section-label"></div>
-      <div id="parent-articles" class="article-list"></div>
-    </div>
-  </div></main>
+    <section class="warm-surface">
+      <div class="warm-inner">
+        <div id="feed-list" class="article-list"></div>
+      </div>
+    </section>
+  </main>
 
   <main id="article-page" class="view article-view"><div class="page-wrap article-shell">
     <nav id="article-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
@@ -541,18 +861,25 @@ h1:focus { outline: none; }
     <div id="article-body" class="article-content"></div>
   </div></main>
 
-  <main id="notfound-page" class="view"><div class="page-wrap">
-    <div class="page-eyebrow">Not found</div>
-    <h1 id="notfound-title" class="page-title">This page could not be found.</h1>
-    <div class="page-rule"></div>
-    <ul class="notfound-links">
-      <li><a href="/" data-nav>Home</a></li>
-      <li><a href="/recent/" data-nav>Recent</a></li>
-      <li><a href="/economics/" data-nav>Economics</a></li>
-      <li><a href="/culture/" data-nav>Culture</a></li>
-      <li><a href="/governance/" data-nav>Governance</a></li>
-    </ul>
-  </div></main>
+  <main id="notfound-page" class="view">
+    <div class="page-head">
+      <div class="page-wrap">
+        <div class="page-eyebrow">Not found</div>
+        <h1 id="notfound-title" class="page-title">This page could not be found.</h1>
+      </div>
+    </div>
+    <section class="warm-surface">
+      <div class="warm-inner">
+        <ul class="notfound-links">
+          <li><a href="/" data-nav>Home</a></li>
+          <li><a href="/recent/" data-nav>Recent</a></li>
+          <li><a href="/economics/" data-nav>Economics</a></li>
+          <li><a href="/culture/" data-nav>Culture</a></li>
+          <li><a href="/governance/" data-nav>Governance</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
 </div>
 
 <script>
@@ -673,7 +1000,7 @@ const ROUTE_MAP = {
     }
   }
 };
-const ROUTE = {"kind":"article","slug":"cornerstone"};
+const ROUTE = {"kind":"center"};
 </script>
 <script>
 const ARTICLES = [
@@ -728,6 +1055,7 @@ const posts = ARTICLES.filter(a => !a.center);
 const allArticles = ARTICLES;
 
 const DEFAULT_BRANCH = 'economics';
+const CENTER_SLUG = (centerPieces[0] && centerPieces[0].slug) || 'cornerstone';
 
 const CX = 310, CY = 310;
 const R_IN0 = 110, R_IN1 = 200, R_OUT0 = 202, R_OUT1 = 298;
@@ -737,7 +1065,12 @@ const R_IN0 = 110, R_IN1 = 200, R_OUT0 = 202, R_OUT1 = 298;
 // ------------------------------------------------------------
 function branchUrl(bk){ return '/' + ROUTE_MAP[bk].url + '/'; }
 function topicUrl(bk, key){ return '/' + ROUTE_MAP[bk].url + '/' + ROUTE_MAP[bk].topics[key] + '/'; }
-function articleUrl(slug){ return '/' + slug + '/'; }
+function articleUrl(slug){
+  // The founding essay sits under its own preview path.
+  if(slug === CENTER_SLUG) return '/' + CENTER_SLUG + '/essay/';
+  return '/' + slug + '/';
+}
+function centerUrl(){ return '/' + CENTER_SLUG + '/'; }
 function homeUrl(){ return '/'; }
 function recentUrl(){ return '/recent/'; }
 
@@ -755,6 +1088,14 @@ function parsePath(pathname){
     const topics = ROUTE_MAP[bk].topics;
     const key = Object.keys(topics).find(k => topics[k] === parts[1]);
     if(key) return { kind:'topic', branch:bk, topic:key };
+    return { kind:'notfound' };
+  }
+
+  // /cornerstone/        -> the preview, shown beneath the wheel
+  // /cornerstone/essay/   -> the full founding essay
+  if(parts[0] === CENTER_SLUG){
+    if(parts.length === 1) return { kind:'center' };
+    if(parts[1] === 'essay') return { kind:'article', slug:CENTER_SLUG };
     return { kind:'notfound' };
   }
 
@@ -913,11 +1254,11 @@ function spinTo(branch, animate){
   curRot += diff;
   const root=document.getElementById('wheelRoot');
   if(animate===false){
-    // Land in position with no animation: used on first paint so a
-    // deep link opens already-positioned instead of spinning into place.
+    // Land in position instantly: a deep link opens already-positioned
+    // rather than spinning into place.
     root.style.transition='none';
     root.style.transform='rotate('+curRot+'deg)';
-    void root.getBoundingClientRect();   // force reflow before restoring
+    void root.getBoundingClientRect();   // flush before restoring
     root.style.transition='';
   } else {
     root.style.transform='rotate('+curRot+'deg)';
@@ -944,73 +1285,142 @@ function articleMeta(p, mode){
   const b=data[p.branch], labels=parentLabels(p).join(' / ');
   if(mode==='branch') return labels;
   if(mode==='topic') return b.label;
-  return b.label+' · '+labels;
+  return b.label+' \u00b7 '+labels;
 }
 function isInParent(p, branch, key){ return p.branch===branch && parentKeys(p).includes(key); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function renderArticleList(container, list, mode, emptyText){
-  container.innerHTML='';
+// The editorial index used on every listing (Recent, branch, topic).
+function articleListHtml(list, mode, emptyText){
   const sorted=sortPosts(list);
   if(!sorted.length){
-    const empty=document.createElement('div');
-    empty.className='empty-state';
-    empty.textContent=emptyText;
-    container.appendChild(empty);
-    return;
+    return '<p class="empty-state">'+esc(emptyText)+'</p>';
   }
-  sorted.forEach(p=>{
-    const metaColor = p.center ? 'var(--text-muted-on-dark)' : data[p.branch].color;
-    // A real link: focusable, and openable in a new tab.
-    const row=document.createElement('a');
-    row.className='article-row';
-    row.href=articleUrl(p.slug);
-    row.setAttribute('data-nav','');
-    row.innerHTML='<div class="article-date">'+fmtDate(p.date)+'</div>'
-      +'<div class="article-meta" style="color:'+metaColor+'">'+articleMeta(p,mode)+'</div>'
-      +'<div><div class="article-list-title">'+p.title+'</div>'
-      +(p.dek?'<div class="article-dek">'+p.dek+'</div>':'')+'</div>';
-    container.appendChild(row);
-  });
+  return sorted.map(p=>{
+    const metaColor = p.center ? 'var(--warm-muted)' : data[p.branch].color;
+    return '<a class="article-row" href="'+articleUrl(p.slug)+'" data-nav>'
+      +'<div class="article-date">'+fmtDate(p.date)+'</div>'
+      +'<div class="article-meta" style="color:'+metaColor+'">'+esc(articleMeta(p,mode))+'</div>'
+      +'<div><div class="article-list-title">'+esc(p.title)+'</div>'
+      +(p.dek?'<div class="article-dek">'+esc(p.dek)+'</div>':'')+'</div>'
+      +'</a>';
+  }).join('');
 }
 
 function buildFeed(){
-  renderArticleList(document.getElementById('feed-list'), posts.concat(centerPieces), 'recent', 'Essays are coming.');
+  document.getElementById('feed-list').innerHTML =
+    articleListHtml(posts.concat(centerPieces), 'recent', 'Essays are coming.');
 }
 
-function renderBranch(branch){
+// ------------------------------------------------------------
+//  The four states of the warm section beneath the wheel.
+//  It is never blank.
+// ------------------------------------------------------------
+function latestEssay(){
+  const sorted=sortPosts(posts);
+  return sorted[0] || centerPieces[0] || null;
+}
+
+// DEFAULT: the latest essay, as a quiet feature (no image, no card).
+function contentHome(){
+  const p=latestEssay();
+  if(!p) return '<p class="empty-state">Essays are coming.</p>';
+  const label = p.center ? 'Cornerstone' : (data[p.branch].label+' \u00b7 '+parentLabels(p).join(' / '));
+  const color = p.center ? 'var(--warm-muted)' : data[p.branch].color;
+  return '<div class="feature">'
+    +'<div class="feature-label" style="color:'+color+'">'+esc(label)+'</div>'
+    +'<div class="feature-date">'+fmtDate(p.date)+'</div>'
+    +'<h2 class="feature-title" id="content-heading">'+esc(p.title)+'</h2>'
+    +(p.dek?'<p class="feature-dek">'+esc(p.dek)+'</p>':'')
+    +'<a class="feature-link" href="'+articleUrl(p.slug)+'" data-nav>Read essay</a>'
+    +'</div>';
+}
+
+// CENTER: a preview of the founding essay.
+function contentCenter(){
+  const p=centerPieces[0];
+  if(!p) return contentHome();
+  return '<div class="feature">'
+    +'<div class="feature-label" style="color:var(--warm-muted)">'+esc(p.eyebrow || 'Centerpiece')+'</div>'
+    +'<div class="feature-date">'+fmtDate(p.date)+'</div>'
+    +'<h2 class="feature-title" id="content-heading">'+esc(p.title)+'</h2>'
+    +(p.dek?'<p class="feature-dek">'+esc(p.dek)+'</p>':'')
+    +'<a class="feature-link" href="'+articleUrl(p.slug)+'" data-nav>Read essay</a>'
+    +'</div>';
+}
+
+// BRANCH: name, four principles, four topic links, recent essays.
+function contentBranch(branch){
   const b=data[branch];
-  const e=document.getElementById('branch-eyebrow'); e.style.color=b.color; e.textContent='Branch';
-  const t=document.getElementById('branch-title'); t.style.color=b.color; t.textContent=b.label;
-
-  document.getElementById('branch-principles-heading').textContent='Key principles of '+b.label;
-
-  const principles=document.getElementById('branch-principles'); principles.innerHTML='';
-  b.principles.forEach(line=>{ const li=document.createElement('li'); li.textContent=line; principles.appendChild(li); });
-
-  const grid=document.getElementById('branch-children'); grid.innerHTML='';
-  b.parents.forEach(([k,lbl])=>{
-    const c=document.createElement('a');
-    c.className='child-card';
-    c.href=topicUrl(branch,k);
-    c.setAttribute('data-nav','');
-    c.innerHTML='<div class="child-card-label" style="color:'+b.color+'">Topic</div><div class="child-card-title">'+lbl+'</div>';
-    grid.appendChild(c);
-  });
-
-  document.getElementById('branch-articles-label').textContent='Recent in '+b.label;
-  renderArticleList(document.getElementById('branch-articles'), posts.filter(p=>p.branch===branch), 'branch', 'Essays on '+b.label+' are coming.');
+  const principles = b.principles.map(line=>
+    '<li>'+esc(line)+'</li>'
+  ).join('');
+  const topics = b.parents.map(([k,lbl])=>
+    '<a class="topic-link" href="'+topicUrl(branch,k)+'" data-nav>'
+      +'<span class="topic-link-name">'+esc(lbl)+'</span>'
+    +'</a>'
+  ).join('');
+  return '<div class="branch-block" style="--accent:'+b.color+'">'
+    +'<div class="content-eyebrow" style="color:'+b.color+'">Branch</div>'
+    +'<h2 class="content-title" id="content-heading">'+esc(b.label)+'</h2>'
+    +'<ul class="principles-list">'+principles+'</ul>'
+    +'<div class="content-section">'
+      +'<div class="content-label">Topics</div>'
+      +'<div class="topic-links">'+topics+'</div>'
+    +'</div>'
+    +'<div class="content-section">'
+      +'<div class="content-label">Recent in '+esc(b.label)+'</div>'
+      +'<div class="article-list">'
+        +articleListHtml(posts.filter(p=>p.branch===branch),'branch','Essays on '+b.label+' are coming.')
+      +'</div>'
+    +'</div>'
+    +'</div>';
 }
 
-function renderTopic(branch,key){
+// TOPIC: name, its essays, quiet link back to the branch.
+function contentTopic(branch,key){
   const b=data[branch], lbl=parentLabel(branch,key);
-  document.getElementById('parent-breadcrumb').innerHTML=
-    `<a href="${homeUrl()}" data-nav>Home</a><span class="sep">/</span>`
-    +`<a href="${branchUrl(branch)}" data-nav style="color:${b.color}">${b.label}</a>`
-    +`<span class="sep">/</span><span aria-current="page" style="color:${b.color}">${lbl}</span>`;
-  const e=document.getElementById('parent-eyebrow'); e.style.color=b.color; e.textContent=b.label;
-  document.getElementById('parent-title').textContent=lbl;
-  document.getElementById('parent-articles-label').textContent='Articles in '+lbl;
-  renderArticleList(document.getElementById('parent-articles'), posts.filter(p=>isInParent(p,branch,key)), 'topic', 'Essays on '+lbl+' are coming.');
+  return '<div class="topic-block" style="--accent:'+b.color+'">'
+    +'<div class="content-eyebrow" style="color:'+b.color+'">'
+      +'<a href="'+branchUrl(branch)+'" data-nav style="color:'+b.color+'">'+esc(b.label)+'</a>'
+    +'</div>'
+    +'<h2 class="content-title" id="content-heading">'+esc(lbl)+'</h2>'
+    +'<div class="content-section">'
+      +'<div class="article-list">'
+        +articleListHtml(posts.filter(p=>isInParent(p,branch,key)),'topic','Essays on '+lbl+' are coming.')
+      +'</div>'
+    +'</div>'
+    +'<a class="back-link" href="'+branchUrl(branch)+'" data-nav>All of '+esc(b.label)+'</a>'
+    +'</div>';
+}
+
+// Swap the warm section's contents with a restrained fade, keeping
+// the section anchored so the page does not jump.
+function setWarmContent(html){
+  const inner=document.getElementById('wheel-content-inner');
+  if(!inner) return;
+  if(prefersReducedMotion()){ inner.innerHTML=html; return; }
+  inner.classList.add('fading');
+  window.setTimeout(()=>{
+    inner.innerHTML=html;
+    inner.classList.remove('fading');
+  }, 150);
+}
+function setWarmContentNow(html){
+  const inner=document.getElementById('wheel-content-inner');
+  if(inner){ inner.innerHTML=html; inner.classList.remove('fading'); }
+}
+
+// Mobile: show the selected branch's topics as large text links.
+function setMobileTopics(branch){
+  const nav=document.getElementById('mobile-topics');
+  if(!nav) return;
+  if(!branch){ nav.hidden=true; nav.innerHTML=''; return; }
+  const b=data[branch];
+  nav.innerHTML = b.parents.map(([k,lbl])=>
+    '<a href="'+topicUrl(branch,k)+'" data-nav style="--accent:'+b.color+'">'+esc(lbl)+'</a>'
+  ).join('');
+  nav.hidden=false;
 }
 
 function renderArticle(slug){
@@ -1026,19 +1436,19 @@ function renderArticle(slug){
   else { subtitle.textContent=''; subtitle.style.display='none'; }
 
   if(p.center){
-    breadcrumb.innerHTML=`<a href="${homeUrl()}" data-nav>Home</a>`;
-    eyebrow.style.color='var(--article-muted-light)';
+    breadcrumb.innerHTML='<a href="'+homeUrl()+'" data-nav>Home</a>';
+    eyebrow.style.color='var(--warm-muted)';
     eyebrow.textContent=p.eyebrow || 'Centerpiece';
   } else {
     const b=data[p.branch], labels=parentLabels(p);
     const topicLinks=parentKeys(p).map(k=>
-      `<a href="${topicUrl(p.branch,k)}" data-nav style="color:${b.light}">${parentLabel(p.branch,k)}</a>`
+      '<a href="'+topicUrl(p.branch,k)+'" data-nav style="color:'+b.light+'">'+esc(parentLabel(p.branch,k))+'</a>'
     ).join('<span class="sep">/</span>');
-    breadcrumb.innerHTML=`<a href="${homeUrl()}" data-nav>Home</a><span class="sep">/</span>`
-      +`<a href="${branchUrl(p.branch)}" data-nav style="color:${b.light}">${b.label}</a>`
-      +`<span class="sep">/</span>${topicLinks}`;
+    breadcrumb.innerHTML='<a href="'+homeUrl()+'" data-nav>Home</a><span class="sep">/</span>'
+      +'<a href="'+branchUrl(p.branch)+'" data-nav style="color:'+b.light+'">'+esc(b.label)+'</a>'
+      +'<span class="sep">/</span>'+topicLinks;
     eyebrow.style.color=b.light;
-    eyebrow.textContent=fmtDate(p.date)+' · '+b.label+' · '+labels.join(' / ');
+    eyebrow.textContent=fmtDate(p.date)+' \u00b7 '+b.label+' \u00b7 '+labels.join(' / ');
   }
 
   document.getElementById('article-body').innerHTML=p.body || '<p>Article coming soon.</p>';
@@ -1047,7 +1457,14 @@ function renderArticle(slug){
 
 // ------------------------------------------------------------
 //  Router
+//  home / branch / topic are all states of the WHEEL VIEW: the
+//  wheel stays on screen and only the warm section changes.
+//  article / recent / notfound are full-page reading views.
 // ------------------------------------------------------------
+function prefersReducedMotion(){
+  return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function focusHeading(id){
   const h=document.getElementById(id);
   if(!h) return;
@@ -1055,58 +1472,93 @@ function focusHeading(id){
   h.focus({ preventScroll:true });
 }
 
+// Move focus (and, on mobile, the viewport) to the fresh content.
+function afterContentChange(){
+  const h=document.getElementById('content-heading');
+  if(!h) return;
+  h.setAttribute('tabindex','-1');
+  h.focus({ preventScroll:true });
+
+  // Only scroll if the heading is not already visible (desktop usually
+  // is; phones usually are not).
+  const rect=h.getBoundingClientRect();
+  const visible = rect.top >= 0 && rect.top < window.innerHeight * 0.85;
+  if(!visible){
+    const top = window.scrollY + rect.top - 16;
+    if(prefersReducedMotion()) window.scrollTo(0, top);
+    else window.scrollTo({ top, behavior:'smooth' });
+  }
+}
+
 function render(route, opts){
   opts = opts || {};
-  const animate = opts.animate !== false;
+  const first = opts.first === true;      // very first paint of this page
+  const animate = !first;
+  const put = first ? setWarmContentNow : setWarmContent;
 
   switch(route.kind){
     case 'home':
       spinTo(DEFAULT_BRANCH, animate);
-      showView('home');
+      setMobileTopics(null);
+      put(contentHome());
+      showView('wheel-view');
+      break;
+
+    case 'center':
+      spinTo(activeBranch, animate);
+      setMobileTopics(null);
+      put(contentCenter());
+      showView('wheel-view');
       break;
 
     case 'branch':
       spinTo(route.branch, animate);
-      renderBranch(route.branch);
-      showView('branch-page');
-      if(opts.focus) focusHeading('branch-title');
+      setMobileTopics(route.branch);
+      put(contentBranch(route.branch));
+      showView('wheel-view');
       break;
 
     case 'topic':
       spinTo(route.branch, animate);
-      renderTopic(route.branch, route.topic);
-      showView('parent-page');
-      if(opts.focus) focusHeading('parent-title');
+      setMobileTopics(route.branch);
+      put(contentTopic(route.branch, route.topic));
+      showView('wheel-view');
       break;
 
     case 'article': {
-      const ok = renderArticle(route.slug);
-      if(!ok){ showView('notfound-page'); break; }
-      const p = allArticles.find(a=>a.slug===route.slug);
-      if(p && !p.center) spinTo(p.branch, animate);
+      if(!renderArticle(route.slug)){ showView('notfound-page'); break; }
       showView('article-page');
-      if(opts.focus) focusHeading('article-title');
+      if(!first) focusHeading('article-title');
       break;
     }
 
     case 'recent':
       buildFeed();
       showView('recent');
-      if(opts.focus) focusHeading('recent-title');
+      if(!first) focusHeading('recent-title');
       break;
 
     default:
       showView('notfound-page');
-      if(opts.focus) focusHeading('notfound-title');
+      if(!first) focusHeading('notfound-title');
   }
 
-  if(opts.scrollTop !== false) window.scrollTo(0,0);
+  const wheelState = ['home','center','branch','topic'].indexOf(route.kind) !== -1;
+  if(first){
+    window.scrollTo(0,0);
+  } else if(wheelState){
+    // Content swapped beneath a wheel that never moved: don't jump to
+    // the top, just bring the new heading into view if it isn't.
+    window.setTimeout(afterContentChange, prefersReducedMotion() ? 0 : 160);
+  } else {
+    window.scrollTo(0,0);
+  }
 }
 
 function navigate(url){
   const route = parsePath(new URL(url, window.location.origin).pathname);
   history.pushState(route, '', url);
-  render(route, { focus:true });
+  render(route);
 }
 
 // Intercept in-site link clicks so navigation stays smooth, while
@@ -1115,11 +1567,10 @@ document.addEventListener('click', function(ev){
   const a = ev.target.closest ? ev.target.closest('a[data-nav]') : null;
   if(!a) return;
   if(ev.defaultPrevented) return;
-  if(ev.button !== 0) return;                                        // not a left click
-  if(ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;   // new tab, etc.
+  if(ev.button !== 0) return;
+  if(ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
   if(a.target && a.target !== '_self') return;
 
-  // SVG <a> exposes href as an SVGAnimatedString, so read the attribute.
   const href = a.getAttribute('href');
   if(!href || /^(https?:|mailto:|tel:)/.test(href)) return;
 
@@ -1127,20 +1578,36 @@ document.addEventListener('click', function(ev){
   navigate(href);
 });
 
-// Back / Forward.
 window.addEventListener('popstate', function(ev){
   const route = ev.state || parsePath(window.location.pathname);
-  render(route, { focus:true });
+  render(route);
 });
 
 // ------------------------------------------------------------
+//  First load: a single settling movement, so the wheel reads as
+//  something with weight that turns. Once only, never repeated,
+//  and skipped entirely for reduced-motion users.
+// ------------------------------------------------------------
+function settleWheel(){
+  if(prefersReducedMotion()) return;
+  const root=document.getElementById('wheelRoot');
+  if(!root) return;
+  const rest=curRot;
+  root.style.transition='transform 620ms cubic-bezier(0.22,1,0.36,1)';
+  root.style.transform='rotate('+(rest - 5)+'deg)';   // 5 degrees, then back
+  window.setTimeout(()=>{
+    root.style.transform='rotate('+rest+'deg)';
+    window.setTimeout(()=>{ root.style.transition=''; }, 640);
+  }, 240);
+}
+
+// ------------------------------------------------------------
 //  Boot
-//  ROUTE is injected per-page by the build, so the right state
-//  paints on the first frame — no flash, no spin-into-place.
 // ------------------------------------------------------------
 buildWheel();
 history.replaceState(ROUTE, '', window.location.pathname + window.location.search);
-render(ROUTE, { animate:false, focus:false });
+render(ROUTE, { first:true });
+if(ROUTE.kind === 'home') settleWheel();
 
 </script>
 </body>

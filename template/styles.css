@@ -41,8 +41,8 @@ body { background: var(--site-bg); }
 .nav-links span { cursor: pointer; } .nav-links span:hover { opacity: 0.75; }
 #home { display: flex; flex-direction: column; align-items: center; padding: 24px 12px; background: var(--site-bg); }
 .wheel-stage { width: 100%; max-width: 620px; aspect-ratio: 1; }
-#wheelRoot { transition: transform 0.9s cubic-bezier(0.22,1,0.36,1); transform-origin: 310px 310px; }
-#wheelRoot text { transition: fill 0.9s cubic-bezier(0.22,1,0.36,1), stroke-opacity 0.9s cubic-bezier(0.22,1,0.36,1); }
+#wheelRoot { transition: transform 560ms cubic-bezier(0.22,1,0.36,1); transform-origin: 310px 310px; }
+#wheelRoot text { transition: fill 200ms ease, stroke-opacity 200ms ease; }
 /* Labels recolor quickly on hover for responsive feedback. Higher
    specificity than the rule above so hover feels immediate; a fast
    recolor during rotation reads crisp, not broken. */
@@ -391,3 +391,318 @@ h1:focus { outline: none; }
 
 /* Empty states now use the exact approved wording and carry no link. */
 .empty-state { padding: 22px 0; }
+
+
+/* ============================================================
+   PHASE 2 — SURFACE SYSTEM, HOMEPAGE STATES, MOBILE WHEEL
+   ============================================================ */
+
+:root {
+  /* The warm reading surface, named for use anywhere on the site. */
+  --warm-surface: #f3f0e8;
+  --warm-title:   #171512;
+  --warm-text:    #24211d;
+  --warm-muted:   #6f6a62;
+  --warm-rule:    #d8d1c5;
+}
+
+/* ---- the black / warm split -------------------------------- */
+/* Near-black: navigation, structure, headings, the wheel.
+   Warm beige: everything you read. The edge between them is a
+   clean full-width horizontal line. No cards, no corners, no
+   shadows. */
+.warm-surface {
+  background: var(--warm-surface);
+  color: var(--warm-text);
+  border-top: 1px solid var(--warm-rule);
+  width: 100%;
+}
+.warm-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 72px 28px 88px;
+  transition: opacity 180ms ease;
+}
+.warm-inner.fading { opacity: 0; }
+
+/* Dark heading strip above a warm section (Recent, 404). */
+.page-head { background: var(--site-bg); padding: 40px 0 34px; }
+.page-head .page-wrap { padding-top: 0; padding-bottom: 0; }
+
+/* ---- homepage hero ----------------------------------------- */
+.wheel-hero {
+  text-align: center;
+  padding: 44px 24px 40px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.hero-line {
+  font-family: var(--font-article);
+  font-weight: 400;
+  font-size: clamp(1.1rem, 2.2vw, 1.42rem);
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  color: var(--text-on-dark);
+}
+.hero-hint {
+  margin-top: 16px;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted-on-dark);
+}
+
+/* The wheel keeps its own scale; the hero adds the breathing room. */
+#wheel-view { background: var(--site-bg); }
+#wheel-view .wheel-stage { margin: 0 auto 56px; }
+
+/* ---- the centre stone -------------------------------------- */
+.center-text { transition: fill 160ms ease; }
+.center-text-soft   { fill: #5a564e; }
+.center-text-strong { fill: #2b2823; }
+.center-link:hover .center-text-soft   { fill: #46423b; }
+.center-link:hover .center-text-strong { fill: #14120f; }
+.center-link:hover ~ * { }              /* no-op, keeps specificity honest */
+#centerHit { transition: none; }
+.center-link:hover #centerHit {
+  opacity: 0.06;
+  fill: #ffffff;
+}
+
+/* ---- content states beneath the wheel ---------------------- */
+.content-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.content-eyebrow a:hover { text-decoration: underline; }
+.content-title {
+  font-family: var(--font-article);
+  font-weight: 600;
+  font-size: clamp(1.9rem, 3.4vw, 2.35rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--warm-title);
+}
+.content-section { margin-top: 46px; }
+.content-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  margin-bottom: 18px;
+}
+
+/* Latest-essay / centrepiece feature. No image, no card, no border. */
+.feature-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.feature-date {
+  margin-top: 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--warm-muted);
+}
+.feature-title {
+  margin-top: 14px;
+  font-family: var(--font-article);
+  font-weight: 600;
+  font-size: clamp(1.65rem, 3vw, 2.05rem);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  color: var(--warm-title);
+  max-width: 620px;
+}
+.feature-dek {
+  margin-top: 12px;
+  font-family: var(--font-article);
+  font-size: 1.06rem;
+  line-height: 1.55;
+  color: var(--warm-muted);
+  max-width: 600px;
+}
+.feature-link {
+  display: inline-block;
+  margin-top: 22px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-title);
+  border-bottom: 1px solid var(--warm-rule);
+  padding-bottom: 3px;
+}
+.feature-link:hover { border-bottom-color: var(--warm-title); }
+
+/* Branch principles: four bullets, Newsreader, generous air, no boxes. */
+.principles-list {
+  list-style: none;
+  margin-top: 30px;
+  max-width: 680px;
+}
+.principles-list li {
+  position: relative;
+  padding: 20px 0 20px 22px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  font-family: var(--font-article);
+  font-size: 1.14rem;
+  line-height: 1.6;
+  color: var(--warm-text);
+}
+.principles-list li:last-child { border-bottom: none; }
+.principles-list li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 32px;
+  width: 7px; height: 1px;
+  background: var(--accent, var(--warm-muted));
+}
+
+/* Topic links: two columns on desktop, thin rules, no cards. */
+.topic-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 44px;
+}
+.topic-link {
+  display: block;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  color: var(--warm-title);
+}
+.topic-link-name {
+  font-family: var(--font-article);
+  font-size: 1.12rem;
+  line-height: 1.3;
+}
+.topic-link:hover .topic-link-name {
+  color: var(--accent, var(--warm-title));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Quiet link back to the parent branch. */
+.back-link {
+  display: inline-block;
+  margin-top: 40px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.back-link:hover { color: var(--warm-title); }
+
+/* ---- editorial index on warm surfaces ---------------------- */
+.warm-surface .article-list { border-top: 1px solid rgba(0,0,0,0.08); }
+.warm-surface .article-row {
+  display: grid;
+  grid-template-columns: 118px 142px 1fr;
+  gap: 16px;
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  align-items: baseline;
+  color: inherit;
+}
+.warm-surface .article-date {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  white-space: nowrap;
+}
+.warm-surface .article-meta {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.warm-surface .article-list-title {
+  font-family: var(--font-article);
+  font-size: 1.2rem;
+  line-height: 1.3;
+  color: var(--warm-title);
+}
+.warm-surface .article-row:hover .article-list-title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.warm-surface .article-dek {
+  margin-top: 7px;
+  font-family: var(--font-article);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--warm-muted);
+  max-width: 560px;
+}
+.warm-surface .empty-state {
+  padding: 24px 0;
+  font-family: var(--font-article);
+  font-size: 1.05rem;
+  color: var(--warm-muted);
+  border: none;
+}
+.warm-surface .notfound-links li { border-bottom: 1px solid rgba(0,0,0,0.08); }
+.warm-surface .notfound-links a { color: var(--warm-title); }
+.warm-surface .notfound-links a:hover { text-decoration: underline; }
+
+/* ---- mobile topic links (wheel's outer labels are hidden) --- */
+.mobile-topics { display: none; }
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+@media (max-width: 760px) {
+  .warm-inner { padding: 48px 22px 64px; }
+  .wheel-hero { padding: 30px 20px 26px; }
+
+  /* Do not shrink twelve unreadable labels: hide the outer ring's
+     text entirely and move wayfinding to real links below. */
+  #wheelRoot .parent-label { display: none; }
+
+  .mobile-topics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 18px;
+    max-width: 520px;
+    margin: 4px auto 8px;
+    padding: 0 20px;
+  }
+  .mobile-topics a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;                 /* practical tap target */
+    font-family: var(--font-article);
+    font-size: 1.05rem;
+    color: var(--text-on-dark);
+    border-bottom: 1px solid var(--rule-on-dark-subtle);
+  }
+  .mobile-topics a:active { color: var(--accent, var(--text-on-dark)); }
+
+  /* Editorial index stacks on phones. */
+  .warm-surface .article-row { display: block; }
+  .warm-surface .article-meta { margin-top: 8px; }
+  .warm-surface .article-list-title { margin-top: 8px; }
+
+  .topic-links { grid-template-columns: 1fr; }
+}
+
+/* Touch feedback: a brief contrast lift, no hover dependency. */
+@media (hover: none) {
+  .wedge { transition: filter 160ms ease, stroke-opacity 160ms ease; }
+  .wedge:active { filter: brightness(1.13); stroke-opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #wheelRoot { transition: none; }
+  .warm-inner { transition: none; }
+}

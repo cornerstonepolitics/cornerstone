@@ -179,8 +179,17 @@ function collectRoutes(articles, routeMap) {
 
   // One page per article, at the top level. Articles can belong to
   // several topics, so nesting them under one would be arbitrary.
+  //
+  // The centerpiece is special: /cornerstone/ is the PREVIEW shown
+  // beneath the wheel (the centre stone links here), and the full
+  // essay lives at /cornerstone/essay/.
   for (const a of articles) {
-    routes.push({ dir: a.slug, route: { kind: 'article', slug: a.slug } });
+    if (a.center) {
+      routes.push({ dir: a.slug, route: { kind: 'center' } });
+      routes.push({ dir: path.posix.join(a.slug, 'essay'), route: { kind: 'article', slug: a.slug } });
+    } else {
+      routes.push({ dir: a.slug, route: { kind: 'article', slug: a.slug } });
+    }
   }
 
   // The Recent index.
@@ -266,6 +275,9 @@ function pageMeta(route, articles) {
   }
   if (route.kind === 'recent') {
     return { title: 'Recent — Cornerstone' };
+  }
+  if (route.kind === 'center') {
+    return { title: 'Cornerstone' };
   }
   return { title: 'Cornerstone' };
 }

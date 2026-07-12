@@ -25,6 +25,7 @@ const posts = ARTICLES.filter(a => !a.center);
 const allArticles = ARTICLES;
 
 const DEFAULT_BRANCH = 'economics';
+const CENTER_SLUG = (centerPieces[0] && centerPieces[0].slug) || 'cornerstone';
 
 const CX = 310, CY = 310;
 const R_IN0 = 110, R_IN1 = 200, R_OUT0 = 202, R_OUT1 = 298;
@@ -34,7 +35,12 @@ const R_IN0 = 110, R_IN1 = 200, R_OUT0 = 202, R_OUT1 = 298;
 // ------------------------------------------------------------
 function branchUrl(bk){ return '/' + ROUTE_MAP[bk].url + '/'; }
 function topicUrl(bk, key){ return '/' + ROUTE_MAP[bk].url + '/' + ROUTE_MAP[bk].topics[key] + '/'; }
-function articleUrl(slug){ return '/' + slug + '/'; }
+function articleUrl(slug){
+  // The founding essay sits under its own preview path.
+  if(slug === CENTER_SLUG) return '/' + CENTER_SLUG + '/essay/';
+  return '/' + slug + '/';
+}
+function centerUrl(){ return '/' + CENTER_SLUG + '/'; }
 function homeUrl(){ return '/'; }
 function recentUrl(){ return '/recent/'; }
 
@@ -52,6 +58,14 @@ function parsePath(pathname){
     const topics = ROUTE_MAP[bk].topics;
     const key = Object.keys(topics).find(k => topics[k] === parts[1]);
     if(key) return { kind:'topic', branch:bk, topic:key };
+    return { kind:'notfound' };
+  }
+
+  // /cornerstone/        -> the preview, shown beneath the wheel
+  // /cornerstone/essay/   -> the full founding essay
+  if(parts[0] === CENTER_SLUG){
+    if(parts.length === 1) return { kind:'center' };
+    if(parts[1] === 'essay') return { kind:'article', slug:CENTER_SLUG };
     return { kind:'notfound' };
   }
 
@@ -210,11 +224,11 @@ function spinTo(branch, animate){
   curRot += diff;
   const root=document.getElementById('wheelRoot');
   if(animate===false){
-    // Land in position with no animation: used on first paint so a
-    // deep link opens already-positioned instead of spinning into place.
+    // Land in position instantly: a deep link opens already-positioned
+    // rather than spinning into place.
     root.style.transition='none';
     root.style.transform='rotate('+curRot+'deg)';
-    void root.getBoundingClientRect();   // force reflow before restoring
+    void root.getBoundingClientRect();   // flush before restoring
     root.style.transition='';
   } else {
     root.style.transform='rotate('+curRot+'deg)';
@@ -241,73 +255,142 @@ function articleMeta(p, mode){
   const b=data[p.branch], labels=parentLabels(p).join(' / ');
   if(mode==='branch') return labels;
   if(mode==='topic') return b.label;
-  return b.label+' · '+labels;
+  return b.label+' \u00b7 '+labels;
 }
 function isInParent(p, branch, key){ return p.branch===branch && parentKeys(p).includes(key); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function renderArticleList(container, list, mode, emptyText){
-  container.innerHTML='';
+// The editorial index used on every listing (Recent, branch, topic).
+function articleListHtml(list, mode, emptyText){
   const sorted=sortPosts(list);
   if(!sorted.length){
-    const empty=document.createElement('div');
-    empty.className='empty-state';
-    empty.textContent=emptyText;
-    container.appendChild(empty);
-    return;
+    return '<p class="empty-state">'+esc(emptyText)+'</p>';
   }
-  sorted.forEach(p=>{
-    const metaColor = p.center ? 'var(--text-muted-on-dark)' : data[p.branch].color;
-    // A real link: focusable, and openable in a new tab.
-    const row=document.createElement('a');
-    row.className='article-row';
-    row.href=articleUrl(p.slug);
-    row.setAttribute('data-nav','');
-    row.innerHTML='<div class="article-date">'+fmtDate(p.date)+'</div>'
-      +'<div class="article-meta" style="color:'+metaColor+'">'+articleMeta(p,mode)+'</div>'
-      +'<div><div class="article-list-title">'+p.title+'</div>'
-      +(p.dek?'<div class="article-dek">'+p.dek+'</div>':'')+'</div>';
-    container.appendChild(row);
-  });
+  return sorted.map(p=>{
+    const metaColor = p.center ? 'var(--warm-muted)' : data[p.branch].color;
+    return '<a class="article-row" href="'+articleUrl(p.slug)+'" data-nav>'
+      +'<div class="article-date">'+fmtDate(p.date)+'</div>'
+      +'<div class="article-meta" style="color:'+metaColor+'">'+esc(articleMeta(p,mode))+'</div>'
+      +'<div><div class="article-list-title">'+esc(p.title)+'</div>'
+      +(p.dek?'<div class="article-dek">'+esc(p.dek)+'</div>':'')+'</div>'
+      +'</a>';
+  }).join('');
 }
 
 function buildFeed(){
-  renderArticleList(document.getElementById('feed-list'), posts.concat(centerPieces), 'recent', 'Essays are coming.');
+  document.getElementById('feed-list').innerHTML =
+    articleListHtml(posts.concat(centerPieces), 'recent', 'Essays are coming.');
 }
 
-function renderBranch(branch){
+// ------------------------------------------------------------
+//  The four states of the warm section beneath the wheel.
+//  It is never blank.
+// ------------------------------------------------------------
+function latestEssay(){
+  const sorted=sortPosts(posts);
+  return sorted[0] || centerPieces[0] || null;
+}
+
+// DEFAULT: the latest essay, as a quiet feature (no image, no card).
+function contentHome(){
+  const p=latestEssay();
+  if(!p) return '<p class="empty-state">Essays are coming.</p>';
+  const label = p.center ? 'Cornerstone' : (data[p.branch].label+' \u00b7 '+parentLabels(p).join(' / '));
+  const color = p.center ? 'var(--warm-muted)' : data[p.branch].color;
+  return '<div class="feature">'
+    +'<div class="feature-label" style="color:'+color+'">'+esc(label)+'</div>'
+    +'<div class="feature-date">'+fmtDate(p.date)+'</div>'
+    +'<h2 class="feature-title" id="content-heading">'+esc(p.title)+'</h2>'
+    +(p.dek?'<p class="feature-dek">'+esc(p.dek)+'</p>':'')
+    +'<a class="feature-link" href="'+articleUrl(p.slug)+'" data-nav>Read essay</a>'
+    +'</div>';
+}
+
+// CENTER: a preview of the founding essay.
+function contentCenter(){
+  const p=centerPieces[0];
+  if(!p) return contentHome();
+  return '<div class="feature">'
+    +'<div class="feature-label" style="color:var(--warm-muted)">'+esc(p.eyebrow || 'Centerpiece')+'</div>'
+    +'<div class="feature-date">'+fmtDate(p.date)+'</div>'
+    +'<h2 class="feature-title" id="content-heading">'+esc(p.title)+'</h2>'
+    +(p.dek?'<p class="feature-dek">'+esc(p.dek)+'</p>':'')
+    +'<a class="feature-link" href="'+articleUrl(p.slug)+'" data-nav>Read essay</a>'
+    +'</div>';
+}
+
+// BRANCH: name, four principles, four topic links, recent essays.
+function contentBranch(branch){
   const b=data[branch];
-  const e=document.getElementById('branch-eyebrow'); e.style.color=b.color; e.textContent='Branch';
-  const t=document.getElementById('branch-title'); t.style.color=b.color; t.textContent=b.label;
-
-  document.getElementById('branch-principles-heading').textContent='Key principles of '+b.label;
-
-  const principles=document.getElementById('branch-principles'); principles.innerHTML='';
-  b.principles.forEach(line=>{ const li=document.createElement('li'); li.textContent=line; principles.appendChild(li); });
-
-  const grid=document.getElementById('branch-children'); grid.innerHTML='';
-  b.parents.forEach(([k,lbl])=>{
-    const c=document.createElement('a');
-    c.className='child-card';
-    c.href=topicUrl(branch,k);
-    c.setAttribute('data-nav','');
-    c.innerHTML='<div class="child-card-label" style="color:'+b.color+'">Topic</div><div class="child-card-title">'+lbl+'</div>';
-    grid.appendChild(c);
-  });
-
-  document.getElementById('branch-articles-label').textContent='Recent in '+b.label;
-  renderArticleList(document.getElementById('branch-articles'), posts.filter(p=>p.branch===branch), 'branch', 'Essays on '+b.label+' are coming.');
+  const principles = b.principles.map(line=>
+    '<li>'+esc(line)+'</li>'
+  ).join('');
+  const topics = b.parents.map(([k,lbl])=>
+    '<a class="topic-link" href="'+topicUrl(branch,k)+'" data-nav>'
+      +'<span class="topic-link-name">'+esc(lbl)+'</span>'
+    +'</a>'
+  ).join('');
+  return '<div class="branch-block" style="--accent:'+b.color+'">'
+    +'<div class="content-eyebrow" style="color:'+b.color+'">Branch</div>'
+    +'<h2 class="content-title" id="content-heading">'+esc(b.label)+'</h2>'
+    +'<ul class="principles-list">'+principles+'</ul>'
+    +'<div class="content-section">'
+      +'<div class="content-label">Topics</div>'
+      +'<div class="topic-links">'+topics+'</div>'
+    +'</div>'
+    +'<div class="content-section">'
+      +'<div class="content-label">Recent in '+esc(b.label)+'</div>'
+      +'<div class="article-list">'
+        +articleListHtml(posts.filter(p=>p.branch===branch),'branch','Essays on '+b.label+' are coming.')
+      +'</div>'
+    +'</div>'
+    +'</div>';
 }
 
-function renderTopic(branch,key){
+// TOPIC: name, its essays, quiet link back to the branch.
+function contentTopic(branch,key){
   const b=data[branch], lbl=parentLabel(branch,key);
-  document.getElementById('parent-breadcrumb').innerHTML=
-    `<a href="${homeUrl()}" data-nav>Home</a><span class="sep">/</span>`
-    +`<a href="${branchUrl(branch)}" data-nav style="color:${b.color}">${b.label}</a>`
-    +`<span class="sep">/</span><span aria-current="page" style="color:${b.color}">${lbl}</span>`;
-  const e=document.getElementById('parent-eyebrow'); e.style.color=b.color; e.textContent=b.label;
-  document.getElementById('parent-title').textContent=lbl;
-  document.getElementById('parent-articles-label').textContent='Articles in '+lbl;
-  renderArticleList(document.getElementById('parent-articles'), posts.filter(p=>isInParent(p,branch,key)), 'topic', 'Essays on '+lbl+' are coming.');
+  return '<div class="topic-block" style="--accent:'+b.color+'">'
+    +'<div class="content-eyebrow" style="color:'+b.color+'">'
+      +'<a href="'+branchUrl(branch)+'" data-nav style="color:'+b.color+'">'+esc(b.label)+'</a>'
+    +'</div>'
+    +'<h2 class="content-title" id="content-heading">'+esc(lbl)+'</h2>'
+    +'<div class="content-section">'
+      +'<div class="article-list">'
+        +articleListHtml(posts.filter(p=>isInParent(p,branch,key)),'topic','Essays on '+lbl+' are coming.')
+      +'</div>'
+    +'</div>'
+    +'<a class="back-link" href="'+branchUrl(branch)+'" data-nav>All of '+esc(b.label)+'</a>'
+    +'</div>';
+}
+
+// Swap the warm section's contents with a restrained fade, keeping
+// the section anchored so the page does not jump.
+function setWarmContent(html){
+  const inner=document.getElementById('wheel-content-inner');
+  if(!inner) return;
+  if(prefersReducedMotion()){ inner.innerHTML=html; return; }
+  inner.classList.add('fading');
+  window.setTimeout(()=>{
+    inner.innerHTML=html;
+    inner.classList.remove('fading');
+  }, 150);
+}
+function setWarmContentNow(html){
+  const inner=document.getElementById('wheel-content-inner');
+  if(inner){ inner.innerHTML=html; inner.classList.remove('fading'); }
+}
+
+// Mobile: show the selected branch's topics as large text links.
+function setMobileTopics(branch){
+  const nav=document.getElementById('mobile-topics');
+  if(!nav) return;
+  if(!branch){ nav.hidden=true; nav.innerHTML=''; return; }
+  const b=data[branch];
+  nav.innerHTML = b.parents.map(([k,lbl])=>
+    '<a href="'+topicUrl(branch,k)+'" data-nav style="--accent:'+b.color+'">'+esc(lbl)+'</a>'
+  ).join('');
+  nav.hidden=false;
 }
 
 function renderArticle(slug){
@@ -323,19 +406,19 @@ function renderArticle(slug){
   else { subtitle.textContent=''; subtitle.style.display='none'; }
 
   if(p.center){
-    breadcrumb.innerHTML=`<a href="${homeUrl()}" data-nav>Home</a>`;
-    eyebrow.style.color='var(--article-muted-light)';
+    breadcrumb.innerHTML='<a href="'+homeUrl()+'" data-nav>Home</a>';
+    eyebrow.style.color='var(--warm-muted)';
     eyebrow.textContent=p.eyebrow || 'Centerpiece';
   } else {
     const b=data[p.branch], labels=parentLabels(p);
     const topicLinks=parentKeys(p).map(k=>
-      `<a href="${topicUrl(p.branch,k)}" data-nav style="color:${b.light}">${parentLabel(p.branch,k)}</a>`
+      '<a href="'+topicUrl(p.branch,k)+'" data-nav style="color:'+b.light+'">'+esc(parentLabel(p.branch,k))+'</a>'
     ).join('<span class="sep">/</span>');
-    breadcrumb.innerHTML=`<a href="${homeUrl()}" data-nav>Home</a><span class="sep">/</span>`
-      +`<a href="${branchUrl(p.branch)}" data-nav style="color:${b.light}">${b.label}</a>`
-      +`<span class="sep">/</span>${topicLinks}`;
+    breadcrumb.innerHTML='<a href="'+homeUrl()+'" data-nav>Home</a><span class="sep">/</span>'
+      +'<a href="'+branchUrl(p.branch)+'" data-nav style="color:'+b.light+'">'+esc(b.label)+'</a>'
+      +'<span class="sep">/</span>'+topicLinks;
     eyebrow.style.color=b.light;
-    eyebrow.textContent=fmtDate(p.date)+' · '+b.label+' · '+labels.join(' / ');
+    eyebrow.textContent=fmtDate(p.date)+' \u00b7 '+b.label+' \u00b7 '+labels.join(' / ');
   }
 
   document.getElementById('article-body').innerHTML=p.body || '<p>Article coming soon.</p>';
@@ -344,7 +427,14 @@ function renderArticle(slug){
 
 // ------------------------------------------------------------
 //  Router
+//  home / branch / topic are all states of the WHEEL VIEW: the
+//  wheel stays on screen and only the warm section changes.
+//  article / recent / notfound are full-page reading views.
 // ------------------------------------------------------------
+function prefersReducedMotion(){
+  return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function focusHeading(id){
   const h=document.getElementById(id);
   if(!h) return;
@@ -352,58 +442,93 @@ function focusHeading(id){
   h.focus({ preventScroll:true });
 }
 
+// Move focus (and, on mobile, the viewport) to the fresh content.
+function afterContentChange(){
+  const h=document.getElementById('content-heading');
+  if(!h) return;
+  h.setAttribute('tabindex','-1');
+  h.focus({ preventScroll:true });
+
+  // Only scroll if the heading is not already visible (desktop usually
+  // is; phones usually are not).
+  const rect=h.getBoundingClientRect();
+  const visible = rect.top >= 0 && rect.top < window.innerHeight * 0.85;
+  if(!visible){
+    const top = window.scrollY + rect.top - 16;
+    if(prefersReducedMotion()) window.scrollTo(0, top);
+    else window.scrollTo({ top, behavior:'smooth' });
+  }
+}
+
 function render(route, opts){
   opts = opts || {};
-  const animate = opts.animate !== false;
+  const first = opts.first === true;      // very first paint of this page
+  const animate = !first;
+  const put = first ? setWarmContentNow : setWarmContent;
 
   switch(route.kind){
     case 'home':
       spinTo(DEFAULT_BRANCH, animate);
-      showView('home');
+      setMobileTopics(null);
+      put(contentHome());
+      showView('wheel-view');
+      break;
+
+    case 'center':
+      spinTo(activeBranch, animate);
+      setMobileTopics(null);
+      put(contentCenter());
+      showView('wheel-view');
       break;
 
     case 'branch':
       spinTo(route.branch, animate);
-      renderBranch(route.branch);
-      showView('branch-page');
-      if(opts.focus) focusHeading('branch-title');
+      setMobileTopics(route.branch);
+      put(contentBranch(route.branch));
+      showView('wheel-view');
       break;
 
     case 'topic':
       spinTo(route.branch, animate);
-      renderTopic(route.branch, route.topic);
-      showView('parent-page');
-      if(opts.focus) focusHeading('parent-title');
+      setMobileTopics(route.branch);
+      put(contentTopic(route.branch, route.topic));
+      showView('wheel-view');
       break;
 
     case 'article': {
-      const ok = renderArticle(route.slug);
-      if(!ok){ showView('notfound-page'); break; }
-      const p = allArticles.find(a=>a.slug===route.slug);
-      if(p && !p.center) spinTo(p.branch, animate);
+      if(!renderArticle(route.slug)){ showView('notfound-page'); break; }
       showView('article-page');
-      if(opts.focus) focusHeading('article-title');
+      if(!first) focusHeading('article-title');
       break;
     }
 
     case 'recent':
       buildFeed();
       showView('recent');
-      if(opts.focus) focusHeading('recent-title');
+      if(!first) focusHeading('recent-title');
       break;
 
     default:
       showView('notfound-page');
-      if(opts.focus) focusHeading('notfound-title');
+      if(!first) focusHeading('notfound-title');
   }
 
-  if(opts.scrollTop !== false) window.scrollTo(0,0);
+  const wheelState = ['home','center','branch','topic'].indexOf(route.kind) !== -1;
+  if(first){
+    window.scrollTo(0,0);
+  } else if(wheelState){
+    // Content swapped beneath a wheel that never moved: don't jump to
+    // the top, just bring the new heading into view if it isn't.
+    window.setTimeout(afterContentChange, prefersReducedMotion() ? 0 : 160);
+  } else {
+    window.scrollTo(0,0);
+  }
 }
 
 function navigate(url){
   const route = parsePath(new URL(url, window.location.origin).pathname);
   history.pushState(route, '', url);
-  render(route, { focus:true });
+  render(route);
 }
 
 // Intercept in-site link clicks so navigation stays smooth, while
@@ -412,11 +537,10 @@ document.addEventListener('click', function(ev){
   const a = ev.target.closest ? ev.target.closest('a[data-nav]') : null;
   if(!a) return;
   if(ev.defaultPrevented) return;
-  if(ev.button !== 0) return;                                        // not a left click
-  if(ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;   // new tab, etc.
+  if(ev.button !== 0) return;
+  if(ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
   if(a.target && a.target !== '_self') return;
 
-  // SVG <a> exposes href as an SVGAnimatedString, so read the attribute.
   const href = a.getAttribute('href');
   if(!href || /^(https?:|mailto:|tel:)/.test(href)) return;
 
@@ -424,17 +548,33 @@ document.addEventListener('click', function(ev){
   navigate(href);
 });
 
-// Back / Forward.
 window.addEventListener('popstate', function(ev){
   const route = ev.state || parsePath(window.location.pathname);
-  render(route, { focus:true });
+  render(route);
 });
 
 // ------------------------------------------------------------
+//  First load: a single settling movement, so the wheel reads as
+//  something with weight that turns. Once only, never repeated,
+//  and skipped entirely for reduced-motion users.
+// ------------------------------------------------------------
+function settleWheel(){
+  if(prefersReducedMotion()) return;
+  const root=document.getElementById('wheelRoot');
+  if(!root) return;
+  const rest=curRot;
+  root.style.transition='transform 620ms cubic-bezier(0.22,1,0.36,1)';
+  root.style.transform='rotate('+(rest - 5)+'deg)';   // 5 degrees, then back
+  window.setTimeout(()=>{
+    root.style.transform='rotate('+rest+'deg)';
+    window.setTimeout(()=>{ root.style.transition=''; }, 640);
+  }, 240);
+}
+
+// ------------------------------------------------------------
 //  Boot
-//  ROUTE is injected per-page by the build, so the right state
-//  paints on the first frame — no flash, no spin-into-place.
 // ------------------------------------------------------------
 buildWheel();
 history.replaceState(ROUTE, '', window.location.pathname + window.location.search);
-render(ROUTE, { animate:false, focus:false });
+render(ROUTE, { first:true });
+if(ROUTE.kind === 'home') settleWheel();

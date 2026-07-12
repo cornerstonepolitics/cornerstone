@@ -21,7 +21,19 @@
     </nav>
   </header>
 
-  <main id="home" class="view">
+  <!-- ============================================================
+       WHEEL VIEW
+       The wheel is permanent. Home, branch and topic are all states
+       of THIS view: the wheel stays put and only the warm section
+       beneath it changes. Articles and Recent are separate views.
+       ============================================================ -->
+  <main id="wheel-view" class="view">
+
+    <div class="wheel-hero">
+      <p class="hero-line">Independent essays on the systems shaping American politics.</p>
+      <p class="hero-hint">Select a branch.</p>
+    </div>
+
     <div class="wheel-stage">
       <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"
            role="group" aria-labelledby="wheelTitle wheelDesc">
@@ -58,19 +70,22 @@
         <path id="selectionLight" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
         <circle cx="310" cy="310" r="108" fill="#cfc9bd" pointer-events="none"/>
         <circle cx="310" cy="310" r="100" fill="url(#centerStone)" stroke="#bdb6a8" stroke-width="0.5" pointer-events="none"/>
-        <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: read the founding essay" data-nav>
-          <circle cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>
-          <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e" pointer-events="none">SERVE THE</text>
-          <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#5a564e" pointer-events="none">LONG-TERM</text>
-          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823" pointer-events="none">INTERESTS OF THE</text>
-          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" fill="#2b2823" pointer-events="none">AMERICAN PEOPLE</text>
+        <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: the founding essay" data-nav>
+          <circle id="centerHit" cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>
+          <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">SERVE THE</text>
+          <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">LONG-TERM</text>
+          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">INTERESTS OF THE</text>
+          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">AMERICAN PEOPLE</text>
         </a>
       </svg>
     </div>
 
-    <!-- Real semantic hierarchy. The wheel is the visual navigation;
-         this is the same structure as text, for keyboard and screen
-         readers. Visually hidden, but fully focusable and readable. -->
+    <!-- Mobile-only topic links. The twelve outer labels are hidden on
+         phones; after a branch is chosen its topics appear here as
+         large, readable links. -->
+    <nav id="mobile-topics" class="mobile-topics" aria-label="Topics in this branch" hidden></nav>
+
+    <!-- Real semantic hierarchy for keyboard and screen readers. -->
     <nav class="wheel-index" aria-label="All sections">
       <ul>
         <li><a href="/cornerstone/" data-nav>Cornerstone</a></li>
@@ -100,43 +115,33 @@
         </li>
       </ul>
     </nav>
+
+    <!-- ==========================================================
+         THE WARM SECTION. Never blank. Swapped in place by the
+         router. Full-width, hard black-to-beige edge, no card.
+         ========================================================== -->
+    <section id="wheel-content" class="warm-surface" aria-live="polite">
+      <div class="warm-inner" id="wheel-content-inner"></div>
+    </section>
   </main>
 
-  <main id="recent" class="view"><div class="page-wrap">
-    <a class="back-btn" href="/" data-nav>&larr; Home</a>
-    <div class="page-eyebrow">Recent</div>
-    <h1 id="recent-title" class="page-title">Latest from Cornerstone</h1>
-    <div class="page-rule"></div>
-    <div id="feed-list"></div>
-  </div></main>
-
-  <main id="branch-page" class="view"><div class="page-wrap">
-    <a class="back-btn" href="/" data-nav>&larr; Home</a>
-    <div id="branch-eyebrow" class="page-eyebrow"></div>
-    <h1 id="branch-title" class="page-title"></h1>
-    <div class="page-rule"></div>
-    <div id="branch-principles-heading" class="principles-heading"></div>
-    <ul id="branch-principles" class="branch-principles"></ul>
-    <div class="children-section">
-      <div class="children-label">Topics within this branch</div>
-      <div id="branch-children" class="children-grid"></div>
+  <!-- ============================================================
+       READING VIEWS (wheel not shown)
+       ============================================================ -->
+  <main id="recent" class="view">
+    <div class="page-head">
+      <div class="page-wrap">
+        <a class="back-btn" href="/" data-nav>&larr; Home</a>
+        <div class="page-eyebrow">Recent</div>
+        <h1 id="recent-title" class="page-title">Latest from Cornerstone</h1>
+      </div>
     </div>
-    <div class="section-block">
-      <div id="branch-articles-label" class="section-label"></div>
-      <div id="branch-articles" class="article-list"></div>
-    </div>
-  </div></main>
-
-  <main id="parent-page" class="view"><div class="page-wrap">
-    <nav id="parent-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
-    <div id="parent-eyebrow" class="page-eyebrow"></div>
-    <h1 id="parent-title" class="page-title"></h1>
-    <div class="page-rule"></div>
-    <div class="section-block" style="margin-top:0">
-      <div id="parent-articles-label" class="section-label"></div>
-      <div id="parent-articles" class="article-list"></div>
-    </div>
-  </div></main>
+    <section class="warm-surface">
+      <div class="warm-inner">
+        <div id="feed-list" class="article-list"></div>
+      </div>
+    </section>
+  </main>
 
   <main id="article-page" class="view article-view"><div class="page-wrap article-shell">
     <nav id="article-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
@@ -147,18 +152,25 @@
     <div id="article-body" class="article-content"></div>
   </div></main>
 
-  <main id="notfound-page" class="view"><div class="page-wrap">
-    <div class="page-eyebrow">Not found</div>
-    <h1 id="notfound-title" class="page-title">This page could not be found.</h1>
-    <div class="page-rule"></div>
-    <ul class="notfound-links">
-      <li><a href="/" data-nav>Home</a></li>
-      <li><a href="/recent/" data-nav>Recent</a></li>
-      <li><a href="/economics/" data-nav>Economics</a></li>
-      <li><a href="/culture/" data-nav>Culture</a></li>
-      <li><a href="/governance/" data-nav>Governance</a></li>
-    </ul>
-  </div></main>
+  <main id="notfound-page" class="view">
+    <div class="page-head">
+      <div class="page-wrap">
+        <div class="page-eyebrow">Not found</div>
+        <h1 id="notfound-title" class="page-title">This page could not be found.</h1>
+      </div>
+    </div>
+    <section class="warm-surface">
+      <div class="warm-inner">
+        <ul class="notfound-links">
+          <li><a href="/" data-nav>Home</a></li>
+          <li><a href="/recent/" data-nav>Recent</a></li>
+          <li><a href="/economics/" data-nav>Economics</a></li>
+          <li><a href="/culture/" data-nav>Culture</a></li>
+          <li><a href="/governance/" data-nav>Governance</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
 </div>
 
 <script>
