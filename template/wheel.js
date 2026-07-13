@@ -118,11 +118,19 @@ function buildWheel(){
     const a0=center-60, a1=center+60;
     const bHref=branchUrl(bk);
 
+    // A light wash covering the whole third — inner wedge and its four
+    // topics as one continuous piece of illuminated stone. Driven by
+    // opacity, not filter(), so the marble keeps its warmth.
+    svg+=`<path class="branch-glow" data-branch="${bk}" d="${wedge(R_IN0,R_OUT1,a0,a1)}" fill="#fff8ea" opacity="0" pointer-events="none"/>`;
+
     svg+=`<a href="${bHref}" class="wedge-link" aria-label="${b.label}" data-nav>`
       +`<path class="wedge branch-wedge" data-branch="${bk}" d="${wedge(R_IN0,R_IN1,a0,a1)}" fill="url(#marble)" stroke="#000" stroke-opacity="0.3" stroke-width="1.7" onmouseenter="hoverBranch('${bk}')" onmouseleave="clearHover()"/>`
       +`</a>`;
 
-    const inR=R_IN0+(R_IN1-R_IN0)*0.45;
+    // Baseline sits inward of the ring's centre so the glyph body, not the
+    // baseline, is what ends up centred. Nudged slightly past geometric
+    // centre for optical balance.
+    const inR=R_IN0+(R_IN1-R_IN0)*0.40;
     const ipid=`bp${i}`;
     defs+=`<path id="${ipid}" fill="none" d="${outwardArc(inR, center+43, center-43)}"/>`;
     const branchFontSize = bk==='governance' ? 20 : 22;
@@ -141,7 +149,9 @@ function buildWheel(){
       const stack = twoLine[p[1]];
       const onBottom = (mid%360>90 && mid%360<270);
       if(stack){
-        const rOuter=R_OUT0+(R_OUT1-R_OUT0)*0.74, rInner=R_OUT0+(R_OUT1-R_OUT0)*0.42;
+        // A stacked pair is centred as a unit: one line above the ring's centre,
+        // one below, each corrected for its own baseline.
+        const rOuter=R_OUT0+(R_OUT1-R_OUT0)*0.57, rInner=R_OUT0+(R_OUT1-R_OUT0)*0.29;
         const firstR=onBottom?rInner:rOuter, secondR=onBottom?rOuter:rInner;
         const id1=`pp${i}_${j}a`, id2=`pp${i}_${j}b`;
         defs+=`<path id="${id1}" fill="none" d="${outwardArc(firstR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
@@ -149,7 +159,12 @@ function buildWheel(){
         svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
         svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
       } else {
-        const outR=R_OUT0+(R_OUT1-R_OUT0)*0.60;   // further out = longer arc = more room
+        // The baseline sits inward of the ring's centre, because glyphs grow
+        // upward (outward) from a baseline. 46% centres them geometrically —
+        // but on a curved band the eye still reads text as riding high, so
+        // this is nudged to 43% for OPTICAL centre. Trust the eye over the
+        // formula: geometric centre and visual centre are not the same thing.
+        const outR=R_OUT0+(R_OUT1-R_OUT0)*0.43;
         const pid=`pp${i}_${j}`;
         defs+=`<path id="${pid}" fill="none" d="${outwardArc(outR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         let fs;
@@ -175,31 +190,38 @@ function buildWheel(){
 function brightenBranch(bk, on){
   document.querySelectorAll('.wedge[data-branch="'+bk+'"]').forEach(el=>el.classList.toggle('hot', on));
 }
-function brightenTopicWedge(bk, key, on){
-  document.querySelectorAll('.topic-wedge[data-branch="'+bk+'"][data-topic="'+key+'"]').forEach(el=>el.classList.toggle('hot', on));
+
+// The single box under the cursor: outlined, and its own label brightened.
+// This is what says "this individual piece is clickable", as distinct from
+// the whole-third cue that says "clicking here will spin the wheel".
+function markHovered(el, on){
+  if(el) el.classList.toggle('hovered', on);
 }
-function brightenBranchWedge(bk, on){
-  document.querySelectorAll('.branch-wedge[data-branch="'+bk+'"]').forEach(el=>el.classList.toggle('hot', on));
+function brightenLabel(sel, on){
+  document.querySelectorAll(sel).forEach(el=>el.classList.toggle('lit', on));
 }
-// Hovering an item makes just that label clearer, matching the
-// selected treatment, so you can see exactly what you are pointing at.
-function tintLabel(bk, key){
-  document.querySelectorAll('.parent-label[data-branch="'+bk+'"][data-topic="'+key+'"]').forEach(el=>{
-    el.classList.add('is-selected');
-  });
-}
+
 function hoverBranch(bk){
-  if(bk===activeBranch) brightenBranchWedge(bk, true);
-  else brightenBranch(bk, true);
+  const wedge = document.querySelector('.branch-wedge[data-branch="'+bk+'"]');
+  markHovered(wedge, true);
+  brightenLabel('.branch-label[data-branch="'+bk+'"]', true);
+  // On a branch that is not selected, also light the whole third: clicking
+  // will rotate the wheel there, and the third is what moves.
+  if(bk!==activeBranch) brightenBranch(bk, true);
 }
+
 function hoverTopic(bk, key){
-  if(bk===activeBranch) brightenTopicWedge(bk, key, true);
-  else brightenBranch(bk, true);
-  tintLabel(bk, key);
+  const wedge = document.querySelector('.topic-wedge[data-branch="'+bk+'"][data-topic="'+key+'"]');
+  markHovered(wedge, true);
+  brightenLabel('.parent-label[data-branch="'+bk+'"][data-topic="'+key+'"]', true);
+  if(bk!==activeBranch) brightenBranch(bk, true);
 }
+
 function clearHover(){
   document.querySelectorAll('.wedge.hot').forEach(el=>el.classList.remove('hot'));
-  updateWheelFocus(activeBranch);   // restores the true selected state
+  document.querySelectorAll('.wedge.hovered').forEach(el=>el.classList.remove('hovered'));
+  document.querySelectorAll('.lit').forEach(el=>el.classList.remove('lit'));
+  updateWheelFocus(activeBranch);
 }
 
 function updateWheelFocus(branch){
@@ -226,6 +248,10 @@ function updateWheelFocus(branch){
     });
 
     document.querySelectorAll('.wedge[data-branch="'+bk+'"]').forEach(el=>{
+      el.classList.toggle('is-selected', active);
+    });
+    // The selected third is lit as one continuous piece of stone.
+    document.querySelectorAll('.branch-glow[data-branch="'+bk+'"]').forEach(el=>{
       el.classList.toggle('is-selected', active);
     });
   });
