@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elections — Governance — Cornerstone</title>
   <link rel="canonical" href="https://cornerstonepolitics.org/governance/elections/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="description" content="Independent essays on the systems shaping American politics.">
+  <meta property="og:site_name" content="Cornerstone">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap');
 
@@ -62,7 +67,7 @@ body { background: var(--site-bg); }
 }
 .nav-links span { cursor: pointer; } .nav-links span:hover { opacity: 0.75; }
 #home { display: flex; flex-direction: column; align-items: center; padding: 24px 12px; background: var(--site-bg); }
-.wheel-stage { width: 100%; max-width: 620px; aspect-ratio: 1; }
+.wheel-stage { width: 100%; max-width: 700px; aspect-ratio: 1; }
 #wheelRoot { transition: transform 560ms cubic-bezier(0.22,1,0.36,1); transform-origin: 310px 310px; }
 #wheelRoot text { transition: fill 200ms ease, stroke-opacity 200ms ease; }
 /* Labels recolor quickly on hover for responsive feedback. Higher
@@ -751,34 +756,27 @@ h1:focus { outline: none; }
    what marble is underneath, and contrast lands at 6.3-12.6 in every
    resting position. Selection changes ink weight and halo strength,
    not hue — so a selected label gets clearer, never invisible. */
-#wheelRoot .parent-label {
-  paint-order: stroke fill;
-  stroke: #efe9dd;
-  stroke-width: 0.9;          /* a hairline, not piping */
-  stroke-opacity: 0.30;
-  stroke-linejoin: round;
-  /* A soft light shadow lifts the glyph off the marble the way a
-     carved letter catches light. This does the separating work the
-     thick stroke was doing, without the sticker outline. */
-  filter: drop-shadow(0 0.5px 0.6px rgba(255,252,246,0.55));
-  transition: stroke-opacity 180ms ease, fill 180ms ease, filter 180ms ease;
-}
-#wheelRoot .parent-label.is-selected {
-  stroke-opacity: 0.45;
-  filter: drop-shadow(0 0.5px 0.8px rgba(255,252,246,0.75));
-}
+/* The outer labels get EXACTLY what the inner ones get: the branch
+   colour on stone, one hairline edge, nothing more. Earlier attempts
+   at a thicker halo and a deeper "ink" measured better for contrast
+   but read as heavy, muddy, and pasted-on — and they flattened the
+   marble's warmth. Same treatment inside and out. */
+/* The labels keep their colours and their weight. The only help they get
+   is the thinnest white outline that still does something: 0.9px, held
+   just visible. Enough to lift a glyph off the marble in any rotation;
+   not enough to read as piping stuck on the stone. */
+#wheelRoot .parent-label,
 #wheelRoot .branch-label {
   paint-order: stroke fill;
-  stroke: #f4f0e7;
-  stroke-width: 0.8;
-  stroke-opacity: 0.22;      /* inner marble is pale: barely any help needed */
+  stroke: #f6f2ea;
+  stroke-width: 0.9;
+  stroke-opacity: 0.42;
   stroke-linejoin: round;
-  filter: drop-shadow(0 0.5px 0.6px rgba(255,252,246,0.45));
-  transition: stroke-opacity 180ms ease, fill 180ms ease, filter 180ms ease;
+  transition: stroke-opacity 180ms ease, fill 180ms ease;
 }
+#wheelRoot .parent-label.is-selected,
 #wheelRoot .branch-label.is-selected {
-  stroke-opacity: 0.34;
-  filter: drop-shadow(0 0.5px 0.8px rgba(255,252,246,0.65));
+  stroke-opacity: 0.55;
 }
 
 /* ---- §7 HOVER AND SELECTED STATES -------------------------- */
@@ -786,11 +784,13 @@ h1:focus { outline: none; }
    reads as "this is what you are about to do". */
 .wedge {
   cursor: pointer;
-  transition: filter 150ms ease, stroke-opacity 150ms ease, stroke-width 150ms ease;
+  transition: stroke-opacity 150ms ease, stroke-width 150ms ease;
 }
 .wedge.hot {
-  filter: brightness(1.11) saturate(1.04);
-  stroke-opacity: 0.62;      /* sharpen the boundary */
+  /* No brightness()/saturate(): filtering an SVG path re-rasterises
+     the marble gradient beneath it and washes out the stone's warmth.
+     A firmer edge alone reads as "this is the target". */
+  stroke-opacity: 0.62;
   stroke-width: 2.1;
 }
 .wedge.is-selected {
@@ -813,7 +813,7 @@ h1:focus { outline: none; }
 /* Reserve the wheel's box before the SVG paints, so nothing shifts. */
 .wheel-stage {
   width: 100%;
-  max-width: 620px;
+  max-width: 700px;
   aspect-ratio: 1 / 1;
   margin-inline: auto;
   contain: layout;
@@ -825,10 +825,10 @@ html { background: #0d0d0d; }
 /* Phones have no hover: a tap must confirm itself. A brief contrast
    lift (~170ms) that resolves into the selected state. */
 @media (hover: none) {
-  .wedge { transition: filter 170ms ease, stroke-opacity 170ms ease; }
+  .wedge { transition: stroke-opacity 170ms ease, stroke-width 170ms ease; }
   .wedge:active {
-    filter: brightness(1.14);
     stroke-opacity: 0.6;
+    stroke-width: 2.2;
   }
   .wheel-hint { font-size: 10px; letter-spacing: 0.16em; }
 }
@@ -862,6 +862,306 @@ html { background: #0d0d0d; }
     min-height: 40px;
   }
 }
+
+
+/* ============================================================
+   PHASE 4 — THE READING LAYER
+   ============================================================ */
+
+/* ---- §15 the body column ----------------------------------- */
+/* Measure is set in `ch`, so it holds 64-70 characters per line no
+   matter how the font renders. The title runs slightly wider than
+   the body, as a title should. */
+.article-content,
+.longform-content {
+  margin-top: 30px;
+  max-width: 68ch;
+  font-family: var(--font-article);
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.62;
+  color: var(--warm-text);
+}
+.article-title-display { max-width: 76ch; }
+.article-subtitle-display { max-width: 64ch; }
+
+/* Short paragraphs are intentional. Never collapse them. */
+.article-content p { margin: 0 0 1.05em 0; }
+
+/* ---- §16 metadata line ------------------------------------- */
+/* Cornerstone · [date] · [Branch] · [Topic] — branch and topic click. */
+.article-meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.article-meta-line a { color: inherit; }
+.article-meta-line a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.meta-author { color: var(--warm-title); }
+.meta-sep { color: #b0a89c; }
+.meta-updated { font-style: italic; text-transform: none; letter-spacing: 0.02em; }
+
+.article-view .breadcrumb {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  margin-bottom: 20px;
+}
+
+/* ---- §19 inline citations ---------------------------------- */
+/* Quiet superscript markers that link to their source. */
+.article-content sup a,
+.article-content [data-footnote-ref] {
+  font-family: var(--font-ui);
+  font-size: 0.62em;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--warm-muted);
+  padding: 0 0.1em;
+  vertical-align: super;
+  line-height: 0;
+}
+.article-content sup a:hover { color: var(--warm-title); }
+.article-content sup a:target,
+.sources-list li:target {
+  background: rgba(0,0,0,0.05);
+}
+
+/* ---- §18 sources ------------------------------------------- */
+.article-end {
+  max-width: 68ch;
+  margin-top: 64px;
+}
+.sources-block { margin-bottom: 44px; }
+.sources-heading {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  padding-top: 22px;
+  border-top: 1px solid var(--warm-rule);
+  margin-bottom: 24px;
+}
+/* Hanging numerals: the number sits in the margin, the text aligns
+   flush. The list numbers itself — nothing is typed by hand. */
+.sources-list {
+  list-style: none;
+  counter-reset: src;
+  margin: 0;
+  padding: 0;
+}
+.sources-list li {
+  counter-increment: src;
+  position: relative;
+  padding-left: 2.4em;
+  margin-bottom: 1.15em;
+  font-family: var(--font-article);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--warm-text);
+}
+.sources-list li::before {
+  content: counter(src) ".";
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  width: 2em;
+  text-align: right;
+  padding-right: 0.5em;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--warm-muted);
+}
+.sources-list li p { margin: 0; }
+.sources-list a { color: var(--warm-text); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--warm-rule); }
+.sources-list a:hover { text-decoration-color: var(--warm-title); }
+/* The back-link to the citation stays small and quiet. */
+.sources-list [data-footnote-backref] {
+  margin-left: 0.4em;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  text-decoration: none;
+  color: var(--warm-muted);
+}
+.sources-list [data-footnote-backref]:hover { color: var(--warm-title); }
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ---- §20-21 endmatter -------------------------------------- */
+.end-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 22px;
+  border-top: 1px solid var(--warm-rule);
+}
+/* A text action. No icon row, no floating rail, no filled button. */
+.copy-link {
+  background: none;
+  border: none;
+  padding: 6px 0;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  cursor: pointer;
+}
+.copy-link:hover { color: var(--warm-title); }
+.copy-status {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.end-back { margin-top: 30px; }
+.end-back a {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.end-back a:hover { color: var(--warm-title); text-decoration: underline; text-underline-offset: 3px; }
+
+.end-related { margin-top: 44px; }
+.related-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  margin-bottom: 12px;
+}
+.related-link { display: block; }
+.related-title {
+  display: block;
+  font-family: var(--font-article);
+  font-size: 1.3rem;
+  line-height: 1.3;
+  color: var(--warm-title);
+}
+.related-link:hover .related-title { text-decoration: underline; text-underline-offset: 3px; }
+.related-dek {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-article);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--warm-muted);
+}
+
+/* ---- §24 links on warm surfaces ---------------------------- */
+/* In body text: underlined, because a reader should see a link.
+   In navigation and indexes: bare at rest, underlined on hover/focus. */
+.article-content p a,
+.article-content li a,
+.article-content blockquote a {
+  color: var(--warm-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: #b9b1a4;
+}
+.article-content p a:hover { text-decoration-color: var(--warm-title); }
+/* Citation markers are not body links: keep them bare. */
+.article-content sup a { text-decoration: none; }
+
+.warm-surface a:focus-visible,
+.article-view a:focus-visible,
+.copy-link:focus-visible {
+  outline: 2px solid var(--warm-title);
+  outline-offset: 3px;
+}
+
+/* ---- §23 no reading furniture ------------------------------ */
+/* No progress bar, no sticky TOC, no floating rail, no sticky header. */
+.article-view { position: static; }
+
+@media (max-width: 760px) {
+  .article-content, .longform-content { font-size: 18px; line-height: 1.6; max-width: 100%; }
+  .article-title-display, .article-subtitle-display { max-width: 100%; }
+  .article-end { max-width: 100%; }
+  .article-meta-line { font-size: 11px; gap: 6px; }
+}
+
+
+/* ============================================================
+   PHASE 5 — FOOTER AND CHROME
+   ============================================================ */
+
+/* ---- §27 footer -------------------------------------------- */
+/* Restrained. No newsletter, no social clutter, no large mark. */
+.site-footer {
+  background: var(--site-bg);
+  border-top: 0.5px solid var(--rule-on-dark);
+  padding: 46px 34px 54px;
+}
+.footer-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+}
+.footer-name {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-on-dark);
+}
+.footer-line {
+  margin-top: 10px;
+  max-width: 42ch;
+  font-family: var(--font-article);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-muted-on-dark);
+}
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+}
+.footer-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted-on-dark);
+}
+.footer-nav a:hover { color: var(--text-on-dark); }
+.footer-nav a:focus-visible { outline: 2px solid var(--text-on-dark); outline-offset: 3px; }
+
+@media (max-width: 640px) {
+  .site-footer { padding: 34px 20px 40px; }
+  .footer-inner { flex-direction: column; gap: 24px; }
+  .footer-nav { gap: 18px; }
+}
+
+/* ---- §32 loading stability --------------------------------- */
+/* Newsreader swaps in without reflowing the page. */
+body { font-display: swap; }
 
   </style>
 </head>
@@ -903,13 +1203,13 @@ html { background: #0d0d0d; }
           <radialGradient id="centerStone" cx="50%" cy="45%" r="60%">
             <stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#f0ece3"/><stop offset="100%" stop-color="#d8d2c6"/>
           </radialGradient>
-          <radialGradient id="selectionGlow" gradientUnits="userSpaceOnUse" cx="310" cy="245" r="330">
+          <radialGradient id="selectionGlow" gradientUnits="userSpaceOnUse" cx="310" cy="245" r="340">
             <stop offset="0%" stop-color="#fff9ee" stop-opacity="0.50"/>
             <stop offset="36%" stop-color="#fff3df" stop-opacity="0.34"/>
             <stop offset="68%" stop-color="#ecd8b7" stop-opacity="0.18"/>
             <stop offset="100%" stop-color="#e0c499" stop-opacity="0.00"/>
           </radialGradient>
-          <linearGradient id="selectionBeam" gradientUnits="userSpaceOnUse" x1="310" y1="180" x2="310" y2="610">
+          <linearGradient id="selectionBeam" gradientUnits="userSpaceOnUse" x1="310" y1="180" x2="310" y2="618">
             <stop offset="0%" stop-color="#fffaf0" stop-opacity="0.08"/>
             <stop offset="35%" stop-color="#fff0d6" stop-opacity="0.18"/>
             <stop offset="70%" stop-color="#f1dbb4" stop-opacity="0.28"/>
@@ -920,8 +1220,8 @@ html { background: #0d0d0d; }
           </filter>
         </defs>
         <g id="wheelRoot"></g>
-        <path id="selectionBeamPath" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionBeam)" opacity="0.50" pointer-events="none"/>
-        <path id="selectionLight" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
+        <path id="selectionBeamPath" d="M575.870,463.500 A307,307 0 0,1 44.130,463.500 L218.201,363.000 A106,106 0 0,0 401.799,363.000 Z" fill="url(#selectionBeam)" opacity="0.50" pointer-events="none"/>
+        <path id="selectionLight" d="M575.870,463.500 A307,307 0 0,1 44.130,463.500 L218.201,363.000 A106,106 0 0,0 401.799,363.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
         <circle cx="310" cy="310" r="108" fill="#cfc9bd" pointer-events="none"/>
         <circle cx="310" cy="310" r="100" fill="url(#centerStone)" pointer-events="none"/>
         <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: the founding essay" data-nav>
@@ -998,14 +1298,27 @@ html { background: #0d0d0d; }
     </section>
   </main>
 
-  <main id="article-page" class="view article-view"><div class="page-wrap article-shell">
+  <main id="article-page" class="view article-view"><article class="page-wrap article-shell">
+    <!-- 1. breadcrumb  2. metadata  3. title  4. optional deck  5. body -->
     <nav id="article-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
-    <div id="article-eyebrow" class="page-eyebrow"></div>
+    <div id="article-eyebrow" class="article-meta-line"></div>
     <h1 id="article-title" class="article-title-display"></h1>
     <div id="article-subtitle" class="article-subtitle-display"></div>
     <div class="page-rule"></div>
     <div id="article-body" class="article-content"></div>
-  </div></main>
+
+    <!-- Endmatter: sources, copy link, one quiet way back, one related essay.
+         No recommendation grids, no social rails. -->
+    <footer class="article-end">
+      <div id="article-sources" class="sources-block"></div>
+      <div class="end-actions">
+        <button type="button" id="copy-link" class="copy-link">Copy link</button>
+        <span id="copy-status" class="copy-status" role="status" aria-live="polite"></span>
+      </div>
+      <div id="article-back" class="end-back"></div>
+      <div id="article-related" class="end-related"></div>
+    </footer>
+  </article></main>
 
   <main id="notfound-page" class="view">
     <div class="page-head">
@@ -1026,6 +1339,22 @@ html { background: #0d0d0d; }
       </div>
     </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-mark">
+        <div class="footer-name">Cornerstone</div>
+        <p class="footer-line">Serve the long-term interests of the American people.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="/recent/" data-nav>Recent</a>
+        <a href="/economics/" data-nav>Economics</a>
+        <a href="/culture/" data-nav>Culture</a>
+        <a href="/governance/" data-nav>Governance</a>
+        <a href="mailto:cornerstoneproject7@gmail.com">Contact</a>
+      </nav>
+    </div>
+  </footer>
 </div>
 
 <script>
@@ -1156,7 +1485,11 @@ const DEFAULT_BRANCH = 'economics';
 const CENTER_SLUG = (centerPieces[0] && centerPieces[0].slug) || 'cornerstone';
 
 const CX = 310, CY = 310;
-const R_IN0 = 110, R_IN1 = 200, R_OUT0 = 202, R_OUT1 = 298;
+// The outer ring reaches further out than it used to, so the twelve topic
+// labels sit on a longer arc and have room to breathe. Combined with the
+// larger on-screen size (700px, up from 620px), every letter gains about a
+// fifth more physical space without changing the type itself.
+const R_IN0 = 108, R_IN1 = 196, R_OUT0 = 198, R_OUT1 = 306;
 
 // ------------------------------------------------------------
 //  URL helpers
@@ -1234,7 +1567,7 @@ const oneLineSmall = { 'Institutions': 13 };
 function buildWheel(){
   const root=document.getElementById('wheelRoot');
   let svg='', defs='';
-  svg+=`<circle cx="${CX}" cy="${CY}" r="298" fill="url(#marble)"/>`;
+  svg+=`<circle cx="${CX}" cy="${CY}" r="${R_OUT1}" fill="url(#marble)"/>`;
 
   order.forEach((bk,i)=>{
     const b=data[bk];
@@ -1265,21 +1598,21 @@ function buildWheel(){
       const stack = twoLine[p[1]];
       const onBottom = (mid%360>90 && mid%360<270);
       if(stack){
-        const rOuter=R_OUT0+(R_OUT1-R_OUT0)*0.66, rInner=R_OUT0+(R_OUT1-R_OUT0)*0.34;
+        const rOuter=R_OUT0+(R_OUT1-R_OUT0)*0.74, rInner=R_OUT0+(R_OUT1-R_OUT0)*0.42;
         const firstR=onBottom?rInner:rOuter, secondR=onBottom?rOuter:rInner;
         const id1=`pp${i}_${j}a`, id2=`pp${i}_${j}b`;
         defs+=`<path id="${id1}" fill="none" d="${outwardArc(firstR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         defs+=`<path id="${id2}" fill="none" d="${outwardArc(secondR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelInk || b.dark}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelInk || b.dark}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
       } else {
-        const outR=R_OUT0+(R_OUT1-R_OUT0)*0.5;
+        const outR=R_OUT0+(R_OUT1-R_OUT0)*0.60;   // further out = longer arc = more room
         const pid=`pp${i}_${j}`;
         defs+=`<path id="${pid}" fill="none" d="${outwardArc(outR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         let fs;
         if(oneLineSmall[p[1]]) fs=oneLineSmall[p[1]];
         else { const arcW=(seg-3)*Math.PI/180*outR; fs=Math.max(12, Math.min(17, arcW/(p[1].length*0.62))); }
-        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelInk || b.dark}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
       }
     });
   });
@@ -1332,10 +1665,11 @@ function updateWheelFocus(branch){
     const active = (bk===branch);
 
     document.querySelectorAll('.parent-label[data-branch="'+bk+'"]').forEach(el=>{
-      // Legibility comes from the LETTERS, not from an outline: a deep
-      // ink that reads as carved. Selection is expressed as a slightly
-      // clearer edge (CSS), never a hue swap into invisibility.
-      el.setAttribute('fill', b.wheelInk || b.dark);
+      // The outer labels get exactly what the inner ones get: the
+      // branch colour on stone. A deeper "ink" measured better for
+      // contrast but read as heavy and muddy, and it flattened the
+      // marble's warmth. Same treatment inside and out.
+      el.setAttribute('fill', b.wheelLabel);
       el.classList.toggle('is-selected', active);
     });
 
@@ -1535,33 +1869,136 @@ function setMobileTopics(branch){
 function renderArticle(slug){
   const p=allArticles.find(x=>x.slug===slug);
   if(!p) return false;
+
   const title=document.getElementById('article-title');
   const subtitle=document.getElementById('article-subtitle');
-  const eyebrow=document.getElementById('article-eyebrow');
+  const meta=document.getElementById('article-eyebrow');
   const breadcrumb=document.getElementById('article-breadcrumb');
 
   title.textContent=p.title;
+
+  // A deck only appears when the essay actually has one. It is not
+  // required, and an empty one is not rendered.
   if(p.subtitle){ subtitle.textContent=p.subtitle; subtitle.style.display='block'; }
   else { subtitle.textContent=''; subtitle.style.display='none'; }
 
+  // ---- breadcrumb + metadata -------------------------------------
+  // Metadata reads:  Cornerstone · [date] · [Branch] · [Topic]
+  // with branch and topic clickable.
   if(p.center){
     breadcrumb.innerHTML='<a href="'+homeUrl()+'" data-nav>Home</a>';
-    eyebrow.style.color='var(--warm-muted)';
-    eyebrow.textContent=p.eyebrow || 'Centerpiece';
+    meta.innerHTML='<span class="meta-author">Cornerstone</span>'
+      +'<span class="meta-sep">\u00b7</span>'
+      +'<time datetime="'+p.date+'">'+fmtDate(p.date)+'</time>';
   } else {
-    const b=data[p.branch], labels=parentLabels(p);
+    const b=data[p.branch];
     const topicLinks=parentKeys(p).map(k=>
-      '<a href="'+topicUrl(p.branch,k)+'" data-nav style="color:'+b.light+'">'+esc(parentLabel(p.branch,k))+'</a>'
+      '<a href="'+topicUrl(p.branch,k)+'" data-nav>'+esc(parentLabel(p.branch,k))+'</a>'
     ).join('<span class="sep">/</span>');
-    breadcrumb.innerHTML='<a href="'+homeUrl()+'" data-nav>Home</a><span class="sep">/</span>'
-      +'<a href="'+branchUrl(p.branch)+'" data-nav style="color:'+b.light+'">'+esc(b.label)+'</a>'
+
+    breadcrumb.innerHTML='<a href="'+branchUrl(p.branch)+'" data-nav>'+esc(b.label)+'</a>'
       +'<span class="sep">/</span>'+topicLinks;
-    eyebrow.style.color=b.light;
-    eyebrow.textContent=fmtDate(p.date)+' \u00b7 '+b.label+' \u00b7 '+labels.join(' / ');
+
+    meta.innerHTML='<span class="meta-author">Cornerstone</span>'
+      +'<span class="meta-sep">\u00b7</span>'
+      +'<time datetime="'+p.date+'">'+fmtDate(p.date)+'</time>'
+      +'<span class="meta-sep">\u00b7</span>'
+      +'<a href="'+branchUrl(p.branch)+'" data-nav style="color:'+b.light+'">'+esc(b.label)+'</a>'
+      +'<span class="meta-sep">\u00b7</span>'
+      +parentKeys(p).map(k=>
+          '<a href="'+topicUrl(p.branch,k)+'" data-nav style="color:'+b.light+'">'+esc(parentLabel(p.branch,k))+'</a>'
+        ).join('<span class="meta-sep">/</span>')
+      + (p.updated ? '<span class="meta-sep">\u00b7</span><span class="meta-updated">Updated '+fmtDate(p.updated)+'</span>' : '');
   }
 
-  document.getElementById('article-body').innerHTML=p.body || '<p>Article coming soon.</p>';
+  // ---- body, with the footnote block lifted out as SOURCES --------
+  const body=document.getElementById('article-body');
+  body.innerHTML = p.body || '<p>Essay coming soon.</p>';
+
+  const sources=document.getElementById('article-sources');
+  sources.innerHTML='';
+  const fn = body.querySelector('section.footnotes, [data-footnotes]');
+  if(fn){
+    // marked-footnote already gives us an <ol> with linked references and
+    // back-links. We only need to move it into the endmatter and give it a
+    // real heading. The list numbers itself, so nothing is typed by hand.
+    fn.remove();
+    const ol = fn.querySelector('ol');
+    if(ol){
+      const h = document.createElement('h2');
+      h.className='sources-heading';
+      h.textContent='Sources';
+      sources.appendChild(h);
+      ol.className='sources-list';
+      sources.appendChild(ol);
+    }
+  }
+
+  // ---- endmatter: one quiet way back, one related essay -----------
+  const back=document.getElementById('article-back');
+  if(p.center){
+    back.innerHTML='<a href="'+homeUrl()+'" data-nav>Return home</a>';
+  } else {
+    const b=data[p.branch];
+    const firstTopic=parentKeys(p)[0];
+    back.innerHTML='<a href="'+topicUrl(p.branch,firstTopic)+'" data-nav>'
+      +'More on '+esc(parentLabel(p.branch,firstTopic))+'</a>';
+  }
+
+  // At most ONE related essay, chosen deliberately: the nearest piece that
+  // shares a topic. No grids, no "you may also like", no endless lists.
+  const related=document.getElementById('article-related');
+  related.innerHTML='';
+  const rel = pickRelated(p);
+  if(rel){
+    const rb = rel.center ? null : data[rel.branch];
+    related.innerHTML='<div class="related-label">Read next</div>'
+      +'<a class="related-link" href="'+articleUrl(rel.slug)+'" data-nav>'
+      +'<span class="related-title">'+esc(rel.title)+'</span>'
+      +(rel.dek?'<span class="related-dek">'+esc(rel.dek)+'</span>':'')
+      +'</a>';
+  }
+
   return true;
+}
+
+// One related essay: prefer a piece sharing a topic, then the same branch,
+// then the most recent other essay. Deliberate, not algorithmic sprawl.
+function pickRelated(p){
+  const others = allArticles.filter(a=>a.slug!==p.slug);
+  if(!others.length) return null;
+  if(!p.center){
+    const keys = parentKeys(p);
+    const sharesTopic = others.filter(a=>!a.center && a.branch===p.branch
+      && parentKeys(a).some(k=>keys.includes(k)));
+    if(sharesTopic.length) return sortPosts(sharesTopic)[0];
+    const sameBranch = others.filter(a=>!a.center && a.branch===p.branch);
+    if(sameBranch.length) return sortPosts(sameBranch)[0];
+  }
+  const posts_ = others.filter(a=>!a.center);
+  return posts_.length ? sortPosts(posts_)[0] : others[0];
+}
+
+// Copy link: a small text action, no icons, no share rail.
+function initCopyLink(){
+  const btn=document.getElementById('copy-link');
+  const status=document.getElementById('copy-status');
+  if(!btn) return;
+  btn.addEventListener('click', function(){
+    const url = window.location.origin + window.location.pathname;
+    const done = ()=>{
+      status.textContent='Copied';
+      window.setTimeout(()=>{ status.textContent=''; }, 2000);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(done).catch(()=>{ status.textContent='Press Ctrl+C'; });
+    } else {
+      const ta=document.createElement('textarea');
+      ta.value=url; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); done(); }catch(e){ status.textContent='Press Ctrl+C'; }
+      document.body.removeChild(ta);
+    }
+  });
 }
 
 // ------------------------------------------------------------
@@ -1701,22 +2138,50 @@ function settleWheel(){
   if(prefersReducedMotion()) return;
   const root=document.getElementById('wheelRoot');
   if(!root) return;
-  const rest=curRot;
-  root.style.transition='transform 620ms cubic-bezier(0.22,1,0.36,1)';
-  root.style.transform='rotate('+(rest - 5)+'deg)';   // 5 degrees, then back
-  window.setTimeout(()=>{
-    root.style.transform='rotate('+rest+'deg)';
-    window.setTimeout(()=>{ root.style.transition=''; }, 640);
-  }, 240);
+
+  // The wheel must announce, once, that it is a thing which turns.
+  // A 5-degree nudge was too small to register. This is a single
+  // deliberate rotation into rest: the wheel starts a quarter-turn
+  // off and swings home under its own weight.
+  //
+  // Deliberately NOT a roulette spin. No multiple revolutions, no
+  // fast whirl, no clatter to a stop — those read as a game of
+  // chance. This reads as mass: it starts, it decelerates hard, it
+  // settles. Under one second, once, and never on a return visit.
+  const rest = curRot;
+  const from = rest + 25;                    // a quarter of a branch, offset
+
+  root.style.transition = 'none';
+  root.style.transform  = 'rotate(' + from + 'deg)';
+  void root.getBoundingClientRect();         // commit the start position
+
+  // Heavy deceleration: quick to move, slow to stop. Weight, not spin.
+  root.style.transition = 'transform 880ms cubic-bezier(0.16, 0.9, 0.24, 1)';
+  root.style.transform  = 'rotate(' + rest + 'deg)';
+
+  window.setTimeout(()=>{ root.style.transition=''; }, 900);
+}
+
+// Once per visitor, not once per page load. A returning reader should
+// not have to sit through the introduction again.
+function shouldSettle(){
+  try {
+    if(sessionStorage.getItem('cs_settled')) return false;
+    sessionStorage.setItem('cs_settled','1');
+    return true;
+  } catch(e){
+    return true;   // private mode etc: erring toward showing it once
+  }
 }
 
 // ------------------------------------------------------------
 //  Boot
 // ------------------------------------------------------------
 buildWheel();
+initCopyLink();
 history.replaceState(ROUTE, '', window.location.pathname + window.location.search);
 render(ROUTE, { first:true });
-if(ROUTE.kind === 'home') settleWheel();
+if(ROUTE.kind === 'home' && shouldSettle()) settleWheel();
 
 </script>
 </body>

@@ -53,7 +53,7 @@ body { background: var(--site-bg); }
 }
 .nav-links span { cursor: pointer; } .nav-links span:hover { opacity: 0.75; }
 #home { display: flex; flex-direction: column; align-items: center; padding: 24px 12px; background: var(--site-bg); }
-.wheel-stage { width: 100%; max-width: 620px; aspect-ratio: 1; }
+.wheel-stage { width: 100%; max-width: 700px; aspect-ratio: 1; }
 #wheelRoot { transition: transform 560ms cubic-bezier(0.22,1,0.36,1); transform-origin: 310px 310px; }
 #wheelRoot text { transition: fill 200ms ease, stroke-opacity 200ms ease; }
 /* Labels recolor quickly on hover for responsive feedback. Higher
@@ -742,34 +742,27 @@ h1:focus { outline: none; }
    what marble is underneath, and contrast lands at 6.3-12.6 in every
    resting position. Selection changes ink weight and halo strength,
    not hue — so a selected label gets clearer, never invisible. */
-#wheelRoot .parent-label {
-  paint-order: stroke fill;
-  stroke: #efe9dd;
-  stroke-width: 0.9;          /* a hairline, not piping */
-  stroke-opacity: 0.30;
-  stroke-linejoin: round;
-  /* A soft light shadow lifts the glyph off the marble the way a
-     carved letter catches light. This does the separating work the
-     thick stroke was doing, without the sticker outline. */
-  filter: drop-shadow(0 0.5px 0.6px rgba(255,252,246,0.55));
-  transition: stroke-opacity 180ms ease, fill 180ms ease, filter 180ms ease;
-}
-#wheelRoot .parent-label.is-selected {
-  stroke-opacity: 0.45;
-  filter: drop-shadow(0 0.5px 0.8px rgba(255,252,246,0.75));
-}
+/* The outer labels get EXACTLY what the inner ones get: the branch
+   colour on stone, one hairline edge, nothing more. Earlier attempts
+   at a thicker halo and a deeper "ink" measured better for contrast
+   but read as heavy, muddy, and pasted-on — and they flattened the
+   marble's warmth. Same treatment inside and out. */
+/* The labels keep their colours and their weight. The only help they get
+   is the thinnest white outline that still does something: 0.9px, held
+   just visible. Enough to lift a glyph off the marble in any rotation;
+   not enough to read as piping stuck on the stone. */
+#wheelRoot .parent-label,
 #wheelRoot .branch-label {
   paint-order: stroke fill;
-  stroke: #f4f0e7;
-  stroke-width: 0.8;
-  stroke-opacity: 0.22;      /* inner marble is pale: barely any help needed */
+  stroke: #f6f2ea;
+  stroke-width: 0.9;
+  stroke-opacity: 0.42;
   stroke-linejoin: round;
-  filter: drop-shadow(0 0.5px 0.6px rgba(255,252,246,0.45));
-  transition: stroke-opacity 180ms ease, fill 180ms ease, filter 180ms ease;
+  transition: stroke-opacity 180ms ease, fill 180ms ease;
 }
+#wheelRoot .parent-label.is-selected,
 #wheelRoot .branch-label.is-selected {
-  stroke-opacity: 0.34;
-  filter: drop-shadow(0 0.5px 0.8px rgba(255,252,246,0.65));
+  stroke-opacity: 0.55;
 }
 
 /* ---- §7 HOVER AND SELECTED STATES -------------------------- */
@@ -777,11 +770,13 @@ h1:focus { outline: none; }
    reads as "this is what you are about to do". */
 .wedge {
   cursor: pointer;
-  transition: filter 150ms ease, stroke-opacity 150ms ease, stroke-width 150ms ease;
+  transition: stroke-opacity 150ms ease, stroke-width 150ms ease;
 }
 .wedge.hot {
-  filter: brightness(1.11) saturate(1.04);
-  stroke-opacity: 0.62;      /* sharpen the boundary */
+  /* No brightness()/saturate(): filtering an SVG path re-rasterises
+     the marble gradient beneath it and washes out the stone's warmth.
+     A firmer edge alone reads as "this is the target". */
+  stroke-opacity: 0.62;
   stroke-width: 2.1;
 }
 .wedge.is-selected {
@@ -804,7 +799,7 @@ h1:focus { outline: none; }
 /* Reserve the wheel's box before the SVG paints, so nothing shifts. */
 .wheel-stage {
   width: 100%;
-  max-width: 620px;
+  max-width: 700px;
   aspect-ratio: 1 / 1;
   margin-inline: auto;
   contain: layout;
@@ -816,10 +811,10 @@ html { background: #0d0d0d; }
 /* Phones have no hover: a tap must confirm itself. A brief contrast
    lift (~170ms) that resolves into the selected state. */
 @media (hover: none) {
-  .wedge { transition: filter 170ms ease, stroke-opacity 170ms ease; }
+  .wedge { transition: stroke-opacity 170ms ease, stroke-width 170ms ease; }
   .wedge:active {
-    filter: brightness(1.14);
     stroke-opacity: 0.6;
+    stroke-width: 2.2;
   }
   .wheel-hint { font-size: 10px; letter-spacing: 0.16em; }
 }
@@ -853,3 +848,303 @@ html { background: #0d0d0d; }
     min-height: 40px;
   }
 }
+
+
+/* ============================================================
+   PHASE 4 — THE READING LAYER
+   ============================================================ */
+
+/* ---- §15 the body column ----------------------------------- */
+/* Measure is set in `ch`, so it holds 64-70 characters per line no
+   matter how the font renders. The title runs slightly wider than
+   the body, as a title should. */
+.article-content,
+.longform-content {
+  margin-top: 30px;
+  max-width: 68ch;
+  font-family: var(--font-article);
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.62;
+  color: var(--warm-text);
+}
+.article-title-display { max-width: 76ch; }
+.article-subtitle-display { max-width: 64ch; }
+
+/* Short paragraphs are intentional. Never collapse them. */
+.article-content p { margin: 0 0 1.05em 0; }
+
+/* ---- §16 metadata line ------------------------------------- */
+/* Cornerstone · [date] · [Branch] · [Topic] — branch and topic click. */
+.article-meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.article-meta-line a { color: inherit; }
+.article-meta-line a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.meta-author { color: var(--warm-title); }
+.meta-sep { color: #b0a89c; }
+.meta-updated { font-style: italic; text-transform: none; letter-spacing: 0.02em; }
+
+.article-view .breadcrumb {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  margin-bottom: 20px;
+}
+
+/* ---- §19 inline citations ---------------------------------- */
+/* Quiet superscript markers that link to their source. */
+.article-content sup a,
+.article-content [data-footnote-ref] {
+  font-family: var(--font-ui);
+  font-size: 0.62em;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--warm-muted);
+  padding: 0 0.1em;
+  vertical-align: super;
+  line-height: 0;
+}
+.article-content sup a:hover { color: var(--warm-title); }
+.article-content sup a:target,
+.sources-list li:target {
+  background: rgba(0,0,0,0.05);
+}
+
+/* ---- §18 sources ------------------------------------------- */
+.article-end {
+  max-width: 68ch;
+  margin-top: 64px;
+}
+.sources-block { margin-bottom: 44px; }
+.sources-heading {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  padding-top: 22px;
+  border-top: 1px solid var(--warm-rule);
+  margin-bottom: 24px;
+}
+/* Hanging numerals: the number sits in the margin, the text aligns
+   flush. The list numbers itself — nothing is typed by hand. */
+.sources-list {
+  list-style: none;
+  counter-reset: src;
+  margin: 0;
+  padding: 0;
+}
+.sources-list li {
+  counter-increment: src;
+  position: relative;
+  padding-left: 2.4em;
+  margin-bottom: 1.15em;
+  font-family: var(--font-article);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--warm-text);
+}
+.sources-list li::before {
+  content: counter(src) ".";
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  width: 2em;
+  text-align: right;
+  padding-right: 0.5em;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--warm-muted);
+}
+.sources-list li p { margin: 0; }
+.sources-list a { color: var(--warm-text); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--warm-rule); }
+.sources-list a:hover { text-decoration-color: var(--warm-title); }
+/* The back-link to the citation stays small and quiet. */
+.sources-list [data-footnote-backref] {
+  margin-left: 0.4em;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  text-decoration: none;
+  color: var(--warm-muted);
+}
+.sources-list [data-footnote-backref]:hover { color: var(--warm-title); }
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ---- §20-21 endmatter -------------------------------------- */
+.end-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 22px;
+  border-top: 1px solid var(--warm-rule);
+}
+/* A text action. No icon row, no floating rail, no filled button. */
+.copy-link {
+  background: none;
+  border: none;
+  padding: 6px 0;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  cursor: pointer;
+}
+.copy-link:hover { color: var(--warm-title); }
+.copy-status {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.end-back { margin-top: 30px; }
+.end-back a {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.end-back a:hover { color: var(--warm-title); text-decoration: underline; text-underline-offset: 3px; }
+
+.end-related { margin-top: 44px; }
+.related-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  margin-bottom: 12px;
+}
+.related-link { display: block; }
+.related-title {
+  display: block;
+  font-family: var(--font-article);
+  font-size: 1.3rem;
+  line-height: 1.3;
+  color: var(--warm-title);
+}
+.related-link:hover .related-title { text-decoration: underline; text-underline-offset: 3px; }
+.related-dek {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-article);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--warm-muted);
+}
+
+/* ---- §24 links on warm surfaces ---------------------------- */
+/* In body text: underlined, because a reader should see a link.
+   In navigation and indexes: bare at rest, underlined on hover/focus. */
+.article-content p a,
+.article-content li a,
+.article-content blockquote a {
+  color: var(--warm-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: #b9b1a4;
+}
+.article-content p a:hover { text-decoration-color: var(--warm-title); }
+/* Citation markers are not body links: keep them bare. */
+.article-content sup a { text-decoration: none; }
+
+.warm-surface a:focus-visible,
+.article-view a:focus-visible,
+.copy-link:focus-visible {
+  outline: 2px solid var(--warm-title);
+  outline-offset: 3px;
+}
+
+/* ---- §23 no reading furniture ------------------------------ */
+/* No progress bar, no sticky TOC, no floating rail, no sticky header. */
+.article-view { position: static; }
+
+@media (max-width: 760px) {
+  .article-content, .longform-content { font-size: 18px; line-height: 1.6; max-width: 100%; }
+  .article-title-display, .article-subtitle-display { max-width: 100%; }
+  .article-end { max-width: 100%; }
+  .article-meta-line { font-size: 11px; gap: 6px; }
+}
+
+
+/* ============================================================
+   PHASE 5 — FOOTER AND CHROME
+   ============================================================ */
+
+/* ---- §27 footer -------------------------------------------- */
+/* Restrained. No newsletter, no social clutter, no large mark. */
+.site-footer {
+  background: var(--site-bg);
+  border-top: 0.5px solid var(--rule-on-dark);
+  padding: 46px 34px 54px;
+}
+.footer-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+}
+.footer-name {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-on-dark);
+}
+.footer-line {
+  margin-top: 10px;
+  max-width: 42ch;
+  font-family: var(--font-article);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-muted-on-dark);
+}
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+}
+.footer-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted-on-dark);
+}
+.footer-nav a:hover { color: var(--text-on-dark); }
+.footer-nav a:focus-visible { outline: 2px solid var(--text-on-dark); outline-offset: 3px; }
+
+@media (max-width: 640px) {
+  .site-footer { padding: 34px 20px 40px; }
+  .footer-inner { flex-direction: column; gap: 24px; }
+  .footer-nav { gap: 18px; }
+}
+
+/* ---- §32 loading stability --------------------------------- */
+/* Newsreader swaps in without reflowing the page. */
+body { font-display: swap; }

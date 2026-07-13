@@ -4,7 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cornerstone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="description" content="Independent essays on the systems shaping American politics.">
+  <meta property="og:site_name" content="Cornerstone">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
 /*__STYLES__*/
   </style>
@@ -47,13 +52,13 @@
           <radialGradient id="centerStone" cx="50%" cy="45%" r="60%">
             <stop offset="0%" stop-color="#ffffff"/><stop offset="55%" stop-color="#f0ece3"/><stop offset="100%" stop-color="#d8d2c6"/>
           </radialGradient>
-          <radialGradient id="selectionGlow" gradientUnits="userSpaceOnUse" cx="310" cy="245" r="330">
+          <radialGradient id="selectionGlow" gradientUnits="userSpaceOnUse" cx="310" cy="245" r="340">
             <stop offset="0%" stop-color="#fff9ee" stop-opacity="0.50"/>
             <stop offset="36%" stop-color="#fff3df" stop-opacity="0.34"/>
             <stop offset="68%" stop-color="#ecd8b7" stop-opacity="0.18"/>
             <stop offset="100%" stop-color="#e0c499" stop-opacity="0.00"/>
           </radialGradient>
-          <linearGradient id="selectionBeam" gradientUnits="userSpaceOnUse" x1="310" y1="180" x2="310" y2="610">
+          <linearGradient id="selectionBeam" gradientUnits="userSpaceOnUse" x1="310" y1="180" x2="310" y2="618">
             <stop offset="0%" stop-color="#fffaf0" stop-opacity="0.08"/>
             <stop offset="35%" stop-color="#fff0d6" stop-opacity="0.18"/>
             <stop offset="70%" stop-color="#f1dbb4" stop-opacity="0.28"/>
@@ -64,8 +69,8 @@
           </filter>
         </defs>
         <g id="wheelRoot"></g>
-        <path id="selectionBeamPath" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionBeam)" opacity="0.50" pointer-events="none"/>
-        <path id="selectionLight" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
+        <path id="selectionBeamPath" d="M575.870,463.500 A307,307 0 0,1 44.130,463.500 L218.201,363.000 A106,106 0 0,0 401.799,363.000 Z" fill="url(#selectionBeam)" opacity="0.50" pointer-events="none"/>
+        <path id="selectionLight" d="M575.870,463.500 A307,307 0 0,1 44.130,463.500 L218.201,363.000 A106,106 0 0,0 401.799,363.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
         <circle cx="310" cy="310" r="108" fill="#cfc9bd" pointer-events="none"/>
         <circle cx="310" cy="310" r="100" fill="url(#centerStone)" pointer-events="none"/>
         <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: the founding essay" data-nav>
@@ -142,14 +147,27 @@
     </section>
   </main>
 
-  <main id="article-page" class="view article-view"><div class="page-wrap article-shell">
+  <main id="article-page" class="view article-view"><article class="page-wrap article-shell">
+    <!-- 1. breadcrumb  2. metadata  3. title  4. optional deck  5. body -->
     <nav id="article-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
-    <div id="article-eyebrow" class="page-eyebrow"></div>
+    <div id="article-eyebrow" class="article-meta-line"></div>
     <h1 id="article-title" class="article-title-display"></h1>
     <div id="article-subtitle" class="article-subtitle-display"></div>
     <div class="page-rule"></div>
     <div id="article-body" class="article-content"></div>
-  </div></main>
+
+    <!-- Endmatter: sources, copy link, one quiet way back, one related essay.
+         No recommendation grids, no social rails. -->
+    <footer class="article-end">
+      <div id="article-sources" class="sources-block"></div>
+      <div class="end-actions">
+        <button type="button" id="copy-link" class="copy-link">Copy link</button>
+        <span id="copy-status" class="copy-status" role="status" aria-live="polite"></span>
+      </div>
+      <div id="article-back" class="end-back"></div>
+      <div id="article-related" class="end-related"></div>
+    </footer>
+  </article></main>
 
   <main id="notfound-page" class="view">
     <div class="page-head">
@@ -170,6 +188,22 @@
       </div>
     </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-mark">
+        <div class="footer-name">Cornerstone</div>
+        <p class="footer-line">Serve the long-term interests of the American people.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="/recent/" data-nav>Recent</a>
+        <a href="/economics/" data-nav>Economics</a>
+        <a href="/culture/" data-nav>Culture</a>
+        <a href="/governance/" data-nav>Governance</a>
+        <a href="mailto:cornerstoneproject7@gmail.com">Contact</a>
+      </nav>
+    </div>
+  </footer>
 </div>
 
 <script>

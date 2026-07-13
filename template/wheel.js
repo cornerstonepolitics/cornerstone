@@ -28,7 +28,11 @@ const DEFAULT_BRANCH = 'economics';
 const CENTER_SLUG = (centerPieces[0] && centerPieces[0].slug) || 'cornerstone';
 
 const CX = 310, CY = 310;
-const R_IN0 = 110, R_IN1 = 200, R_OUT0 = 202, R_OUT1 = 298;
+// The outer ring reaches further out than it used to, so the twelve topic
+// labels sit on a longer arc and have room to breathe. Combined with the
+// larger on-screen size (700px, up from 620px), every letter gains about a
+// fifth more physical space without changing the type itself.
+const R_IN0 = 108, R_IN1 = 196, R_OUT0 = 198, R_OUT1 = 306;
 
 // ------------------------------------------------------------
 //  URL helpers
@@ -106,7 +110,7 @@ const oneLineSmall = { 'Institutions': 13 };
 function buildWheel(){
   const root=document.getElementById('wheelRoot');
   let svg='', defs='';
-  svg+=`<circle cx="${CX}" cy="${CY}" r="298" fill="url(#marble)"/>`;
+  svg+=`<circle cx="${CX}" cy="${CY}" r="${R_OUT1}" fill="url(#marble)"/>`;
 
   order.forEach((bk,i)=>{
     const b=data[bk];
@@ -137,21 +141,21 @@ function buildWheel(){
       const stack = twoLine[p[1]];
       const onBottom = (mid%360>90 && mid%360<270);
       if(stack){
-        const rOuter=R_OUT0+(R_OUT1-R_OUT0)*0.66, rInner=R_OUT0+(R_OUT1-R_OUT0)*0.34;
+        const rOuter=R_OUT0+(R_OUT1-R_OUT0)*0.74, rInner=R_OUT0+(R_OUT1-R_OUT0)*0.42;
         const firstR=onBottom?rInner:rOuter, secondR=onBottom?rOuter:rInner;
         const id1=`pp${i}_${j}a`, id2=`pp${i}_${j}b`;
         defs+=`<path id="${id1}" fill="none" d="${outwardArc(firstR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         defs+=`<path id="${id2}" fill="none" d="${outwardArc(secondR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelInk || b.dark}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelInk || b.dark}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
       } else {
-        const outR=R_OUT0+(R_OUT1-R_OUT0)*0.5;
+        const outR=R_OUT0+(R_OUT1-R_OUT0)*0.60;   // further out = longer arc = more room
         const pid=`pp${i}_${j}`;
         defs+=`<path id="${pid}" fill="none" d="${outwardArc(outR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         let fs;
         if(oneLineSmall[p[1]]) fs=oneLineSmall[p[1]];
         else { const arcW=(seg-3)*Math.PI/180*outR; fs=Math.max(12, Math.min(17, arcW/(p[1].length*0.62))); }
-        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelInk || b.dark}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
       }
     });
   });
@@ -204,10 +208,11 @@ function updateWheelFocus(branch){
     const active = (bk===branch);
 
     document.querySelectorAll('.parent-label[data-branch="'+bk+'"]').forEach(el=>{
-      // Legibility comes from the LETTERS, not from an outline: a deep
-      // ink that reads as carved. Selection is expressed as a slightly
-      // clearer edge (CSS), never a hue swap into invisibility.
-      el.setAttribute('fill', b.wheelInk || b.dark);
+      // The outer labels get exactly what the inner ones get: the
+      // branch colour on stone. A deeper "ink" measured better for
+      // contrast but read as heavy and muddy, and it flattened the
+      // marble's warmth. Same treatment inside and out.
+      el.setAttribute('fill', b.wheelLabel);
       el.classList.toggle('is-selected', active);
     });
 
@@ -407,33 +412,136 @@ function setMobileTopics(branch){
 function renderArticle(slug){
   const p=allArticles.find(x=>x.slug===slug);
   if(!p) return false;
+
   const title=document.getElementById('article-title');
   const subtitle=document.getElementById('article-subtitle');
-  const eyebrow=document.getElementById('article-eyebrow');
+  const meta=document.getElementById('article-eyebrow');
   const breadcrumb=document.getElementById('article-breadcrumb');
 
   title.textContent=p.title;
+
+  // A deck only appears when the essay actually has one. It is not
+  // required, and an empty one is not rendered.
   if(p.subtitle){ subtitle.textContent=p.subtitle; subtitle.style.display='block'; }
   else { subtitle.textContent=''; subtitle.style.display='none'; }
 
+  // ---- breadcrumb + metadata -------------------------------------
+  // Metadata reads:  Cornerstone · [date] · [Branch] · [Topic]
+  // with branch and topic clickable.
   if(p.center){
     breadcrumb.innerHTML='<a href="'+homeUrl()+'" data-nav>Home</a>';
-    eyebrow.style.color='var(--warm-muted)';
-    eyebrow.textContent=p.eyebrow || 'Centerpiece';
+    meta.innerHTML='<span class="meta-author">Cornerstone</span>'
+      +'<span class="meta-sep">\u00b7</span>'
+      +'<time datetime="'+p.date+'">'+fmtDate(p.date)+'</time>';
   } else {
-    const b=data[p.branch], labels=parentLabels(p);
+    const b=data[p.branch];
     const topicLinks=parentKeys(p).map(k=>
-      '<a href="'+topicUrl(p.branch,k)+'" data-nav style="color:'+b.light+'">'+esc(parentLabel(p.branch,k))+'</a>'
+      '<a href="'+topicUrl(p.branch,k)+'" data-nav>'+esc(parentLabel(p.branch,k))+'</a>'
     ).join('<span class="sep">/</span>');
-    breadcrumb.innerHTML='<a href="'+homeUrl()+'" data-nav>Home</a><span class="sep">/</span>'
-      +'<a href="'+branchUrl(p.branch)+'" data-nav style="color:'+b.light+'">'+esc(b.label)+'</a>'
+
+    breadcrumb.innerHTML='<a href="'+branchUrl(p.branch)+'" data-nav>'+esc(b.label)+'</a>'
       +'<span class="sep">/</span>'+topicLinks;
-    eyebrow.style.color=b.light;
-    eyebrow.textContent=fmtDate(p.date)+' \u00b7 '+b.label+' \u00b7 '+labels.join(' / ');
+
+    meta.innerHTML='<span class="meta-author">Cornerstone</span>'
+      +'<span class="meta-sep">\u00b7</span>'
+      +'<time datetime="'+p.date+'">'+fmtDate(p.date)+'</time>'
+      +'<span class="meta-sep">\u00b7</span>'
+      +'<a href="'+branchUrl(p.branch)+'" data-nav style="color:'+b.light+'">'+esc(b.label)+'</a>'
+      +'<span class="meta-sep">\u00b7</span>'
+      +parentKeys(p).map(k=>
+          '<a href="'+topicUrl(p.branch,k)+'" data-nav style="color:'+b.light+'">'+esc(parentLabel(p.branch,k))+'</a>'
+        ).join('<span class="meta-sep">/</span>')
+      + (p.updated ? '<span class="meta-sep">\u00b7</span><span class="meta-updated">Updated '+fmtDate(p.updated)+'</span>' : '');
   }
 
-  document.getElementById('article-body').innerHTML=p.body || '<p>Article coming soon.</p>';
+  // ---- body, with the footnote block lifted out as SOURCES --------
+  const body=document.getElementById('article-body');
+  body.innerHTML = p.body || '<p>Essay coming soon.</p>';
+
+  const sources=document.getElementById('article-sources');
+  sources.innerHTML='';
+  const fn = body.querySelector('section.footnotes, [data-footnotes]');
+  if(fn){
+    // marked-footnote already gives us an <ol> with linked references and
+    // back-links. We only need to move it into the endmatter and give it a
+    // real heading. The list numbers itself, so nothing is typed by hand.
+    fn.remove();
+    const ol = fn.querySelector('ol');
+    if(ol){
+      const h = document.createElement('h2');
+      h.className='sources-heading';
+      h.textContent='Sources';
+      sources.appendChild(h);
+      ol.className='sources-list';
+      sources.appendChild(ol);
+    }
+  }
+
+  // ---- endmatter: one quiet way back, one related essay -----------
+  const back=document.getElementById('article-back');
+  if(p.center){
+    back.innerHTML='<a href="'+homeUrl()+'" data-nav>Return home</a>';
+  } else {
+    const b=data[p.branch];
+    const firstTopic=parentKeys(p)[0];
+    back.innerHTML='<a href="'+topicUrl(p.branch,firstTopic)+'" data-nav>'
+      +'More on '+esc(parentLabel(p.branch,firstTopic))+'</a>';
+  }
+
+  // At most ONE related essay, chosen deliberately: the nearest piece that
+  // shares a topic. No grids, no "you may also like", no endless lists.
+  const related=document.getElementById('article-related');
+  related.innerHTML='';
+  const rel = pickRelated(p);
+  if(rel){
+    const rb = rel.center ? null : data[rel.branch];
+    related.innerHTML='<div class="related-label">Read next</div>'
+      +'<a class="related-link" href="'+articleUrl(rel.slug)+'" data-nav>'
+      +'<span class="related-title">'+esc(rel.title)+'</span>'
+      +(rel.dek?'<span class="related-dek">'+esc(rel.dek)+'</span>':'')
+      +'</a>';
+  }
+
   return true;
+}
+
+// One related essay: prefer a piece sharing a topic, then the same branch,
+// then the most recent other essay. Deliberate, not algorithmic sprawl.
+function pickRelated(p){
+  const others = allArticles.filter(a=>a.slug!==p.slug);
+  if(!others.length) return null;
+  if(!p.center){
+    const keys = parentKeys(p);
+    const sharesTopic = others.filter(a=>!a.center && a.branch===p.branch
+      && parentKeys(a).some(k=>keys.includes(k)));
+    if(sharesTopic.length) return sortPosts(sharesTopic)[0];
+    const sameBranch = others.filter(a=>!a.center && a.branch===p.branch);
+    if(sameBranch.length) return sortPosts(sameBranch)[0];
+  }
+  const posts_ = others.filter(a=>!a.center);
+  return posts_.length ? sortPosts(posts_)[0] : others[0];
+}
+
+// Copy link: a small text action, no icons, no share rail.
+function initCopyLink(){
+  const btn=document.getElementById('copy-link');
+  const status=document.getElementById('copy-status');
+  if(!btn) return;
+  btn.addEventListener('click', function(){
+    const url = window.location.origin + window.location.pathname;
+    const done = ()=>{
+      status.textContent='Copied';
+      window.setTimeout(()=>{ status.textContent=''; }, 2000);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(done).catch(()=>{ status.textContent='Press Ctrl+C'; });
+    } else {
+      const ta=document.createElement('textarea');
+      ta.value=url; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); done(); }catch(e){ status.textContent='Press Ctrl+C'; }
+      document.body.removeChild(ta);
+    }
+  });
 }
 
 // ------------------------------------------------------------
@@ -573,19 +681,47 @@ function settleWheel(){
   if(prefersReducedMotion()) return;
   const root=document.getElementById('wheelRoot');
   if(!root) return;
-  const rest=curRot;
-  root.style.transition='transform 620ms cubic-bezier(0.22,1,0.36,1)';
-  root.style.transform='rotate('+(rest - 5)+'deg)';   // 5 degrees, then back
-  window.setTimeout(()=>{
-    root.style.transform='rotate('+rest+'deg)';
-    window.setTimeout(()=>{ root.style.transition=''; }, 640);
-  }, 240);
+
+  // The wheel must announce, once, that it is a thing which turns.
+  // A 5-degree nudge was too small to register. This is a single
+  // deliberate rotation into rest: the wheel starts a quarter-turn
+  // off and swings home under its own weight.
+  //
+  // Deliberately NOT a roulette spin. No multiple revolutions, no
+  // fast whirl, no clatter to a stop — those read as a game of
+  // chance. This reads as mass: it starts, it decelerates hard, it
+  // settles. Under one second, once, and never on a return visit.
+  const rest = curRot;
+  const from = rest + 25;                    // a quarter of a branch, offset
+
+  root.style.transition = 'none';
+  root.style.transform  = 'rotate(' + from + 'deg)';
+  void root.getBoundingClientRect();         // commit the start position
+
+  // Heavy deceleration: quick to move, slow to stop. Weight, not spin.
+  root.style.transition = 'transform 880ms cubic-bezier(0.16, 0.9, 0.24, 1)';
+  root.style.transform  = 'rotate(' + rest + 'deg)';
+
+  window.setTimeout(()=>{ root.style.transition=''; }, 900);
+}
+
+// Once per visitor, not once per page load. A returning reader should
+// not have to sit through the introduction again.
+function shouldSettle(){
+  try {
+    if(sessionStorage.getItem('cs_settled')) return false;
+    sessionStorage.setItem('cs_settled','1');
+    return true;
+  } catch(e){
+    return true;   // private mode etc: erring toward showing it once
+  }
 }
 
 // ------------------------------------------------------------
 //  Boot
 // ------------------------------------------------------------
 buildWheel();
+initCopyLink();
 history.replaceState(ROUTE, '', window.location.pathname + window.location.search);
 render(ROUTE, { first:true });
-if(ROUTE.kind === 'home') settleWheel();
+if(ROUTE.kind === 'home' && shouldSettle()) settleWheel();
