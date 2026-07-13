@@ -35,7 +35,7 @@
   <main id="wheel-view" class="view">
 
 
-    <p class="wheel-hint">Turn the wheel to explore.</p>
+    <p class="wheel-hint">Select a section to explore.</p>
 
     <div class="wheel-stage">
       <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"
@@ -71,7 +71,10 @@
         <g id="wheelRoot"></g>
         <path id="selectionBeamPath" d="M575.870,463.500 A307,307 0 0,1 44.130,463.500 L218.201,363.000 A106,106 0 0,0 401.799,363.000 Z" fill="url(#selectionBeam)" opacity="0.50" pointer-events="none"/>
         <path id="selectionLight" d="M575.870,463.500 A307,307 0 0,1 44.130,463.500 L218.201,363.000 A106,106 0 0,0 401.799,363.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
-        <circle cx="310" cy="310" r="108" fill="#cfc9bd" pointer-events="none"/>
+        <!-- The centre stone sits directly in the wheel. It used to carry an
+             8-unit grey collar AND a 2-unit band on top of that, which read as
+             two light outlines stacked around the middle. Both are gone. The
+             single carved rim below (#centerRim) is the only edge. -->
         <circle cx="310" cy="310" r="100" fill="url(#centerStone)" pointer-events="none"/>
         <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: the founding essay" data-nav>
           <circle id="centerHit" cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>

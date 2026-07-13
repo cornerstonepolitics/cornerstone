@@ -32,7 +32,11 @@ const CX = 310, CY = 310;
 // labels sit on a longer arc and have room to breathe. Combined with the
 // larger on-screen size (700px, up from 620px), every letter gains about a
 // fifth more physical space without changing the type itself.
-const R_IN0 = 108, R_IN1 = 196, R_OUT0 = 198, R_OUT1 = 306;
+// The centre stone is r=100 with a 2-unit rim. The inner branch ring starts
+// just outside it — the old 8-unit grey collar that used to sit here has been
+// removed, so the ring reclaims that space and the branch labels have room to
+// sit properly centred instead of being crowded against a heavy band.
+const R_IN0 = 101, R_IN1 = 196, R_OUT0 = 198, R_OUT1 = 306;
 
 // ------------------------------------------------------------
 //  URL helpers
@@ -127,10 +131,10 @@ function buildWheel(){
       +`<path class="wedge branch-wedge" data-branch="${bk}" d="${wedge(R_IN0,R_IN1,a0,a1)}" fill="url(#marble)" stroke="#000" stroke-opacity="0.3" stroke-width="1.7" onmouseenter="hoverBranch('${bk}')" onmouseleave="clearHover()"/>`
       +`</a>`;
 
-    // Baseline sits inward of the ring's centre so the glyph body, not the
-    // baseline, is what ends up centred. Nudged slightly past geometric
-    // centre for optical balance.
-    const inR=R_IN0+(R_IN1-R_IN0)*0.40;
+    // The baseline sits inward of the ring's centre, because glyphs grow
+    // outward from a baseline. 44% lands the letters centred without
+    // crowding the centre stone (40% pushed them right up against it).
+    const inR=R_IN0+(R_IN1-R_IN0)*0.42;
     const ipid=`bp${i}`;
     defs+=`<path id="${ipid}" fill="none" d="${outwardArc(inR, center+43, center-43)}"/>`;
     const branchFontSize = bk==='governance' ? 20 : 22;
@@ -151,7 +155,10 @@ function buildWheel(){
       if(stack){
         // A stacked pair is centred as a unit: one line above the ring's centre,
         // one below, each corrected for its own baseline.
-        const rOuter=R_OUT0+(R_OUT1-R_OUT0)*0.57, rInner=R_OUT0+(R_OUT1-R_OUT0)*0.29;
+        // A stacked pair straddles the ring's centre: one line above, one below,
+        // with a consistent gap. Placed symmetrically so the pair reads as one
+        // unit rather than two drifting words.
+        const rOuter=R_OUT0+(R_OUT1-R_OUT0)*0.62, rInner=R_OUT0+(R_OUT1-R_OUT0)*0.38;
         const firstR=onBottom?rInner:rOuter, secondR=onBottom?rOuter:rInner;
         const id1=`pp${i}_${j}a`, id2=`pp${i}_${j}b`;
         defs+=`<path id="${id1}" fill="none" d="${outwardArc(firstR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
@@ -159,17 +166,24 @@ function buildWheel(){
         svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
         svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
       } else {
-        // The baseline sits inward of the ring's centre, because glyphs grow
-        // upward (outward) from a baseline. 46% centres them geometrically —
-        // but on a curved band the eye still reads text as riding high, so
-        // this is nudged to 43% for OPTICAL centre. Trust the eye over the
-        // formula: geometric centre and visual centre are not the same thing.
-        const outR=R_OUT0+(R_OUT1-R_OUT0)*0.43;
+        // Sits just inward of the ring's centre so the letters read centred,
+        // but far enough out that the arc stays long. Pulling this in too far
+        // shortens the arc and the longest words (COMMUNITY, EDUCATION) run
+        // into each other.
+        const outR=R_OUT0+(R_OUT1-R_OUT0)*0.50;
         const pid=`pp${i}_${j}`;
         defs+=`<path id="${pid}" fill="none" d="${outwardArc(outR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         let fs;
         if(oneLineSmall[p[1]]) fs=oneLineSmall[p[1]];
-        else { const arcW=(seg-3)*Math.PI/180*outR; fs=Math.max(12, Math.min(17, arcW/(p[1].length*0.62))); }
+        else {
+          // The arc a label has to live in, with a little padding at each end.
+          const arcW=(seg-4)*Math.PI/180*outR;
+          // Georgia uppercase, with the tracking we apply, runs about 0.80em
+          // per character. The old figure here was 0.62 — far too optimistic,
+          // which is why nine-letter words (COMMUNITY, EDUCATION) were sized
+          // to 17px and then overflowed their wedge into the neighbour.
+          fs=Math.max(11, Math.min(16, arcW/(p[1].length*0.80)));
+        }
         svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
       }
     });
