@@ -134,7 +134,7 @@ function buildWheel(){
     // The baseline sits inward of the ring's centre, because glyphs grow
     // outward from a baseline. 44% lands the letters centred without
     // crowding the centre stone (40% pushed them right up against it).
-    const inR=R_IN0+(R_IN1-R_IN0)*0.42;
+    const inR=R_IN0+(R_IN1-R_IN0)*0.48;
     const ipid=`bp${i}`;
     defs+=`<path id="${ipid}" fill="none" d="${outwardArc(inR, center+43, center-43)}"/>`;
     const branchFontSize = bk==='governance' ? 20 : 22;
