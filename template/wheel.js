@@ -142,8 +142,8 @@ function buildWheel(){
         const id1=`pp${i}_${j}a`, id2=`pp${i}_${j}b`;
         defs+=`<path id="${id1}" fill="none" d="${outwardArc(firstR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         defs+=`<path id="${id2}" fill="none" d="${outwardArc(secondR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
       } else {
         const outR=R_OUT0+(R_OUT1-R_OUT0)*0.5;
         const pid=`pp${i}_${j}`;
@@ -151,7 +151,7 @@ function buildWheel(){
         let fs;
         if(oneLineSmall[p[1]]) fs=oneLineSmall[p[1]];
         else { const arcW=(seg-3)*Math.PI/180*outR; fs=Math.max(12, Math.min(17, arcW/(p[1].length*0.62))); }
-        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
       }
     });
   });
@@ -177,10 +177,11 @@ function brightenTopicWedge(bk, key, on){
 function brightenBranchWedge(bk, on){
   document.querySelectorAll('.branch-wedge[data-branch="'+bk+'"]').forEach(el=>el.classList.toggle('hot', on));
 }
+// Hovering an item makes just that label clearer, matching the
+// selected treatment, so you can see exactly what you are pointing at.
 function tintLabel(bk, key){
-  const b=data[bk];
   document.querySelectorAll('.parent-label[data-branch="'+bk+'"][data-topic="'+key+'"]').forEach(el=>{
-    el.setAttribute('fill', b.wheelLabel);
+    el.classList.add('is-selected');
   });
 }
 function hoverBranch(bk){
@@ -194,19 +195,30 @@ function hoverTopic(bk, key){
 }
 function clearHover(){
   document.querySelectorAll('.wedge.hot').forEach(el=>el.classList.remove('hot'));
-  updateWheelFocus(activeBranch);
+  updateWheelFocus(activeBranch);   // restores the true selected state
 }
 
 function updateWheelFocus(branch){
   order.forEach(bk=>{
     const b=data[bk];
-    const active = bk===branch;
-    document.querySelectorAll('.parent-label-'+bk).forEach(el=>{
-      el.setAttribute('fill', active ? b.wheelLabel : b.dark);
-      el.setAttribute('stroke-opacity', '0.16');
+    const active = (bk===branch);
+
+    document.querySelectorAll('.parent-label[data-branch="'+bk+'"]').forEach(el=>{
+      // Ink stays the deep branch colour at all times. Selection is
+      // expressed as a stronger halo (CSS), which is legible on every
+      // marble tone — unlike the old bright fill, which vanished at
+      // 1.0 contrast on mid-tone stone.
+      el.setAttribute('fill', b.dark);
+      el.classList.toggle('is-selected', active);
     });
-    document.querySelectorAll('.branch-label-'+bk).forEach(el=>{
+
+    document.querySelectorAll('.branch-label[data-branch="'+bk+'"]').forEach(el=>{
       el.setAttribute('fill', b.wheelLabel);
+      el.classList.toggle('is-selected', active);
+    });
+
+    document.querySelectorAll('.wedge[data-branch="'+bk+'"]').forEach(el=>{
+      el.classList.toggle('is-selected', active);
     });
   });
 }

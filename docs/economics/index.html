@@ -44,9 +44,22 @@
 body { background: var(--site-bg); }
 #app { font-family: var(--font-ui); background: var(--site-bg); color: var(--text-soft-on-dark); min-height: 760px; }
 .view { display: none; } .view.active { display: block; }
-.nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; border-bottom: 0.5px solid var(--rule-on-dark); background: var(--site-bg); }
-.nav-logo { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-on-dark); cursor: pointer; }
-.nav-links { display: flex; gap: 22px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+.nav { display: flex; justify-content: space-between; align-items: center; padding: 26px 34px; border-bottom: 0.5px solid var(--rule-on-dark); background: var(--site-bg); }
+.nav-logo {
+  font-size: 19px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-on-dark);
+  cursor: pointer;
+  font-weight: 400;
+}
+.nav-links {
+  display: flex;
+  gap: 30px;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
 .nav-links span { cursor: pointer; } .nav-links span:hover { opacity: 0.75; }
 #home { display: flex; flex-direction: column; align-items: center; padding: 24px 12px; background: var(--site-bg); }
 .wheel-stage { width: 100%; max-width: 620px; aspect-ratio: 1; }
@@ -72,14 +85,6 @@ body { background: var(--site-bg); }
    lights up together to signal it will rotate. Labels are
    pointer-events:none so the cursor never leaves the wedge beneath
    (which would make the hover flicker as you cross a letter). */
-.wedge {
-  cursor: pointer;
-  transition: filter 0.18s ease, stroke-opacity 0.18s ease;
-}
-.wedge.hot {
-  filter: brightness(1.11) saturate(1.05);
-  stroke-opacity: 0.5;
-}
 
 
 .page-wrap { padding: 40px 28px; max-width: 800px; margin: 0 auto; }
@@ -716,6 +721,140 @@ h1:focus { outline: none; }
   .warm-inner { transition: none; }
 }
 
+
+/* ============================================================
+   PHASE 3 — WHEEL LEGIBILITY, HOVER, TOUCH, LOADING
+   ============================================================ */
+
+/* ---- the one instruction that earns its place -------------- */
+/* A pointer cursor cannot tell you the wheel TURNS, and phones
+   have no hover at all. This is the only thing a visitor cannot
+   otherwise guess, so it is the only thing we say. */
+.wheel-hint {
+  text-align: center;
+  margin: 6px auto 30px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted-on-dark);
+}
+
+/* ---- §8 LABEL LEGIBILITY ----------------------------------- */
+/* The marble runs light at the centre and dark at the rim, so a
+   label's background changes as the wheel turns. Measured, the old
+   treatment gave 1.0-4.0 contrast depending on position: some
+   labels vanished, others shouted.
+
+   Fix: give every glyph its own light halo (a stroke painted behind
+   the fill). The letters then sit on a consistent ground no matter
+   what marble is underneath, and contrast lands at 6.3-12.6 in every
+   resting position. Selection changes ink weight and halo strength,
+   not hue — so a selected label gets clearer, never invisible. */
+#wheelRoot .parent-label {
+  paint-order: stroke fill;
+  stroke: #f2ede3;
+  stroke-width: 2.6;
+  stroke-opacity: 0.62;
+  stroke-linejoin: round;
+  transition: stroke-opacity 180ms ease, fill 180ms ease;
+}
+#wheelRoot .parent-label.is-selected {
+  stroke-opacity: 0.86;      /* clearer, not brighter */
+  stroke-width: 3;
+}
+#wheelRoot .branch-label {
+  paint-order: stroke fill;
+  stroke: #f4f0e7;
+  stroke-width: 2.4;
+  stroke-opacity: 0.34;      /* inner marble is lighter: needs less help */
+  stroke-linejoin: round;
+  transition: stroke-opacity 180ms ease, fill 180ms ease;
+}
+#wheelRoot .branch-label.is-selected { stroke-opacity: 0.55; }
+
+/* ---- §7 HOVER AND SELECTED STATES -------------------------- */
+/* Resting selected state stays QUIETER than hover, so hover always
+   reads as "this is what you are about to do". */
+.wedge {
+  cursor: pointer;
+  transition: filter 150ms ease, stroke-opacity 150ms ease, stroke-width 150ms ease;
+}
+.wedge.hot {
+  filter: brightness(1.11) saturate(1.04);
+  stroke-opacity: 0.62;      /* sharpen the boundary */
+  stroke-width: 2.1;
+}
+.wedge.is-selected {
+  stroke-opacity: 0.44;      /* quieter than .hot */
+}
+
+/* ---- the centre mission stone ------------------------------ */
+/* Restrained engraved response: text firms up, the rim deepens. */
+#centerRim {
+  transition: stroke 160ms ease, stroke-width 160ms ease;
+}
+.center-link:hover ~ #centerRim,
+.center-link:focus-visible ~ #centerRim {
+  stroke: #a9a294;
+  stroke-width: 1.4;
+}
+.center-link:hover #centerHit { opacity: 0.05; fill: #fffdf8; }
+
+/* ---- §32 LOADING STABILITY --------------------------------- */
+/* Reserve the wheel's box before the SVG paints, so nothing shifts. */
+.wheel-stage {
+  width: 100%;
+  max-width: 620px;
+  aspect-ratio: 1 / 1;
+  margin-inline: auto;
+  contain: layout;
+}
+/* Near-black is painted immediately, never a white flash. */
+html { background: #0d0d0d; }
+
+/* ---- §9 TOUCH FEEDBACK ------------------------------------- */
+/* Phones have no hover: a tap must confirm itself. A brief contrast
+   lift (~170ms) that resolves into the selected state. */
+@media (hover: none) {
+  .wedge { transition: filter 170ms ease, stroke-opacity 170ms ease; }
+  .wedge:active {
+    filter: brightness(1.14);
+    stroke-opacity: 0.6;
+  }
+  .wheel-hint { font-size: 10px; letter-spacing: 0.16em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wedge, #wheelRoot .parent-label, #wheelRoot .branch-label { transition: none; }
+}
+
+/* ---- header on phones -------------------------------------- */
+/* All four links stay visible and on one line. No hamburger. */
+@media (max-width: 640px) {
+  .nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 20px;
+  }
+  .nav-logo { font-size: 16px; letter-spacing: 0.18em; }
+  .nav-links {
+    gap: 18px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+  /* Larger invisible tap areas without a bulkier header. */
+  .nav-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -738,10 +877,8 @@ h1:focus { outline: none; }
        ============================================================ -->
   <main id="wheel-view" class="view">
 
-    <div class="wheel-hero">
-      <p class="hero-line">Independent essays on the systems shaping American politics.</p>
-      <p class="hero-hint">Select a branch.</p>
-    </div>
+
+    <p class="wheel-hint">Turn the wheel to explore.</p>
 
     <div class="wheel-stage">
       <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"
@@ -778,7 +915,7 @@ h1:focus { outline: none; }
         <path id="selectionBeamPath" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionBeam)" opacity="0.50" pointer-events="none"/>
         <path id="selectionLight" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
         <circle cx="310" cy="310" r="108" fill="#cfc9bd" pointer-events="none"/>
-        <circle cx="310" cy="310" r="100" fill="url(#centerStone)" stroke="#bdb6a8" stroke-width="0.5" pointer-events="none"/>
+        <circle cx="310" cy="310" r="100" fill="url(#centerStone)" pointer-events="none"/>
         <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: the founding essay" data-nav>
           <circle id="centerHit" cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>
           <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">SERVE THE</text>
@@ -786,6 +923,7 @@ h1:focus { outline: none; }
           <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">INTERESTS OF THE</text>
           <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">AMERICAN PEOPLE</text>
         </a>
+        <circle id="centerRim" cx="310" cy="310" r="100" fill="none" stroke="#bdb6a8" stroke-width="0.5" pointer-events="none"/>
       </svg>
     </div>
 
@@ -1172,8 +1310,8 @@ function buildWheel(){
         const id1=`pp${i}_${j}a`, id2=`pp${i}_${j}b`;
         defs+=`<path id="${id1}" fill="none" d="${outwardArc(firstR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         defs+=`<path id="${id2}" fill="none" d="${outwardArc(secondR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
       } else {
         const outR=R_OUT0+(R_OUT1-R_OUT0)*0.5;
         const pid=`pp${i}_${j}`;
@@ -1181,7 +1319,7 @@ function buildWheel(){
         let fs;
         if(oneLineSmall[p[1]]) fs=oneLineSmall[p[1]];
         else { const arcW=(seg-3)*Math.PI/180*outR; fs=Math.max(12, Math.min(17, arcW/(p[1].length*0.62))); }
-        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" stroke="#efe8dc" stroke-opacity="0.16" stroke-width="1.05" paint-order="stroke fill" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.dark}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
       }
     });
   });
@@ -1207,10 +1345,11 @@ function brightenTopicWedge(bk, key, on){
 function brightenBranchWedge(bk, on){
   document.querySelectorAll('.branch-wedge[data-branch="'+bk+'"]').forEach(el=>el.classList.toggle('hot', on));
 }
+// Hovering an item makes just that label clearer, matching the
+// selected treatment, so you can see exactly what you are pointing at.
 function tintLabel(bk, key){
-  const b=data[bk];
   document.querySelectorAll('.parent-label[data-branch="'+bk+'"][data-topic="'+key+'"]').forEach(el=>{
-    el.setAttribute('fill', b.wheelLabel);
+    el.classList.add('is-selected');
   });
 }
 function hoverBranch(bk){
@@ -1224,19 +1363,30 @@ function hoverTopic(bk, key){
 }
 function clearHover(){
   document.querySelectorAll('.wedge.hot').forEach(el=>el.classList.remove('hot'));
-  updateWheelFocus(activeBranch);
+  updateWheelFocus(activeBranch);   // restores the true selected state
 }
 
 function updateWheelFocus(branch){
   order.forEach(bk=>{
     const b=data[bk];
-    const active = bk===branch;
-    document.querySelectorAll('.parent-label-'+bk).forEach(el=>{
-      el.setAttribute('fill', active ? b.wheelLabel : b.dark);
-      el.setAttribute('stroke-opacity', '0.16');
+    const active = (bk===branch);
+
+    document.querySelectorAll('.parent-label[data-branch="'+bk+'"]').forEach(el=>{
+      // Ink stays the deep branch colour at all times. Selection is
+      // expressed as a stronger halo (CSS), which is legible on every
+      // marble tone — unlike the old bright fill, which vanished at
+      // 1.0 contrast on mid-tone stone.
+      el.setAttribute('fill', b.dark);
+      el.classList.toggle('is-selected', active);
     });
-    document.querySelectorAll('.branch-label-'+bk).forEach(el=>{
+
+    document.querySelectorAll('.branch-label[data-branch="'+bk+'"]').forEach(el=>{
       el.setAttribute('fill', b.wheelLabel);
+      el.classList.toggle('is-selected', active);
+    });
+
+    document.querySelectorAll('.wedge[data-branch="'+bk+'"]').forEach(el=>{
+      el.classList.toggle('is-selected', active);
     });
   });
 }

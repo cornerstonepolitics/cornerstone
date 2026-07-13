@@ -29,10 +29,8 @@
        ============================================================ -->
   <main id="wheel-view" class="view">
 
-    <div class="wheel-hero">
-      <p class="hero-line">Independent essays on the systems shaping American politics.</p>
-      <p class="hero-hint">Select a branch.</p>
-    </div>
+
+    <p class="wheel-hint">Turn the wheel to explore.</p>
 
     <div class="wheel-stage">
       <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"
@@ -69,7 +67,7 @@
         <path id="selectionBeamPath" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionBeam)" opacity="0.50" pointer-events="none"/>
         <path id="selectionLight" d="M569.808,460.000 A300,300 0 0,1 50.192,460.000 L219.933,362.000 A104,104 0 0,0 400.067,362.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
         <circle cx="310" cy="310" r="108" fill="#cfc9bd" pointer-events="none"/>
-        <circle cx="310" cy="310" r="100" fill="url(#centerStone)" stroke="#bdb6a8" stroke-width="0.5" pointer-events="none"/>
+        <circle cx="310" cy="310" r="100" fill="url(#centerStone)" pointer-events="none"/>
         <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: the founding essay" data-nav>
           <circle id="centerHit" cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>
           <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">SERVE THE</text>
@@ -77,6 +75,7 @@
           <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">INTERESTS OF THE</text>
           <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">AMERICAN PEOPLE</text>
         </a>
+        <circle id="centerRim" cx="310" cy="310" r="100" fill="none" stroke="#bdb6a8" stroke-width="0.5" pointer-events="none"/>
       </svg>
     </div>
 

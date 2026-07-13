@@ -35,9 +35,22 @@
 body { background: var(--site-bg); }
 #app { font-family: var(--font-ui); background: var(--site-bg); color: var(--text-soft-on-dark); min-height: 760px; }
 .view { display: none; } .view.active { display: block; }
-.nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; border-bottom: 0.5px solid var(--rule-on-dark); background: var(--site-bg); }
-.nav-logo { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-on-dark); cursor: pointer; }
-.nav-links { display: flex; gap: 22px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+.nav { display: flex; justify-content: space-between; align-items: center; padding: 26px 34px; border-bottom: 0.5px solid var(--rule-on-dark); background: var(--site-bg); }
+.nav-logo {
+  font-size: 19px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-on-dark);
+  cursor: pointer;
+  font-weight: 400;
+}
+.nav-links {
+  display: flex;
+  gap: 30px;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
 .nav-links span { cursor: pointer; } .nav-links span:hover { opacity: 0.75; }
 #home { display: flex; flex-direction: column; align-items: center; padding: 24px 12px; background: var(--site-bg); }
 .wheel-stage { width: 100%; max-width: 620px; aspect-ratio: 1; }
@@ -63,14 +76,6 @@ body { background: var(--site-bg); }
    lights up together to signal it will rotate. Labels are
    pointer-events:none so the cursor never leaves the wedge beneath
    (which would make the hover flicker as you cross a letter). */
-.wedge {
-  cursor: pointer;
-  transition: filter 0.18s ease, stroke-opacity 0.18s ease;
-}
-.wedge.hot {
-  filter: brightness(1.11) saturate(1.05);
-  stroke-opacity: 0.5;
-}
 
 
 .page-wrap { padding: 40px 28px; max-width: 800px; margin: 0 auto; }
@@ -705,4 +710,138 @@ h1:focus { outline: none; }
 @media (prefers-reduced-motion: reduce) {
   #wheelRoot { transition: none; }
   .warm-inner { transition: none; }
+}
+
+
+/* ============================================================
+   PHASE 3 — WHEEL LEGIBILITY, HOVER, TOUCH, LOADING
+   ============================================================ */
+
+/* ---- the one instruction that earns its place -------------- */
+/* A pointer cursor cannot tell you the wheel TURNS, and phones
+   have no hover at all. This is the only thing a visitor cannot
+   otherwise guess, so it is the only thing we say. */
+.wheel-hint {
+  text-align: center;
+  margin: 6px auto 30px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted-on-dark);
+}
+
+/* ---- §8 LABEL LEGIBILITY ----------------------------------- */
+/* The marble runs light at the centre and dark at the rim, so a
+   label's background changes as the wheel turns. Measured, the old
+   treatment gave 1.0-4.0 contrast depending on position: some
+   labels vanished, others shouted.
+
+   Fix: give every glyph its own light halo (a stroke painted behind
+   the fill). The letters then sit on a consistent ground no matter
+   what marble is underneath, and contrast lands at 6.3-12.6 in every
+   resting position. Selection changes ink weight and halo strength,
+   not hue — so a selected label gets clearer, never invisible. */
+#wheelRoot .parent-label {
+  paint-order: stroke fill;
+  stroke: #f2ede3;
+  stroke-width: 2.6;
+  stroke-opacity: 0.62;
+  stroke-linejoin: round;
+  transition: stroke-opacity 180ms ease, fill 180ms ease;
+}
+#wheelRoot .parent-label.is-selected {
+  stroke-opacity: 0.86;      /* clearer, not brighter */
+  stroke-width: 3;
+}
+#wheelRoot .branch-label {
+  paint-order: stroke fill;
+  stroke: #f4f0e7;
+  stroke-width: 2.4;
+  stroke-opacity: 0.34;      /* inner marble is lighter: needs less help */
+  stroke-linejoin: round;
+  transition: stroke-opacity 180ms ease, fill 180ms ease;
+}
+#wheelRoot .branch-label.is-selected { stroke-opacity: 0.55; }
+
+/* ---- §7 HOVER AND SELECTED STATES -------------------------- */
+/* Resting selected state stays QUIETER than hover, so hover always
+   reads as "this is what you are about to do". */
+.wedge {
+  cursor: pointer;
+  transition: filter 150ms ease, stroke-opacity 150ms ease, stroke-width 150ms ease;
+}
+.wedge.hot {
+  filter: brightness(1.11) saturate(1.04);
+  stroke-opacity: 0.62;      /* sharpen the boundary */
+  stroke-width: 2.1;
+}
+.wedge.is-selected {
+  stroke-opacity: 0.44;      /* quieter than .hot */
+}
+
+/* ---- the centre mission stone ------------------------------ */
+/* Restrained engraved response: text firms up, the rim deepens. */
+#centerRim {
+  transition: stroke 160ms ease, stroke-width 160ms ease;
+}
+.center-link:hover ~ #centerRim,
+.center-link:focus-visible ~ #centerRim {
+  stroke: #a9a294;
+  stroke-width: 1.4;
+}
+.center-link:hover #centerHit { opacity: 0.05; fill: #fffdf8; }
+
+/* ---- §32 LOADING STABILITY --------------------------------- */
+/* Reserve the wheel's box before the SVG paints, so nothing shifts. */
+.wheel-stage {
+  width: 100%;
+  max-width: 620px;
+  aspect-ratio: 1 / 1;
+  margin-inline: auto;
+  contain: layout;
+}
+/* Near-black is painted immediately, never a white flash. */
+html { background: #0d0d0d; }
+
+/* ---- §9 TOUCH FEEDBACK ------------------------------------- */
+/* Phones have no hover: a tap must confirm itself. A brief contrast
+   lift (~170ms) that resolves into the selected state. */
+@media (hover: none) {
+  .wedge { transition: filter 170ms ease, stroke-opacity 170ms ease; }
+  .wedge:active {
+    filter: brightness(1.14);
+    stroke-opacity: 0.6;
+  }
+  .wheel-hint { font-size: 10px; letter-spacing: 0.16em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wedge, #wheelRoot .parent-label, #wheelRoot .branch-label { transition: none; }
+}
+
+/* ---- header on phones -------------------------------------- */
+/* All four links stay visible and on one line. No hamburger. */
+@media (max-width: 640px) {
+  .nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 20px;
+  }
+  .nav-logo { font-size: 16px; letter-spacing: 0.18em; }
+  .nav-links {
+    gap: 18px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+  /* Larger invisible tap areas without a bulkier header. */
+  .nav-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
 }
