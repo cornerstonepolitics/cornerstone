@@ -222,20 +222,22 @@ function brightenLabel(sel, on){
   document.querySelectorAll(sel).forEach(el=>el.classList.toggle('lit', on));
 }
 
+// Hover behaves identically on every third, selected or not: the whole third
+// lights, the box under the cursor is outlined, and that box's own label
+// brightens. Previously the whole-third cue was suppressed on the selected
+// third, which made hovering it feel dead by comparison.
 function hoverBranch(bk){
   const wedge = document.querySelector('.branch-wedge[data-branch="'+bk+'"]');
+  brightenBranch(bk, true);
   markHovered(wedge, true);
   brightenLabel('.branch-label[data-branch="'+bk+'"]', true);
-  // On a branch that is not selected, also light the whole third: clicking
-  // will rotate the wheel there, and the third is what moves.
-  if(bk!==activeBranch) brightenBranch(bk, true);
 }
 
 function hoverTopic(bk, key){
   const wedge = document.querySelector('.topic-wedge[data-branch="'+bk+'"][data-topic="'+key+'"]');
+  brightenBranch(bk, true);
   markHovered(wedge, true);
   brightenLabel('.parent-label[data-branch="'+bk+'"][data-topic="'+key+'"]', true);
-  if(bk!==activeBranch) brightenBranch(bk, true);
 }
 
 function clearHover(){

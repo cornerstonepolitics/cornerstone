@@ -768,17 +768,43 @@ h1:focus { outline: none; }
   cursor: pointer;
   transition: stroke-opacity 150ms ease, stroke-width 150ms ease;
 }
+/* The RESTING selected state. Declared before the hover rules so that hover
+   always wins: these have the same specificity, so source order decides, and
+   with is-selected last the hover was being silently overridden on the
+   selected third — which is why hovering it felt dead. */
+.wedge.is-selected {
+  stroke-opacity: 0.5;
+  stroke-width: 1.5;
+}
+
+/* THE WHOLE-THIRD CUE — only on a branch that is NOT selected.
+   Clicking there rotates the wheel, and the third is what moves, so the
+   third is what lights up. No brightness() filter: filtering an SVG path
+   re-rasterises the marble beneath it and washes the stone out. */
 .wedge.hot {
-  /* No brightness()/saturate(): filtering an SVG path re-rasterises
-     the marble gradient beneath it and washes out the stone's warmth.
-     A firmer edge alone reads as "this is the target". */
   stroke-opacity: 0.62;
   stroke-width: 2.1;
 }
-.wedge.is-selected {
-  stroke-opacity: 0.44;      /* quieter than .hot */
+
+/* THE INDIVIDUAL BOX — the one actually under the cursor.
+   A firm outline around that box alone, so it is unmistakable which
+   piece you are about to click. This reads on the selected third (where
+   there is no whole-third cue) and on top of the third cue elsewhere. */
+.wedge.hovered {
+  stroke: #241f18;
+  stroke-opacity: 0.9;
+  stroke-width: 3.4;
 }
 
+/* The hovered box's own label brightens. This is the signal that says
+   "this individual piece is clickable", distinct from the third cue.
+   CSS wins over the fill attribute the script sets, so this survives
+   updateWheelFocus. */
+#wheelRoot .parent-label.lit,
+#wheelRoot .branch-label.lit {
+  fill: #fdf6e6 !important;
+  stroke-opacity: 0.85;
+}
 /* ---- the centre mission stone ------------------------------ */
 /* Restrained engraved response: text firms up, the rim deepens. */
 #centerRim {
@@ -821,29 +847,7 @@ html { background: #0d0d0d; }
 
 /* ---- header on phones -------------------------------------- */
 /* All four links stay visible and on one line. No hamburger. */
-@media (max-width: 640px) {
-  .nav {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 18px 20px;
-  }
-  .nav-logo { font-size: 16px; letter-spacing: 0.18em; }
-  .nav-links {
-    gap: 18px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    flex-wrap: nowrap;
-    width: 100%;
-  }
-  /* Larger invisible tap areas without a bulkier header. */
-  .nav-links a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 40px;
-  }
-}
+
 
 
 /* ============================================================
@@ -1266,15 +1270,21 @@ body { font-display: swap; }
    on a 700px wheel and illegible on a 340px one. The wheel drops below
    the size its labels need at roughly 460px of window width — so that
    is where the labels step aside and the topic links take over. */
-@media (max-width: 460px) {
-  #wheelRoot .parent-label { display: none; }
+/* The twelve outer labels ALWAYS show. An empty outer ring reads as broken
+   — worse than small type. The labels are drawn in SVG user units, so they
+   scale with the wheel automatically: shrink the wheel and the letters
+   shrink with it, in proportion, staying where they belong.
 
+   The topic links below the wheel remain as a larger tap target on phones,
+   where a 5mm wedge is a hard thing to hit accurately. They supplement the
+   wheel rather than replacing it. */
+@media (max-width: 560px) {
   .mobile-topics {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0 18px;
     max-width: 520px;
-    margin: 4px auto 8px;
+    margin: 10px auto 8px;
     padding: 0 20px;
   }
   .mobile-topics a {
@@ -1288,11 +1298,16 @@ body { font-display: swap; }
   }
   .mobile-topics a:active { color: var(--accent, var(--text-on-dark)); }
 }
-
-/* Between 460px and 760px the wheel keeps all twelve labels. It simply
-   scales down with its container, and the labels scale with it. */
-@media (min-width: 461px) and (max-width: 760px) {
+@media (min-width: 561px) {
   .mobile-topics { display: none; }
+}
+
+/* Give the wheel as much of a narrow screen as it can take, so the labels
+   are as large as the viewport allows. */
+@media (max-width: 560px) {
+  #home, #wheel-view { padding-left: 0; padding-right: 0; }
+  .wheel-stage { width: min(100%, 100vw); max-width: 100vw; }
+  .wheel-hint { margin-bottom: 14px; }
 }
 
 
@@ -1301,29 +1316,64 @@ body { font-display: swap; }
    room. The header previously only stacked at 640px, so between 640
    and 700 they ran into each other. Stack earlier, and let the gap
    shrink before that so the transition is gradual rather than abrupt. */
-@media (max-width: 900px) {
-  .nav { padding: 20px 24px; }
-  .nav-links { gap: clamp(16px, 2.6vw, 30px); }
+/* The header type scales continuously with the viewport, so the wordmark
+   and all four links stay on ONE line at every width. No stacking, no
+   hamburger, no dropdown — and no dead space after a hard breakpoint,
+   which is what stacking produced. It simply keeps shrinking with the page. */
+.nav {
+  padding: clamp(14px, 2.2vw, 26px) clamp(16px, 2.8vw, 34px);
+  gap: 16px;
 }
-@media (max-width: 780px) {
-  .nav {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 18px 22px;
+.nav-logo {
+  font-size: clamp(11px, 2.05vw, 22px);
+  letter-spacing: clamp(0.06em, 0.6vw, 0.2em);
+  white-space: nowrap;
+}
+.nav-links {
+  gap: clamp(6px, 1.9vw, 30px);
+  font-size: clamp(7.5px, 1.28vw, 15px);
+  letter-spacing: clamp(0.02em, 0.28vw, 0.14em);
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+.nav-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+}
+
+
+/* ---- the selected third, lit as one piece of stone ---------- */
+/* A translucent warm wash over the whole third — inner wedge and its four
+   topic wedges together — so the selection reads as one continuous
+   illuminated section rather than five separate pieces.
+
+   Opacity, not filter(): a brightness() filter re-rasterises the marble
+   gradient underneath and flattens its warmth. A wash lifts luminance
+   while the stone shows through. */
+.branch-glow {
+  opacity: 0;
+  transition: opacity 260ms ease;
+  mix-blend-mode: soft-light;
+}
+.branch-glow.is-selected { opacity: 0.55; }
+
+
+/* On phones the wheel is small, so the labels are small. Legibility beats
+   elegance at that size: give the type a touch more weight and tighten the
+   tracking so the letters hold together instead of dissolving. */
+@media (max-width: 560px) {
+  #wheelRoot .parent-label {
+    font-weight: 700;
+    letter-spacing: 0.2px;
   }
-  .nav-logo { font-size: 18px; letter-spacing: 0.18em; }
-  .nav-links {
-    gap: 20px;
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    flex-wrap: nowrap;
-    width: 100%;
+  #wheelRoot .branch-label {
+    font-weight: 700;
   }
-  .nav-links a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 40px;
+  /* A firmer carved edge helps small letters separate from the stone. */
+  #wheelRoot .parent-label,
+  #wheelRoot .branch-label {
+    stroke-width: 0.6;
+    stroke-opacity: 0.65;
   }
 }
