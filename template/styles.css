@@ -1148,3 +1148,110 @@ html { background: #0d0d0d; }
 /* ---- §32 loading stability --------------------------------- */
 /* Newsreader swaps in without reflowing the page. */
 body { font-display: swap; }
+
+
+/* ============================================================
+   HOMEPAGE — RECENT ESSAYS
+   ============================================================ */
+
+.home-recent-heading {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--warm-rule);
+  margin-bottom: 4px;
+}
+
+/* Each row carries a thin rule in its branch colour. That is the branch
+   identity — architectural and quiet. The alternative, an outline around
+   the letterforms, degrades the type: it thickens strokes unevenly, muddies
+   the counters, and reads as decoration stuck on rather than structure. */
+.essay-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 28px;
+  align-items: baseline;
+  padding: 26px 0 26px 18px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  border-left: 2px solid var(--accent);
+  color: inherit;
+  transition: border-left-width 140ms ease, padding-left 140ms ease;
+}
+.essay-row:hover {
+  border-left-width: 4px;
+  padding-left: 16px;
+}
+.essay-row:last-child { border-bottom: none; }
+
+.essay-row-meta { display: flex; flex-direction: column; gap: 6px; }
+.essay-row-date {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+  white-space: nowrap;
+}
+.essay-row-branch {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.essay-row-body { display: block; }
+
+/* The title reads as a link: it underlines on hover, in the branch colour.
+   Interaction without decorating the letterform. */
+.essay-row-title {
+  display: block;
+  font-family: var(--font-article);
+  font-size: 1.42rem;
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  color: var(--warm-title);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 140ms ease;
+}
+.essay-row:hover .essay-row-title,
+.essay-row:focus-visible .essay-row-title {
+  text-decoration-color: var(--accent);
+}
+.essay-row-dek {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--font-article);
+  font-size: 1.02rem;
+  line-height: 1.5;
+  color: var(--warm-muted);
+  max-width: 58ch;
+}
+
+.home-all {
+  display: inline-block;
+  margin-top: 34px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.home-all:hover { color: var(--warm-title); text-decoration: underline; text-underline-offset: 3px; }
+
+@media (max-width: 760px) {
+  .essay-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding-left: 14px;
+  }
+  .essay-row:hover { padding-left: 12px; }
+  .essay-row-meta { flex-direction: row; gap: 12px; flex-wrap: wrap; }
+  .essay-row-title { font-size: 1.3rem; }
+}

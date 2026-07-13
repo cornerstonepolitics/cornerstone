@@ -307,18 +307,39 @@ function latestEssay(){
   return sorted[0] || centerPieces[0] || null;
 }
 
-// DEFAULT: the latest essay, as a quiet feature (no image, no card).
+// DEFAULT: the three most recent essays, plainly labelled. A doorway,
+// not a destination — the wheel is still the homepage.
 function contentHome(){
-  const p=latestEssay();
-  if(!p) return '<p class="empty-state">Essays are coming.</p>';
-  const label = p.center ? 'Cornerstone' : (data[p.branch].label+' \u00b7 '+parentLabels(p).join(' / '));
-  const color = p.center ? 'var(--warm-muted)' : data[p.branch].color;
-  return '<div class="feature">'
-    +'<div class="feature-label" style="color:'+color+'">'+esc(label)+'</div>'
-    +'<div class="feature-date">'+fmtDate(p.date)+'</div>'
-    +'<h2 class="feature-title" id="content-heading">'+esc(p.title)+'</h2>'
-    +(p.dek?'<p class="feature-dek">'+esc(p.dek)+'</p>':'')
-    +'<a class="feature-link" href="'+articleUrl(p.slug)+'" data-nav>Read essay</a>'
+  const recent = sortPosts(posts).slice(0, 3);
+  if(!recent.length){
+    return '<div class="home-recent">'
+      +'<h2 class="content-label" id="content-heading">Recent essays</h2>'
+      +'<p class="empty-state">Essays are coming.</p></div>';
+  }
+  const rows = recent.map(p=>{
+    const b = data[p.branch];
+    return '<a class="essay-row" href="'+articleUrl(p.slug)+'" data-nav style="--accent:'+b.color+'">'
+      +'<div class="essay-row-meta">'
+        +'<time class="essay-row-date" datetime="'+p.date+'">'+fmtDate(p.date)+'</time>'
+        +'<span class="essay-row-branch" style="color:'+b.color+'">'
+          +esc(b.label)+' \u00b7 '+esc(parentLabels(p).join(' / '))
+        +'</span>'
+      +'</div>'
+      +'<div class="essay-row-body">'
+        +'<span class="essay-row-title">'+esc(p.title)+'</span>'
+        +(p.dek?'<span class="essay-row-dek">'+esc(p.dek)+'</span>':'')
+      +'</div>'
+      +'</a>';
+  }).join('');
+
+  const more = posts.length > 3
+    ? '<a class="home-all" href="'+recentUrl()+'" data-nav>All essays</a>'
+    : '';
+
+  return '<div class="home-recent">'
+    +'<h2 class="home-recent-heading" id="content-heading">Recent essays</h2>'
+    +'<div class="essay-list">'+rows+'</div>'
+    + more
     +'</div>';
 }
 
