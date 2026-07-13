@@ -703,8 +703,8 @@ h1:focus { outline: none; }
 
 /* Touch feedback: a brief contrast lift, no hover dependency. */
 @media (hover: none) {
-  .wedge { transition: filter 160ms ease, stroke-opacity 160ms ease; }
-  .wedge:active { filter: brightness(1.13); stroke-opacity: 0.55; }
+  .wedge { transition: stroke-opacity 160ms ease, stroke-width 160ms ease; }
+  .wedge:active { stroke-opacity: 0.6; stroke-width: 2.2; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -751,18 +751,36 @@ h1:focus { outline: none; }
    is the thinnest white outline that still does something: 0.9px, held
    just visible. Enough to lift a glyph off the marble in any rotation;
    not enough to read as piping stuck on the stone. */
+/* The labels are bright branch colours sitting on a gradient that runs
+   from pale marble to dark. Measured, the ink lands at almost exactly the
+   same LUMINANCE as the mid-tone stone the topic labels cross (contrast
+   1.2-1.5). Same-brightness text is the hardest case there is: the eye has
+   no edge to lock onto, only a hue shift, which barely registers at 13px.
+
+   A pale halo cannot fix this. It is lighter than the ink, so it only
+   creates an edge where the stone is already dark — which is why it had to
+   grow thick and started reading as piping stuck on the marble.
+
+   A DARK edge works everywhere. It is darker than the pale stone (8.5),
+   the mid stone (5.6), the darker stone (3.1), and darker than the ink
+   itself (3.7-4.3). The eye always finds the boundary, in every rotation.
+   And it is what a carved letter actually is: the incision sits in shadow.
+
+   A whisper of light on the opposite side completes the carve. */
 #wheelRoot .parent-label,
 #wheelRoot .branch-label {
   paint-order: stroke fill;
-  stroke: #f6f2ea;
-  stroke-width: 0.9;
-  stroke-opacity: 0.42;
+  stroke: #33302a;
+  stroke-width: 0.75;
+  stroke-opacity: 0.55;
   stroke-linejoin: round;
+  paint-order: stroke fill;
   transition: stroke-opacity 180ms ease, fill 180ms ease;
 }
+/* Selection reads as a firmer incision, not brighter text. */
 #wheelRoot .parent-label.is-selected,
 #wheelRoot .branch-label.is-selected {
-  stroke-opacity: 0.55;
+  stroke-opacity: 0.68;
 }
 
 /* ---- §7 HOVER AND SELECTED STATES -------------------------- */

@@ -717,8 +717,8 @@ h1:focus { outline: none; }
 
 /* Touch feedback: a brief contrast lift, no hover dependency. */
 @media (hover: none) {
-  .wedge { transition: filter 160ms ease, stroke-opacity 160ms ease; }
-  .wedge:active { filter: brightness(1.13); stroke-opacity: 0.55; }
+  .wedge { transition: stroke-opacity 160ms ease, stroke-width 160ms ease; }
+  .wedge:active { stroke-opacity: 0.6; stroke-width: 2.2; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -765,18 +765,36 @@ h1:focus { outline: none; }
    is the thinnest white outline that still does something: 0.9px, held
    just visible. Enough to lift a glyph off the marble in any rotation;
    not enough to read as piping stuck on the stone. */
+/* The labels are bright branch colours sitting on a gradient that runs
+   from pale marble to dark. Measured, the ink lands at almost exactly the
+   same LUMINANCE as the mid-tone stone the topic labels cross (contrast
+   1.2-1.5). Same-brightness text is the hardest case there is: the eye has
+   no edge to lock onto, only a hue shift, which barely registers at 13px.
+
+   A pale halo cannot fix this. It is lighter than the ink, so it only
+   creates an edge where the stone is already dark — which is why it had to
+   grow thick and started reading as piping stuck on the marble.
+
+   A DARK edge works everywhere. It is darker than the pale stone (8.5),
+   the mid stone (5.6), the darker stone (3.1), and darker than the ink
+   itself (3.7-4.3). The eye always finds the boundary, in every rotation.
+   And it is what a carved letter actually is: the incision sits in shadow.
+
+   A whisper of light on the opposite side completes the carve. */
 #wheelRoot .parent-label,
 #wheelRoot .branch-label {
   paint-order: stroke fill;
-  stroke: #f6f2ea;
-  stroke-width: 0.9;
-  stroke-opacity: 0.42;
+  stroke: #33302a;
+  stroke-width: 0.75;
+  stroke-opacity: 0.55;
   stroke-linejoin: round;
+  paint-order: stroke fill;
   transition: stroke-opacity 180ms ease, fill 180ms ease;
 }
+/* Selection reads as a firmer incision, not brighter text. */
 #wheelRoot .parent-label.is-selected,
 #wheelRoot .branch-label.is-selected {
-  stroke-opacity: 0.55;
+  stroke-opacity: 0.68;
 }
 
 /* ---- §7 HOVER AND SELECTED STATES -------------------------- */
@@ -1467,7 +1485,7 @@ body { font-display: swap; }
 <script>
 const siteConfig = {
   economics: {
-    color: '#c59a32', wheel: '#8a6a14', wheelLabel: '#a98222', wheelActive: '#a98222',
+    color: '#c59a32', wheel: '#8a6a14', wheelLabel: '#a98222', wheelLabelInner: '#b3913d', wheelActive: '#a98222',
     light: '#6b520f', dark: '#6b520f', wheelInk: '#4a3809', label: 'Economics',
     principles: [
       'The economy exists to use limited resources for human good.',
@@ -1478,7 +1496,7 @@ const siteConfig = {
     parents: [['labor','Labor'],['monetary','Monetary'],['fiscal','Fiscal'],['markets','Markets']]
   },
   culture: {
-    color: '#d27a52', wheel: '#a0522d', wheelLabel: '#c16c47', wheelActive: '#c16c47',
+    color: '#d27a52', wheel: '#a0522d', wheelLabel: '#c16c47', wheelLabelInner: '#c87e5d', wheelActive: '#c16c47',
     light: '#7c3f22', dark: '#7c3f22', wheelInk: '#5c2c15', label: 'Culture',
     principles: [
       'People are not born knowing how to live.',
@@ -1489,7 +1507,7 @@ const siteConfig = {
     parents: [['education','Education'],['community','Community'],['justice','Justice'],['identity','Identity']]
   },
   governance: {
-    color: '#6f9ac7', wheel: '#1e3a5f', wheelLabel: '#5e91c4', wheelActive: '#5e91c4',
+    color: '#6f9ac7', wheel: '#1e3a5f', wheelLabel: '#5e91c4', wheelLabelInner: '#719ecb', wheelActive: '#5e91c4',
     light: '#16293f', dark: '#16293f', wheelInk: '#0e1c2c', label: 'Governance',
     principles: [
       'Government exists to do for the people what they cannot do well alone.',
@@ -1691,7 +1709,7 @@ function buildWheel(){
     defs+=`<path id="${ipid}" fill="none" d="${outwardArc(inR, center+43, center-43)}"/>`;
     const branchFontSize = bk==='governance' ? 20 : 22;
     const branchLetterSpacing = bk==='governance' ? 2.2 : 3.2;
-    svg+=`<text font-family="Georgia,serif" font-size="${branchFontSize}" letter-spacing="${branchLetterSpacing}" font-weight="600" class="branch-label branch-label-${bk}" data-branch="${bk}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${ipid}" startOffset="50%" text-anchor="middle">${b.label.toUpperCase()}</textPath></text>`;
+    svg+=`<text font-family="Georgia,serif" font-size="${branchFontSize}" letter-spacing="${branchLetterSpacing}" font-weight="700" class="branch-label branch-label-${bk}" data-branch="${bk}" fill="${b.wheelLabelInner || b.wheelLabel}" pointer-events="none"><textPath href="#${ipid}" startOffset="50%" text-anchor="middle">${b.label.toUpperCase()}</textPath></text>`;
 
     const n=b.parents.length, seg=120/n;
     b.parents.forEach((p,j)=>{
@@ -1710,8 +1728,8 @@ function buildWheel(){
         const id1=`pp${i}_${j}a`, id2=`pp${i}_${j}b`;
         defs+=`<path id="${id1}" fill="none" d="${outwardArc(firstR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         defs+=`<path id="${id2}" fill="none" d="${outwardArc(secondR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
       } else {
         const outR=R_OUT0+(R_OUT1-R_OUT0)*0.60;   // further out = longer arc = more room
         const pid=`pp${i}_${j}`;
@@ -1719,7 +1737,7 @@ function buildWheel(){
         let fs;
         if(oneLineSmall[p[1]]) fs=oneLineSmall[p[1]];
         else { const arcW=(seg-3)*Math.PI/180*outR; fs=Math.max(12, Math.min(17, arcW/(p[1].length*0.62))); }
-        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
       }
     });
   });
@@ -1781,7 +1799,11 @@ function updateWheelFocus(branch){
     });
 
     document.querySelectorAll('.branch-label[data-branch="'+bk+'"]').forEach(el=>{
-      el.setAttribute('fill', b.wheelLabel);
+      // The inner labels sit on paler marble. Identical ink LOOKS darker there
+      // (simultaneous contrast), so they carry a slightly lifted tone in order
+      // to read at the same brightness as the outer ring. Equal perceived
+      // legibility, not equal hex values.
+      el.setAttribute('fill', b.wheelLabelInner || b.wheelLabel);
       el.classList.toggle('is-selected', active);
     });
 

@@ -127,7 +127,7 @@ function buildWheel(){
     defs+=`<path id="${ipid}" fill="none" d="${outwardArc(inR, center+43, center-43)}"/>`;
     const branchFontSize = bk==='governance' ? 20 : 22;
     const branchLetterSpacing = bk==='governance' ? 2.2 : 3.2;
-    svg+=`<text font-family="Georgia,serif" font-size="${branchFontSize}" letter-spacing="${branchLetterSpacing}" font-weight="600" class="branch-label branch-label-${bk}" data-branch="${bk}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${ipid}" startOffset="50%" text-anchor="middle">${b.label.toUpperCase()}</textPath></text>`;
+    svg+=`<text font-family="Georgia,serif" font-size="${branchFontSize}" letter-spacing="${branchLetterSpacing}" font-weight="700" class="branch-label branch-label-${bk}" data-branch="${bk}" fill="${b.wheelLabelInner || b.wheelLabel}" pointer-events="none"><textPath href="#${ipid}" startOffset="50%" text-anchor="middle">${b.label.toUpperCase()}</textPath></text>`;
 
     const n=b.parents.length, seg=120/n;
     b.parents.forEach((p,j)=>{
@@ -146,8 +146,8 @@ function buildWheel(){
         const id1=`pp${i}_${j}a`, id2=`pp${i}_${j}b`;
         defs+=`<path id="${id1}" fill="none" d="${outwardArc(firstR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
         defs+=`<path id="${id2}" fill="none" d="${outwardArc(secondR, mid+seg/2-1.5, mid-seg/2+1.5)}"/>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
-        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id1}" startOffset="50%" text-anchor="middle">${stack[0].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="13" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${id2}" startOffset="50%" text-anchor="middle">${stack[1].toUpperCase()}</textPath></text>`;
       } else {
         const outR=R_OUT0+(R_OUT1-R_OUT0)*0.60;   // further out = longer arc = more room
         const pid=`pp${i}_${j}`;
@@ -155,7 +155,7 @@ function buildWheel(){
         let fs;
         if(oneLineSmall[p[1]]) fs=oneLineSmall[p[1]];
         else { const arcW=(seg-3)*Math.PI/180*outR; fs=Math.max(12, Math.min(17, arcW/(p[1].length*0.62))); }
-        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="600" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
+        svg+=`<text font-family="Georgia,serif" font-size="${fs}" letter-spacing="0.5" font-weight="700" class="parent-label parent-label-${bk}" data-branch="${bk}" data-topic="${p[0]}" fill="${b.wheelLabel}" pointer-events="none"><textPath href="#${pid}" startOffset="50%" text-anchor="middle">${p[1].toUpperCase()}</textPath></text>`;
       }
     });
   });
@@ -217,7 +217,11 @@ function updateWheelFocus(branch){
     });
 
     document.querySelectorAll('.branch-label[data-branch="'+bk+'"]').forEach(el=>{
-      el.setAttribute('fill', b.wheelLabel);
+      // The inner labels sit on paler marble. Identical ink LOOKS darker there
+      // (simultaneous contrast), so they carry a slightly lifted tone in order
+      // to read at the same brightness as the outer ring. Equal perceived
+      // legibility, not equal hex values.
+      el.setAttribute('fill', b.wheelLabelInner || b.wheelLabel);
       el.classList.toggle('is-selected', active);
     });
 
