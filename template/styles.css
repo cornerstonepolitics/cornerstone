@@ -35,9 +35,9 @@
 body { background: var(--site-bg); }
 #app { font-family: var(--font-ui); background: var(--site-bg); color: var(--text-soft-on-dark); min-height: 760px; }
 .view { display: none; } .view.active { display: block; }
-.nav { display: flex; justify-content: space-between; align-items: center; padding: 26px 34px; border-bottom: 0.5px solid var(--rule-on-dark); background: var(--site-bg); }
+.nav { display: flex; justify-content: space-between; align-items: center; padding: 21px 34px; border-bottom: 0.5px solid var(--rule-on-dark); background: var(--site-bg); }
 .nav-logo {
-  font-size: 19px;
+  font-size: 22px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-on-dark);
@@ -46,8 +46,8 @@ body { background: var(--site-bg); }
 }
 .nav-links {
   display: flex;
-  gap: 30px;
-  font-size: 13px;
+  gap: clamp(26px, 4.4vw, 64px);   /* spread across the bar, not bunched */
+  font-size: 15px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -744,25 +744,33 @@ h1:focus { outline: none; }
    not hue — so a selected label gets clearer, never invisible. */
 #wheelRoot .parent-label {
   paint-order: stroke fill;
-  stroke: #f2ede3;
-  stroke-width: 2.6;
-  stroke-opacity: 0.62;
+  stroke: #efe9dd;
+  stroke-width: 0.9;          /* a hairline, not piping */
+  stroke-opacity: 0.30;
   stroke-linejoin: round;
-  transition: stroke-opacity 180ms ease, fill 180ms ease;
+  /* A soft light shadow lifts the glyph off the marble the way a
+     carved letter catches light. This does the separating work the
+     thick stroke was doing, without the sticker outline. */
+  filter: drop-shadow(0 0.5px 0.6px rgba(255,252,246,0.55));
+  transition: stroke-opacity 180ms ease, fill 180ms ease, filter 180ms ease;
 }
 #wheelRoot .parent-label.is-selected {
-  stroke-opacity: 0.86;      /* clearer, not brighter */
-  stroke-width: 3;
+  stroke-opacity: 0.45;
+  filter: drop-shadow(0 0.5px 0.8px rgba(255,252,246,0.75));
 }
 #wheelRoot .branch-label {
   paint-order: stroke fill;
   stroke: #f4f0e7;
-  stroke-width: 2.4;
-  stroke-opacity: 0.34;      /* inner marble is lighter: needs less help */
+  stroke-width: 0.8;
+  stroke-opacity: 0.22;      /* inner marble is pale: barely any help needed */
   stroke-linejoin: round;
-  transition: stroke-opacity 180ms ease, fill 180ms ease;
+  filter: drop-shadow(0 0.5px 0.6px rgba(255,252,246,0.45));
+  transition: stroke-opacity 180ms ease, fill 180ms ease, filter 180ms ease;
 }
-#wheelRoot .branch-label.is-selected { stroke-opacity: 0.55; }
+#wheelRoot .branch-label.is-selected {
+  stroke-opacity: 0.34;
+  filter: drop-shadow(0 0.5px 0.8px rgba(255,252,246,0.65));
+}
 
 /* ---- §7 HOVER AND SELECTED STATES -------------------------- */
 /* Resting selected state stays QUIETER than hover, so hover always
