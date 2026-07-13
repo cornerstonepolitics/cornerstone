@@ -684,28 +684,6 @@ h1:focus { outline: none; }
   .warm-inner { padding: 48px 22px 64px; }
   .wheel-hero { padding: 30px 20px 26px; }
 
-  /* Do not shrink twelve unreadable labels: hide the outer ring's
-     text entirely and move wayfinding to real links below. */
-  #wheelRoot .parent-label { display: none; }
-
-  .mobile-topics {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 18px;
-    max-width: 520px;
-    margin: 4px auto 8px;
-    padding: 0 20px;
-  }
-  .mobile-topics a {
-    display: flex;
-    align-items: center;
-    min-height: 44px;                 /* practical tap target */
-    font-family: var(--font-article);
-    font-size: 1.05rem;
-    color: var(--text-on-dark);
-    border-bottom: 1px solid var(--rule-on-dark-subtle);
-  }
-  .mobile-topics a:active { color: var(--accent, var(--text-on-dark)); }
 
   /* Editorial index stacks on phones. */
   .warm-surface .article-row { display: block; }
@@ -1286,6 +1264,82 @@ body { font-display: swap; }
   .essay-row:hover { padding-left: 12px; }
   .essay-row-meta { flex-direction: row; gap: 12px; flex-wrap: wrap; }
   .essay-row-title { font-size: 1.3rem; }
+}
+
+
+/* ============================================================
+   NARROW WINDOWS — keep the labels as long as the wheel can hold them
+   ============================================================ */
+
+/* The twelve outer labels were previously hidden below 760px of WINDOW
+   width. But the wheel is sized by its container, not the window: at
+   760px the wheel is still ~730px across and reads perfectly. Hiding
+   the labels there left a large wheel with an empty outer ring.
+
+   What actually matters is how big the WHEEL is. A 13px label is fine
+   on a 700px wheel and illegible on a 340px one. The wheel drops below
+   the size its labels need at roughly 460px of window width — so that
+   is where the labels step aside and the topic links take over. */
+@media (max-width: 460px) {
+  #wheelRoot .parent-label { display: none; }
+
+  .mobile-topics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 18px;
+    max-width: 520px;
+    margin: 4px auto 8px;
+    padding: 0 20px;
+  }
+  .mobile-topics a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;                 /* practical tap target */
+    font-family: var(--font-article);
+    font-size: 1.05rem;
+    color: var(--text-on-dark);
+    border-bottom: 1px solid var(--rule-on-dark-subtle);
+  }
+  .mobile-topics a:active { color: var(--accent, var(--text-on-dark)); }
+}
+
+/* Between 460px and 760px the wheel keeps all twelve labels. It simply
+   scales down with its container, and the labels scale with it. */
+@media (min-width: 461px) and (max-width: 760px) {
+  .mobile-topics { display: none; }
+}
+
+
+/* ---- header: never let the wordmark and links collide ------- */
+/* The wordmark (22px) plus four links (15px) need roughly 700px of
+   room. The header previously only stacked at 640px, so between 640
+   and 700 they ran into each other. Stack earlier, and let the gap
+   shrink before that so the transition is gradual rather than abrupt. */
+@media (max-width: 900px) {
+  .nav { padding: 20px 24px; }
+  .nav-links { gap: clamp(16px, 2.6vw, 30px); }
+}
+@media (max-width: 780px) {
+  .nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 22px;
+  }
+  .nav-logo { font-size: 18px; letter-spacing: 0.18em; }
+  .nav-links {
+    gap: 20px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+  .nav-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
 }
 
   </style>
