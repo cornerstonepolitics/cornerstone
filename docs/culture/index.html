@@ -805,8 +805,12 @@ h1:focus { outline: none; }
    piece you are about to click. This reads on the selected third (where
    there is no whole-third cue) and on top of the third cue elsewhere. */
 .wedge.hovered {
-  stroke: #241f18;
-  stroke-opacity: 0.9;
+  /* The resting stroke is pure black at 0.3 opacity. Hover must go DARKER and
+     firmer, never lighter — the previous colour here (#241f18) was a brown
+     lighter than black, so hovering made the boundary appear to wash out
+     instead of firming up. */
+  stroke: #000;
+  stroke-opacity: 0.95;
   stroke-width: 3.4;
 }
 
@@ -1888,7 +1892,9 @@ function buildWheel(){
   // rule. R_IN1 and R_OUT0 are now the same radius, so it is a single stroke.
   svg+=`<circle cx="${CX}" cy="${CY}" r="${R_OUT1}" fill="none" stroke="#000" stroke-opacity="0.38" stroke-width="1.6" pointer-events="none"/>`;
   svg+=`<circle cx="${CX}" cy="${CY}" r="${R_IN1}" fill="none" stroke="#000" stroke-opacity="0.3" stroke-width="1.15" pointer-events="none"/>`;
-  svg+=`<circle cx="${CX}" cy="${CY}" r="${R_IN0}" fill="none" stroke="#000" stroke-opacity="0.26" stroke-width="1.05" pointer-events="none"/>`;
+  // No circle at R_IN0. The centre stone's rim is already the inner boundary
+  // of the branch ring; drawing another here produced a second concentric
+  // ring a few units outside it.
   [120,240,360].forEach(d=>{ const [xa,ya]=pol(R_IN0,d),[xb,yb]=pol(R_OUT1,d); svg+=`<line x1="${xa}" y1="${ya}" x2="${xb}" y2="${yb}" stroke="#000" stroke-opacity="0.34" stroke-width="3.8" pointer-events="none"/>`; });
 
   root.innerHTML=`<defs>${defs}</defs>`+svg;

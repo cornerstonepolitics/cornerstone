@@ -791,8 +791,12 @@ h1:focus { outline: none; }
    piece you are about to click. This reads on the selected third (where
    there is no whole-third cue) and on top of the third cue elsewhere. */
 .wedge.hovered {
-  stroke: #241f18;
-  stroke-opacity: 0.9;
+  /* The resting stroke is pure black at 0.3 opacity. Hover must go DARKER and
+     firmer, never lighter — the previous colour here (#241f18) was a brown
+     lighter than black, so hovering made the boundary appear to wash out
+     instead of firming up. */
+  stroke: #000;
+  stroke-opacity: 0.95;
   stroke-width: 3.4;
 }
 
