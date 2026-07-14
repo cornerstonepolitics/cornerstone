@@ -132,7 +132,7 @@ function buildWheel(){
     // opacity, not filter(), so the marble keeps its warmth.
     svg+=`<path class="branch-glow" data-branch="${bk}" d="${wedge(R_IN0,R_OUT1,a0,a1)}" fill="#fff8ea" opacity="0" pointer-events="none"/>`;
 
-    svg+=`<a href="${bHref}" class="wedge-link" aria-label="${b.label}" data-nav>`
+    svg+=`<a href="${bHref}" class="wedge-link" data-nav><desc>${b.label}</desc>`
       +`<path class="wedge branch-wedge" data-branch="${bk}" d="${wedge(R_IN0,R_IN1,a0,a1)}" fill="url(#marble)" stroke="#000" onmouseenter="hoverBranch('${bk}')" onmouseleave="clearHover()"/>`
       +`</a>`;
 
@@ -154,7 +154,7 @@ function buildWheel(){
       const pa0=a0+j*seg, pa1=a0+(j+1)*seg, mid=(pa0+pa1)/2;
       const tHref=topicUrl(bk,p[0]);
 
-      svg+=`<a href="${tHref}" class="wedge-link" aria-label="${p[1]}, in ${b.label}" data-nav>`
+      svg+=`<a href="${tHref}" class="wedge-link" data-nav><desc>${p[1]}, in ${b.label}</desc>`
         +`<path class="wedge topic-wedge" data-branch="${bk}" data-topic="${p[0]}" d="${wedge(R_OUT0,R_OUT1,pa0,pa1)}" fill="url(#marble)" stroke="#000" onmouseenter="hoverTopic('${bk}','${p[0]}')" onmouseleave="clearHover()"/>`
         +`</a>`;
 

@@ -1437,9 +1437,12 @@ body { font-display: swap; }
 
     <div class="wheel-stage">
       <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"
-           role="group" aria-labelledby="wheelTitle wheelDesc">
-        <title id="wheelTitle">Cornerstone navigation</title>
-        <desc id="wheelDesc">A wheel with the Cornerstone mission at the centre, three branches (Economics, Culture, Governance), and four topics within each branch. Every section is also listed as a link below.</desc>
+           role="group" aria-labelledby="wheelDesc">
+        <!-- No <title> here. An SVG <title> renders as a native browser tooltip
+             on hover of the whole graphic, which put a "Cornerstone navigation"
+             box over the wheel. <desc> carries the accessible name instead: it
+             is announced by screen readers and never shown as a tooltip. -->
+        <desc id="wheelDesc">Cornerstone navigation. A wheel with the Cornerstone mission at the centre, three branches (Economics, Culture, Governance), and four topics within each branch. Every section is also listed as a link below.</desc>
         <defs>
           <!-- The wheel's stone. This gradient is anchored at the wheel's centre,
                so the inner edge of the branch ring (r=102, ~34% out) used to land
@@ -1483,14 +1486,15 @@ body { font-display: swap; }
              two light outlines stacked around the middle. Both are gone. The
              single carved rim below (#centerRim) is the only edge. -->
         <circle cx="310" cy="310" r="100" fill="url(#centerStone)" pointer-events="none"/>
-        <a href="/cornerstone/" class="center-link" aria-label="Cornerstone: the founding essay" data-nav>
+        <a href="/cornerstone/" class="center-link" role="link" data-nav>
+          <desc>Cornerstone: the founding essay</desc>
           <circle id="centerHit" cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>
           <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">SERVE THE</text>
           <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">LONG-TERM</text>
           <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">INTERESTS OF THE</text>
           <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">AMERICAN PEOPLE</text>
         </a>
-        <circle id="centerRim" cx="310" cy="310" r="100" fill="none" stroke="#000" stroke-opacity="0.30" stroke-width="1.2" pointer-events="none"/>
+        <circle id="centerRim" cx="310" cy="310" r="100" fill="none" stroke="#000" stroke-opacity="0.8" stroke-width="3.4" pointer-events="none"/>
       </svg>
     </div>
 
@@ -1848,7 +1852,7 @@ function buildWheel(){
     // opacity, not filter(), so the marble keeps its warmth.
     svg+=`<path class="branch-glow" data-branch="${bk}" d="${wedge(R_IN0,R_OUT1,a0,a1)}" fill="#fff8ea" opacity="0" pointer-events="none"/>`;
 
-    svg+=`<a href="${bHref}" class="wedge-link" aria-label="${b.label}" data-nav>`
+    svg+=`<a href="${bHref}" class="wedge-link" data-nav><desc>${b.label}</desc>`
       +`<path class="wedge branch-wedge" data-branch="${bk}" d="${wedge(R_IN0,R_IN1,a0,a1)}" fill="url(#marble)" stroke="#000" onmouseenter="hoverBranch('${bk}')" onmouseleave="clearHover()"/>`
       +`</a>`;
 
@@ -1870,7 +1874,7 @@ function buildWheel(){
       const pa0=a0+j*seg, pa1=a0+(j+1)*seg, mid=(pa0+pa1)/2;
       const tHref=topicUrl(bk,p[0]);
 
-      svg+=`<a href="${tHref}" class="wedge-link" aria-label="${p[1]}, in ${b.label}" data-nav>`
+      svg+=`<a href="${tHref}" class="wedge-link" data-nav><desc>${p[1]}, in ${b.label}</desc>`
         +`<path class="wedge topic-wedge" data-branch="${bk}" data-topic="${p[0]}" d="${wedge(R_OUT0,R_OUT1,pa0,pa1)}" fill="url(#marble)" stroke="#000" onmouseenter="hoverTopic('${bk}','${p[0]}')" onmouseleave="clearHover()"/>`
         +`</a>`;
 
