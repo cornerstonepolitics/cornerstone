@@ -142,7 +142,7 @@ function buildWheel(){
     // Baseline sits well out from the hub. The fraction is measured against a
     // ring that now starts at the rim, so this keeps the label at the same
     // radius it had before the gap was closed.
-    const inR=R_IN0+(R_IN1-R_IN0)*0.72;
+    const inR=R_IN0+(R_IN1-R_IN0)*0.58;
     const ipid=`bp${i}`;
     defs+=`<path id="${ipid}" fill="none" d="${outwardArc(inR, center+43, center-43)}"/>`;
     const branchFontSize = bk==='governance' ? 20 : 22;
