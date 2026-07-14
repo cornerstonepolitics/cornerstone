@@ -133,7 +133,7 @@ function buildWheel(){
     svg+=`<path class="branch-glow" data-branch="${bk}" d="${wedge(R_IN0,R_OUT1,a0,a1)}" fill="#fff8ea" opacity="0" pointer-events="none"/>`;
 
     svg+=`<a href="${bHref}" class="wedge-link" aria-label="${b.label}" data-nav>`
-      +`<path class="wedge branch-wedge" data-branch="${bk}" d="${wedge(R_IN0,R_IN1,a0,a1)}" fill="url(#marble)" stroke="#000" stroke-opacity="0.3" stroke-width="1.7" onmouseenter="hoverBranch('${bk}')" onmouseleave="clearHover()"/>`
+      +`<path class="wedge branch-wedge" data-branch="${bk}" d="${wedge(R_IN0,R_IN1,a0,a1)}" fill="url(#marble)" stroke="#000" onmouseenter="hoverBranch('${bk}')" onmouseleave="clearHover()"/>`
       +`</a>`;
 
     // The baseline sits inward of the ring's centre, because glyphs grow
@@ -142,7 +142,7 @@ function buildWheel(){
     // Baseline sits well out from the hub. The fraction is measured against a
     // ring that now starts at the rim, so this keeps the label at the same
     // radius it had before the gap was closed.
-    const inR=R_IN0+(R_IN1-R_IN0)*0.66;
+    const inR=R_IN0+(R_IN1-R_IN0)*0.72;
     const ipid=`bp${i}`;
     defs+=`<path id="${ipid}" fill="none" d="${outwardArc(inR, center+43, center-43)}"/>`;
     const branchFontSize = bk==='governance' ? 20 : 22;
@@ -155,7 +155,7 @@ function buildWheel(){
       const tHref=topicUrl(bk,p[0]);
 
       svg+=`<a href="${tHref}" class="wedge-link" aria-label="${p[1]}, in ${b.label}" data-nav>`
-        +`<path class="wedge topic-wedge" data-branch="${bk}" data-topic="${p[0]}" d="${wedge(R_OUT0,R_OUT1,pa0,pa1)}" fill="url(#marble)" stroke="#000" stroke-opacity="0.30" stroke-width="0.95" onmouseenter="hoverTopic('${bk}','${p[0]}')" onmouseleave="clearHover()"/>`
+        +`<path class="wedge topic-wedge" data-branch="${bk}" data-topic="${p[0]}" d="${wedge(R_OUT0,R_OUT1,pa0,pa1)}" fill="url(#marble)" stroke="#000" onmouseenter="hoverTopic('${bk}','${p[0]}')" onmouseleave="clearHover()"/>`
         +`</a>`;
 
       const stack = twoLine[p[1]];

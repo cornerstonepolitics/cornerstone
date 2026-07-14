@@ -681,7 +681,13 @@ h1:focus { outline: none; }
 
 /* Touch feedback: a brief contrast lift, no hover dependency. */
 @media (hover: none) {
-  .wedge { transition: stroke-opacity 160ms ease, stroke-width 160ms ease; }
+  .wedge {
+  cursor: pointer;
+  stroke: #000;
+  stroke-opacity: 0.3;
+  stroke-width: 1.2;
+  transition: stroke-opacity 150ms ease, stroke-width 150ms ease;
+}
   .wedge:active { stroke-opacity: 0.6; stroke-width: 2.2; }
 }
 
@@ -768,13 +774,22 @@ h1:focus { outline: none; }
   cursor: pointer;
   transition: stroke-opacity 150ms ease, stroke-width 150ms ease;
 }
-/* The RESTING selected state. Declared before the hover rules so that hover
-   always wins: these have the same specificity, so source order decides, and
-   with is-selected last the hover was being silently overridden on the
-   selected third — which is why hovering it felt dead. */
+/* One strictly-increasing progression. Declared before the hover rules so
+   hover always wins (same specificity, so source order decides).
+
+   Every state must be FIRMER than the one below it. The wedges previously
+   carried an inline stroke-width of 1.7 (branch) and 0.95 (topic), while
+   .is-selected set 1.5 — so selecting a branch made its outline THINNER than
+   an unselected one, and hovering could look like the line was thinning out.
+   The inline widths are gone; this is the only ladder.
+
+     rest      1.2 / 0.30
+     selected  1.8 / 0.45
+     third     2.6 / 0.65
+     hovered   4.2 / 0.95   */
 .wedge.is-selected {
-  stroke-opacity: 0.5;
-  stroke-width: 1.5;
+  stroke-opacity: 0.45;
+  stroke-width: 1.8;
 }
 
 /* THE WHOLE-THIRD CUE — only on a branch that is NOT selected.
@@ -782,8 +797,8 @@ h1:focus { outline: none; }
    third is what lights up. No brightness() filter: filtering an SVG path
    re-rasterises the marble beneath it and washes the stone out. */
 .wedge.hot {
-  stroke-opacity: 0.62;
-  stroke-width: 2.1;
+  stroke-opacity: 0.65;
+  stroke-width: 2.6;
 }
 
 /* THE INDIVIDUAL BOX — the one actually under the cursor.
@@ -797,7 +812,7 @@ h1:focus { outline: none; }
      instead of firming up. */
   stroke: #000;
   stroke-opacity: 0.95;
-  stroke-width: 3.4;
+  stroke-width: 4.2;
 }
 
 /* The hovered box's own label brightens. This is the signal that says
