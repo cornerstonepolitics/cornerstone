@@ -306,8 +306,8 @@ body { background: var(--site-bg); }
 }
 
 @media (max-width: 640px) {
-  .nav { display: block; padding: 13px 18px; }
-  .nav-links { margin-top: 10px; gap: 14px; font-size: 9px; flex-wrap: wrap; }
+  /* The wordmark and links stay on ONE line at every width — the
+     clamp-based .nav rules further down handle the shrink. No stacking. */
   .article-row, .feed-item { display: block; }
   .article-meta, .feed-cat { margin-top: 8px; }
   .article-list-title, .feed-title { margin-top: 8px; }
@@ -1302,37 +1302,14 @@ body { font-display: swap; }
    on a 700px wheel and illegible on a 340px one. The wheel drops below
    the size its labels need at roughly 460px of window width — so that
    is where the labels step aside and the topic links take over. */
-/* The twelve outer labels ALWAYS show. An empty outer ring reads as broken
-   — worse than small type. The labels are drawn in SVG user units, so they
-   scale with the wheel automatically: shrink the wheel and the letters
-   shrink with it, in proportion, staying where they belong.
+/* The twelve outer labels ALWAYS show, at every width. They are drawn in
+   SVG user units, so they scale with the wheel automatically: shrink the
+   wheel and the letters shrink with it, staying where they belong.
 
-   The topic links below the wheel remain as a larger tap target on phones,
-   where a 5mm wedge is a hard thing to hit accurately. They supplement the
-   wheel rather than replacing it. */
-@media (max-width: 560px) {
-  .mobile-topics {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 18px;
-    max-width: 520px;
-    margin: 10px auto 8px;
-    padding: 0 20px;
-  }
-  .mobile-topics a {
-    display: flex;
-    align-items: center;
-    min-height: 44px;                 /* practical tap target */
-    font-family: var(--font-article);
-    font-size: 1.05rem;
-    color: var(--text-on-dark);
-    border-bottom: 1px solid var(--rule-on-dark-subtle);
-  }
-  .mobile-topics a:active { color: var(--accent, var(--text-on-dark)); }
-}
-@media (min-width: 561px) {
-  .mobile-topics { display: none; }
-}
+   The old 2-column topic list that used to appear beneath the wheel on
+   phones has been removed: the outer labels are visible and tappable, so
+   the list was a redundant duplicate. #mobile-topics never displays now
+   (see the base rule .mobile-topics { display: none } above). */
 
 /* Give the wheel as much of a narrow screen as it can take, so the labels
    are as large as the viewport allows. */
@@ -1409,7 +1386,7 @@ body { font-display: swap; }
     stroke-opacity: 0.65;
   }
 }
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
   </style>
 </head>
 <body>
@@ -2432,7 +2409,11 @@ function render(route, opts){
   }
 
   const wheelState = ['home','center','branch','topic'].indexOf(route.kind) !== -1;
-  if(first){
+  if(first || route.kind === 'home'){
+    // Home is the landing state: return to the top with the wheel in view,
+    // exactly as on first load. Do NOT scroll to or focus the recent-essays
+    // heading beneath the wheel — that made tapping the wordmark on mobile
+    // jump down and "select" Recent essays.
     window.scrollTo(0,0);
   } else if(wheelState){
     // Content swapped beneath a wheel that never moved: don't jump to
@@ -2516,15 +2497,7 @@ function shouldSettle(){
   }
 }
 
-// ------------------------------------------------------------
-//  Boot
-// ------------------------------------------------------------
-buildWheel();
-initCopyLink();
-history.replaceState(ROUTE, '', window.location.pathname + window.location.search);
-render(ROUTE, { first:true });
-if(ROUTE.kind === 'home' && shouldSettle()) settleWheel();
-
+// -------------------------------------
 </script>
 </body>
 </html>

@@ -712,7 +712,11 @@ function render(route, opts){
   }
 
   const wheelState = ['home','center','branch','topic'].indexOf(route.kind) !== -1;
-  if(first){
+  if(first || route.kind === 'home'){
+    // Home is the landing state: return to the top with the wheel in view,
+    // exactly as on first load. Do NOT scroll to or focus the recent-essays
+    // heading beneath the wheel — that made tapping the wordmark on mobile
+    // jump down and "select" Recent essays.
     window.scrollTo(0,0);
   } else if(wheelState){
     // Content swapped beneath a wheel that never moved: don't jump to
