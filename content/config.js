@@ -17,7 +17,7 @@ const siteConfig = {
       'People are not born knowing how to live.',
       'Culture is how one generation forms the next.',
       'Culture teaches by what it honors and what it shames.',
-      'A country pulls apart when its differences grow deeper than its shared allegiance.'
+      'One faction cannot judge the whole without forcing every other faction to defend its right to differ.'
     ],
     parents: [['education','Education'],['community','Community'],['justice','Justice'],['identity','Identity']]
   },
@@ -33,7 +33,15 @@ const siteConfig = {
     parents: [['elections','Elections'],['institutions','Institutions'],['foreign','Foreign Policy'],['ruleoflaw','Rule of Law']]
   }
 };
+
+const cornerstonePrinciples = [
+  'Systems drift toward factional interests.',
+  'Build systems on principles that serve the whole.',
+  'Understand systems, teach principles, and guide renewal.',
+  'What the builders reject may be what the whole depends on.'
+];
+
 const branchOrder = ['economics', 'culture', 'governance'];
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { siteConfig, branchOrder };
+  module.exports = { siteConfig, branchOrder, cornerstonePrinciples };
 }

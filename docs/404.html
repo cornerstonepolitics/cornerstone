@@ -1386,7 +1386,7 @@ body { font-display: swap; }
     stroke-opacity: 0.65;
   }
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
   </style>
 </head>
 <body>
@@ -1468,8 +1468,8 @@ body { font-display: swap; }
           <circle id="centerHit" cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>
           <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">SERVE THE</text>
           <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">LONG-TERM</text>
-          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">INTERESTS OF THE</text>
-          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">AMERICAN PEOPLE</text>
+          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">INTERESTS OF</text>
+          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">THE WHOLE</text>
         </a>
         <circle id="centerRim" cx="310" cy="310" r="100" fill="none" stroke="#a9a294" stroke-opacity="0.8" stroke-width="1.4" pointer-events="none"/>
       </svg>
@@ -1617,7 +1617,7 @@ const siteConfig = {
       'People are not born knowing how to live.',
       'Culture is how one generation forms the next.',
       'Culture teaches by what it honors and what it shames.',
-      'A country pulls apart when its differences grow deeper than its shared allegiance.'
+      'One faction cannot judge the whole without forcing every other faction to defend its right to differ.'
     ],
     parents: [['education','Education'],['community','Community'],['justice','Justice'],['identity','Identity']]
   },
@@ -1633,9 +1633,17 @@ const siteConfig = {
     parents: [['elections','Elections'],['institutions','Institutions'],['foreign','Foreign Policy'],['ruleoflaw','Rule of Law']]
   }
 };
+
+const cornerstonePrinciples = [
+  'Systems drift toward factional interests.',
+  'Build systems on principles that serve the whole.',
+  'Understand systems, teach principles, and guide renewal.',
+  'What the builders reject may be what the whole depends on.'
+];
+
 const branchOrder = ['economics', 'culture', 'governance'];
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { siteConfig, branchOrder };
+  module.exports = { siteConfig, branchOrder, cornerstonePrinciples };
 }
 
 const ROUTE_MAP = {
@@ -2065,10 +2073,14 @@ function latestEssay(){
 // DEFAULT: the three most recent essays, plainly labelled. A doorway,
 // not a destination — the wheel is still the homepage.
 function contentHome(){
+  const principles = (typeof cornerstonePrinciples !== 'undefined' ? cornerstonePrinciples : [])
+    .map(line=>'<li>'+esc(line)+'</li>').join('');
+  const manifesto = '<ul class="principles-list home-principles">'+principles+'</ul>';
   const recent = sortPosts(posts).slice(0, 3);
   if(!recent.length){
-    return '<div class="home-recent">'
-      +'<h2 class="content-label" id="content-heading">Recent essays</h2>'
+    return manifesto
+      +'<div class="home-recent content-section">'
+      +'<h2 class="home-recent-heading" id="content-heading">Recent essays</h2>'
       +'<p class="empty-state">Essays are coming.</p></div>';
   }
   const rows = recent.map(p=>{
@@ -2091,7 +2103,8 @@ function contentHome(){
     ? '<a class="home-all" href="'+recentUrl()+'" data-nav>All essays</a>'
     : '';
 
-  return '<div class="home-recent">'
+  return manifesto
+    +'<div class="home-recent content-section">'
     +'<h2 class="home-recent-heading" id="content-heading">Recent essays</h2>'
     +'<div class="essay-list">'+rows+'</div>'
     + more
@@ -2117,19 +2130,10 @@ function contentBranch(branch){
   const principles = b.principles.map(line=>
     '<li>'+esc(line)+'</li>'
   ).join('');
-  const topics = b.parents.map(([k,lbl])=>
-    '<a class="topic-link" href="'+topicUrl(branch,k)+'" data-nav>'
-      +'<span class="topic-link-name">'+esc(lbl)+'</span>'
-    +'</a>'
-  ).join('');
   return '<div class="branch-block" style="--accent:'+b.color+'">'
     +'<div class="content-eyebrow" style="color:'+b.color+'">Branch</div>'
     +'<h2 class="content-title" id="content-heading">'+esc(b.label)+'</h2>'
     +'<ul class="principles-list">'+principles+'</ul>'
-    +'<div class="content-section">'
-      +'<div class="content-label">Topics</div>'
-      +'<div class="topic-links">'+topics+'</div>'
-    +'</div>'
     +'<div class="content-section">'
       +'<div class="content-label">Recent in '+esc(b.label)+'</div>'
       +'<div class="article-list">'

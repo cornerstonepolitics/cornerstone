@@ -368,10 +368,14 @@ function latestEssay(){
 // DEFAULT: the three most recent essays, plainly labelled. A doorway,
 // not a destination — the wheel is still the homepage.
 function contentHome(){
+  const principles = (typeof cornerstonePrinciples !== 'undefined' ? cornerstonePrinciples : [])
+    .map(line=>'<li>'+esc(line)+'</li>').join('');
+  const manifesto = '<ul class="principles-list home-principles">'+principles+'</ul>';
   const recent = sortPosts(posts).slice(0, 3);
   if(!recent.length){
-    return '<div class="home-recent">'
-      +'<h2 class="content-label" id="content-heading">Recent essays</h2>'
+    return manifesto
+      +'<div class="home-recent content-section">'
+      +'<h2 class="home-recent-heading" id="content-heading">Recent essays</h2>'
       +'<p class="empty-state">Essays are coming.</p></div>';
   }
   const rows = recent.map(p=>{
@@ -394,7 +398,8 @@ function contentHome(){
     ? '<a class="home-all" href="'+recentUrl()+'" data-nav>All essays</a>'
     : '';
 
-  return '<div class="home-recent">'
+  return manifesto
+    +'<div class="home-recent content-section">'
     +'<h2 class="home-recent-heading" id="content-heading">Recent essays</h2>'
     +'<div class="essay-list">'+rows+'</div>'
     + more
@@ -420,19 +425,10 @@ function contentBranch(branch){
   const principles = b.principles.map(line=>
     '<li>'+esc(line)+'</li>'
   ).join('');
-  const topics = b.parents.map(([k,lbl])=>
-    '<a class="topic-link" href="'+topicUrl(branch,k)+'" data-nav>'
-      +'<span class="topic-link-name">'+esc(lbl)+'</span>'
-    +'</a>'
-  ).join('');
   return '<div class="branch-block" style="--accent:'+b.color+'">'
     +'<div class="content-eyebrow" style="color:'+b.color+'">Branch</div>'
     +'<h2 class="content-title" id="content-heading">'+esc(b.label)+'</h2>'
     +'<ul class="principles-list">'+principles+'</ul>'
-    +'<div class="content-section">'
-      +'<div class="content-label">Topics</div>'
-      +'<div class="topic-links">'+topics+'</div>'
-    +'</div>'
     +'<div class="content-section">'
       +'<div class="content-label">Recent in '+esc(b.label)+'</div>'
       +'<div class="article-list">'
