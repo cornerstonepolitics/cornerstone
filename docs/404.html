@@ -337,7 +337,7 @@ a { color: inherit; text-decoration: none; }
 
 /* Wheel wedges are wrapped in <a>. Keep the pointer cursor and make
    keyboard focus visible on the wedge itself. */
-.wedge-link, .center-link { cursor: pointer; outline: none; }
+.wedge-link, .center-link { cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent; }
 .wedge-link:focus-visible .wedge,
 .center-link:focus-visible circle {
   stroke: #f4f1ea;
@@ -346,7 +346,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* A single, consistent focus ring everywhere else. */
-a:focus-visible,
+a:focus-visible:not(.wedge-link):not(.center-link),
 .article-row:focus-visible,
 .child-card:focus-visible {
   outline: 2px solid var(--text-on-dark);
@@ -843,7 +843,8 @@ h1:focus { outline: none; }
   transition: stroke 160ms ease, stroke-width 160ms ease;
 }
 .center-link:hover ~ #centerRim,
-.center-link:focus-visible ~ #centerRim {
+.center-link:focus-visible ~ #centerRim,
+.center-link:active ~ #centerRim {
   stroke: #000;
   stroke-width: 3.4;
 }
