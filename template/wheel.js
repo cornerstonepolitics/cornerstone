@@ -368,12 +368,18 @@ function latestEssay(){
 // DEFAULT: the three most recent essays, plainly labelled. A doorway,
 // not a destination — the wheel is still the homepage.
 function contentHome(){
+  const cp = centerPieces[0];
+  const feature = cp ? '<div class="center-row">'
+      +'<a class="center-row-title" href="'+articleUrl(cp.slug)+'" data-nav>'+esc(cp.title)+'</a>'
+      +'<time class="center-row-date" datetime="'+cp.date+'">'+fmtDate(cp.date)+'</time>'
+      +'<a class="center-row-link" href="'+articleUrl(cp.slug)+'" data-nav>Read essay</a>'
+    +'</div>' : '';
   const principles = (typeof cornerstonePrinciples !== 'undefined' ? cornerstonePrinciples : [])
     .map(line=>'<li>'+esc(line)+'</li>').join('');
   const manifesto = '<ul class="principles-list home-principles">'+principles+'</ul>';
   const recent = sortPosts(posts).slice(0, 3);
   if(!recent.length){
-    return manifesto
+    return feature + manifesto
       +'<div class="home-recent content-section">'
       +'<h2 class="home-recent-heading" id="content-heading">Recent essays</h2>'
       +'<p class="empty-state">Essays are coming.</p></div>';
@@ -398,7 +404,7 @@ function contentHome(){
     ? '<a class="home-all" href="'+recentUrl()+'" data-nav>All essays</a>'
     : '';
 
-  return manifesto
+  return feature + manifesto
     +'<div class="home-recent content-section">'
     +'<h2 class="home-recent-heading" id="content-heading">Recent essays</h2>'
     +'<div class="essay-list">'+rows+'</div>'
@@ -408,15 +414,8 @@ function contentHome(){
 
 // CENTER: a preview of the founding essay.
 function contentCenter(){
-  const p=centerPieces[0];
-  if(!p) return contentHome();
-  return '<div class="feature">'
-    +'<div class="feature-label" style="color:var(--warm-muted)">'+esc(p.eyebrow || 'Centerpiece')+'</div>'
-    +'<div class="feature-date">'+fmtDate(p.date)+'</div>'
-    +'<h2 class="feature-title" id="content-heading">'+esc(p.title)+'</h2>'
-    +(p.dek?'<p class="feature-dek">'+esc(p.dek)+'</p>':'')
-    +'<a class="feature-link" href="'+articleUrl(p.slug)+'" data-nav>Read essay</a>'
-    +'</div>';
+  // The centre-stone page and the home page are the same view.
+  return contentHome();
 }
 
 // BRANCH: name, four principles, four topic links, recent essays.
@@ -708,7 +707,7 @@ function render(route, opts){
   }
 
   const wheelState = ['home','center','branch','topic'].indexOf(route.kind) !== -1;
-  if(first || route.kind === 'home'){
+  if(first || route.kind === 'home' || route.kind === 'center'){
     // Home is the landing state: return to the top with the wheel in view,
     // exactly as on first load. Do NOT scroll to or focus the recent-essays
     // heading beneath the wheel — that made tapping the wordmark on mobile

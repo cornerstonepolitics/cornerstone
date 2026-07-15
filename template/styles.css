@@ -1373,3 +1373,41 @@ body { font-display: swap; }
     stroke-opacity: 0.65;
   }
 }
+
+
+/* ---- Cornerstone feature row (home + centre): title, date, read essay ---- */
+.center-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 22px;
+  margin-top: 6px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--warm-rule);
+}
+.center-row-title {
+  font-family: var(--font-article);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--warm-title);
+}
+.center-row-title:hover { text-decoration: underline; }
+.center-row-date {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.center-row-link {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-title);
+  border-bottom: 1px solid var(--warm-rule);
+  padding-bottom: 3px;
+}
+.center-row-link:hover { border-bottom-color: var(--warm-title); }

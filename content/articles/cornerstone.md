@@ -3,7 +3,6 @@ title: Cornerstone
 date: 2026-07-10
 slug: cornerstone
 center: true
-eyebrow: Centerpiece
 ---
 
 Every system is founded on a set of principles. Factions form around competing visions of how those principles should be applied. Over time, the aim shifts from serving the principles to preserving the faction that claims to serve them. The faction makes compromises to grow. Each deal entrenches its benefactors until their will controls the system the faction was formed to serve. When the drift runs far enough, the system cannot hold. A ruler is removed, a government overthrown, a rebirth paid in blood. What force turns every system away from the principles on which it was founded?

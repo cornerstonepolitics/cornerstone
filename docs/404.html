@@ -1387,6 +1387,44 @@ body { font-display: swap; }
   }
 }
 
+
+/* ---- Cornerstone feature row (home + centre): title, date, read essay ---- */
+.center-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 22px;
+  margin-top: 6px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--warm-rule);
+}
+.center-row-title {
+  font-family: var(--font-article);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--warm-title);
+}
+.center-row-title:hover { text-decoration: underline; }
+.center-row-date {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.center-row-link {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-title);
+  border-bottom: 1px solid var(--warm-rule);
+  padding-bottom: 3px;
+}
+.center-row-link:hover { border-bottom-color: var(--warm-title); }
+
   </style>
 </head>
 <body>
@@ -1638,7 +1676,7 @@ const cornerstonePrinciples = [
   'Systems drift toward factional interests.',
   'Build systems on principles that serve the whole.',
   'Understand systems, teach principles, and guide renewal.',
-  'What the builders reject may be what the whole depends on.'
+  'What power rejects sometimes becomes what the whole depends on.'
 ];
 
 const branchOrder = ['economics', 'culture', 'governance'];
@@ -1684,7 +1722,6 @@ const ARTICLES = [
     "slug": "cornerstone",
     "date": "2026-07-10",
     "body": "<p>Every system is founded on a set of principles. Factions form around competing visions of how those principles should be applied. Over time, the aim shifts from serving the principles to preserving the faction that claims to serve them. The faction makes compromises to grow. Each deal entrenches its benefactors until their will controls the system the faction was formed to serve. When the drift runs far enough, the system cannot hold. A ruler is removed, a government overthrown, a rebirth paid in blood. What force turns every system away from the principles on which it was founded?</p>\n<p>Americans increasingly believe the system has already begun to drift. A Gallup poll conducted April 1–15, 2026, put disapproval of Congress at 86%, with 10% approving. In a September 2023 Pew survey, 83% of Republicans and Republican-leaning independents and 80% of Democrats and Democratic-leaning independents said major campaign donors have too much influence over congressional decisions.<sup><a id=\"footnote-ref-1\" href=\"#footnote-1\" data-footnote-ref aria-describedby=\"footnote-label\">1</a></sup></p>\n<p>Feeling this, many want a single leader strong enough to cut through it, unbound by the checks that slow change down. They wait for the coming man. A leader with the intelligence to solve their problems, the courage to face them, and the power to defeat them. But who comes after the coming man?</p>\n<p>Augustus inherited the Roman Republic worn down by a century of dysfunction and civil war, and he fixed it. He never called himself king or dictator. He took the modest title of first citizen, kept the old Republican institutions, but held the power of a sole ruler in his own hands. A people worn down by a broken system might reasonably believe this was what they needed. Yet the whole of the state depended on one life. The same throne that made killing for the ruler an act of loyalty made killing the ruler the only path to change.</p>\n<p>Tiberius governed well before he turned cruel. Claudius conquered Britain, then built roads and aqueducts across the empire. Caligula emptied the treasury and was killed by his own guard. Nero murdered his mother, then drove the empire to the revolt that ended his line. The empire survived most of them and prospered through much of it, but the throne was a gamble every generation. The greater the power, the more dangerous the men who chase it. Once they have it, the consequences of their flaws can reach an empire. Even the best rulers fear opposition because their death is the only path to change. Their life is all that holds the state together.<sup><a id=\"footnote-ref-2\" href=\"#footnote-2\" data-footnote-ref aria-describedby=\"footnote-label\">2</a></sup></p>\n<p>George Washington led the country to victory in a war many thought unwinnable. Loyalty ran so deep in the army and the people that he could have made himself something close to the king they had just fought to escape. He refused it, served two terms, and walked away from an office he could have held for life.</p>\n<p>In 1787, fifty-five delegates arrived in Philadelphia carrying the competing interests of their states. The large states had the numbers to dominate the rest, and the small states could hold out for equal representation. Each sacrificed the leverage it held to build a government neither could dominate.<sup><a id=\"footnote-ref-2-2\" href=\"#footnote-2\" data-footnote-ref aria-describedby=\"footnote-label\">2</a></sup></p>\n<p>Victory in war did not make self-government durable. That happened only when the people who could have seized power chose to divide it among separate hands rather than concentrate it in one. Every reign ends. The answer was never a better ruler.</p>\n<p>Who are we to compare ourselves to Augustus and Washington? We must achieve more, not because we are greater, but because the problems we face demand more of us. The world we inherit would have been unimaginable to them. Thinking machines, the whole of human knowledge in a pocket, robots that do our labor, and the first steps beyond Earth. None of it could have been predicted from where the founders stood 250 years ago.</p>\n<p>What divides us has grown alongside what we can build. Factional division has always existed, but the scale has changed. In their time, it ran between farmers and financiers, Jeffersonians and Hamiltonians. Today the country splits more deeply and along more lines: by class, race, religion, region, party, and a thousand identities beneath them, each pulling toward its own interest and looking for room to grow.<sup><a id=\"footnote-ref-3\" href=\"#footnote-3\" data-footnote-ref aria-describedby=\"footnote-label\">3</a></sup></p>\n<p>Money and media have always shaped politics, but never at this scale. In the founding era, that meant free beer to sway a local vote and partisan pamphlets passed by hand. Now it means billions of dollars every election cycle and information reaching every corner of the earth. The system was not built to contain either at this scale. Forces this large are not led. They demand to be followed and break whoever stands against them.<sup><a id=\"footnote-ref-3-2\" href=\"#footnote-3\" data-footnote-ref aria-describedby=\"footnote-label\">3</a></sup></p>\n<p>A system begins to fail when the interests of a faction become stronger than the principles meant to restrain them. The founding promise that all men are created equal was denied from the beginning. Slavery was the contradiction, and ending it cost over half a million lives in the Civil War. The gap between what a system promises and what it provides is the space where discontent grows. That gap is closed by force or by persuasion.<sup><a id=\"footnote-ref-4\" href=\"#footnote-4\" data-footnote-ref aria-describedby=\"footnote-label\">4</a></sup></p>\n<p>Force and persuasion are both gambles. Win with force and you get what you wanted immediately. Lose, and the least you lose is your position; more likely, your people and your life. Once force is chosen, it becomes the only thing that matters. The side that falls behind is cornered and will spend its resources and abandon its morality. Force never touches the belief. It ends the conflict only when the other side is forced into submission or destroyed, because anything less leaves the threat of vengeance alive.</p>\n<p>Persuasion changes the belief itself. Each side gives up part of what it wanted for the thing that matters more. It is slow, and while it works, the other side can prepare force. So it demands strength to defend what you are building without striking first.</p>\n<p>An idea must be planted, given room, and tended. Crowded, starved, or forgotten, it never matures, and what never matures never passes on. Power does not give itself up. Once an idea outgrows the forces against it, the system forms around it.</p>\n<p>What turns every system away from its principles is human nature: the self-interest in every faction pulling away from the whole. The only thing that holds against it is shared sacrifice. Each side gives up something of its own, and they build something new with the parts. No side can destroy it without destroying something it helped build.</p>\n<p>That is the cornerstone. Serve the long-term interests of the American people.</p>\n<section class=\"footnotes\" data-footnotes>\n<h2 id=\"footnote-label\" class=\"sr-only\">Footnotes</h2>\n<ol>\n<li id=\"footnote-1\">\n<p>Gallup, &quot;Disapproval of Congress Ties Record High at 86%,&quot; April 22, 2026; Pew Research Center, &quot;Money, Power and the Influence of Ordinary People in American Politics,&quot; September 19, 2023. <a href=\"#footnote-ref-1\" data-footnote-backref aria-label=\"Back to reference 1\">↩</a></p>\n</li>\n<li id=\"footnote-2\">\n<p>The Metropolitan Museum of Art, &quot;The Julio-Claudian Dynasty&quot;; British Museum, &quot;Nero: The Man Behind the Myth&quot;; George Washington&#39;s Mount Vernon, materials on Washington&#39;s surrender of power; National Archives, &quot;Constitution of the United States—A History.&quot; <a href=\"#footnote-ref-2\" data-footnote-backref aria-label=\"Back to reference 2\">↩</a> <a href=\"#footnote-ref-2-2\" data-footnote-backref aria-label=\"Back to reference 2\">↩<sup>2</sup></a></p>\n</li>\n<li id=\"footnote-3\">\n<p>George Washington&#39;s Mount Vernon, &quot;Beer&quot;; Library of Congress, &quot;Formation of Political Parties&quot; and &quot;The Practical Use of Power&quot;; Federal Election Commission, &quot;Statistical Summary of 24-Month Campaign Activity of the 2023–2024 Election Cycle.&quot; <a href=\"#footnote-ref-3\" data-footnote-backref aria-label=\"Back to reference 3\">↩</a> <a href=\"#footnote-ref-3-2\" data-footnote-backref aria-label=\"Back to reference 3\">↩<sup>2</sup></a></p>\n</li>\n<li id=\"footnote-4\">\n<p>National Archives, &quot;Declaration of Independence: A Transcription&quot;; National Park Service, &quot;Overview: The Civil War.&quot; <a href=\"#footnote-ref-4\" data-footnote-backref aria-label=\"Back to reference 4\">↩</a></p>\n</li>\n</ol>\n</section>",
-    "eyebrow": "Centerpiece",
     "center": true
   },
   {
@@ -2073,12 +2110,18 @@ function latestEssay(){
 // DEFAULT: the three most recent essays, plainly labelled. A doorway,
 // not a destination — the wheel is still the homepage.
 function contentHome(){
+  const cp = centerPieces[0];
+  const feature = cp ? '<div class="center-row">'
+      +'<a class="center-row-title" href="'+articleUrl(cp.slug)+'" data-nav>'+esc(cp.title)+'</a>'
+      +'<time class="center-row-date" datetime="'+cp.date+'">'+fmtDate(cp.date)+'</time>'
+      +'<a class="center-row-link" href="'+articleUrl(cp.slug)+'" data-nav>Read essay</a>'
+    +'</div>' : '';
   const principles = (typeof cornerstonePrinciples !== 'undefined' ? cornerstonePrinciples : [])
     .map(line=>'<li>'+esc(line)+'</li>').join('');
   const manifesto = '<ul class="principles-list home-principles">'+principles+'</ul>';
   const recent = sortPosts(posts).slice(0, 3);
   if(!recent.length){
-    return manifesto
+    return feature + manifesto
       +'<div class="home-recent content-section">'
       +'<h2 class="home-recent-heading" id="content-heading">Recent essays</h2>'
       +'<p class="empty-state">Essays are coming.</p></div>';
@@ -2103,7 +2146,7 @@ function contentHome(){
     ? '<a class="home-all" href="'+recentUrl()+'" data-nav>All essays</a>'
     : '';
 
-  return manifesto
+  return feature + manifesto
     +'<div class="home-recent content-section">'
     +'<h2 class="home-recent-heading" id="content-heading">Recent essays</h2>'
     +'<div class="essay-list">'+rows+'</div>'
@@ -2113,15 +2156,8 @@ function contentHome(){
 
 // CENTER: a preview of the founding essay.
 function contentCenter(){
-  const p=centerPieces[0];
-  if(!p) return contentHome();
-  return '<div class="feature">'
-    +'<div class="feature-label" style="color:var(--warm-muted)">'+esc(p.eyebrow || 'Centerpiece')+'</div>'
-    +'<div class="feature-date">'+fmtDate(p.date)+'</div>'
-    +'<h2 class="feature-title" id="content-heading">'+esc(p.title)+'</h2>'
-    +(p.dek?'<p class="feature-dek">'+esc(p.dek)+'</p>':'')
-    +'<a class="feature-link" href="'+articleUrl(p.slug)+'" data-nav>Read essay</a>'
-    +'</div>';
+  // The centre-stone page and the home page are the same view.
+  return contentHome();
 }
 
 // BRANCH: name, four principles, four topic links, recent essays.
@@ -2413,7 +2449,7 @@ function render(route, opts){
   }
 
   const wheelState = ['home','center','branch','topic'].indexOf(route.kind) !== -1;
-  if(first || route.kind === 'home'){
+  if(first || route.kind === 'home' || route.kind === 'center'){
     // Home is the landing state: return to the top with the wheel in view,
     // exactly as on first load. Do NOT scroll to or focus the recent-essays
     // heading beneath the wheel — that made tapping the wordmark on mobile

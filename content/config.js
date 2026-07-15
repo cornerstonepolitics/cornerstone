@@ -38,7 +38,7 @@ const cornerstonePrinciples = [
   'Systems drift toward factional interests.',
   'Build systems on principles that serve the whole.',
   'Understand systems, teach principles, and guide renewal.',
-  'What the builders reject may be what the whole depends on.'
+  'What power rejects sometimes becomes what the whole depends on.'
 ];
 
 const branchOrder = ['economics', 'culture', 'governance'];
