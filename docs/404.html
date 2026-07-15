@@ -2497,7 +2497,15 @@ function shouldSettle(){
   }
 }
 
-// -------------------------------------
+// ------------------------------------------------------------
+//  Boot
+// ------------------------------------------------------------
+buildWheel();
+initCopyLink();
+history.replaceState(ROUTE, '', window.location.pathname + window.location.search);
+render(ROUTE, { first:true });
+if(ROUTE.kind === 'home' && shouldSettle()) settleWheel();
+
 </script>
 </body>
 </html>
