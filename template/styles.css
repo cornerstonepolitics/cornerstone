@@ -831,8 +831,8 @@ h1:focus { outline: none; }
 }
 .center-link:hover ~ #centerRim,
 .center-link:focus-visible ~ #centerRim {
-  stroke: #a9a294;
-  stroke-width: 1.4;
+  stroke: #000;
+  stroke-width: 3.4;
 }
 .center-link:hover #centerHit { opacity: 0.05; fill: #fffdf8; }
 
