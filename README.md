@@ -1,43 +1,39 @@
 # Cornerstone
 
-The site is built from source files into a single deployable HTML file.
-You write essays in Markdown; a build step assembles the finished site.
+Cornerstone is a multi-page static publication built from Markdown. Each public URL receives its own semantic HTML page, while styling, wheel behavior, and the small site index are shared as cacheable assets.
 
 ## Project layout
 
-```
-cornerstone/
-├── content/
-│   ├── config.js            Branches, topics, colors, principles (rarely edited)
-│   └── articles/            One Markdown file per essay — THIS is where you write
-│       ├── cornerstone.md
-│       └── unnatural-selection.md
-├── template/
-│   ├── index.html           The page shell (rarely edited)
-│   ├── styles.css           All styling (rarely edited)
-│   └── wheel.js             Wheel engine + navigation (rarely edited)
-├── build.js                 Assembles everything into dist/index.html
-└── dist/
-    └── index.html           The finished site you deploy
+```text
+content/
+  config.js                 Branches, topics, colors, and principles
+  articles/                 One Markdown file per essay
+template/
+  index.html                Shared page shell
+  wheel.html                Wheel-page markup
+  styles.css                Site styling
+  site.js                   Shared article controls
+  wheel.js                  Wheel drawing and in-page wheel navigation
+build.js                    Static-site generator
+verify.js                   Generated-output checks
+docs/                       GitHub Pages output
 ```
 
-## One-time setup
+## Install, build, and test
 
-You need Node.js installed (you already have it). Then, in this folder:
-
-```
+```bash
 npm install
+npm run build
+npm test
 ```
 
-This installs the three small libraries the build uses (marked,
-marked-footnote, gray-matter).
+`npm run build` writes the finished site to `docs/`. `npm test` rebuilds it and verifies page structure, metadata, internal links, generated assets, the sitemap, and robots rules.
 
-## Writing a new article
+## Writing an article
 
-1. Create a new file in `content/articles/`, e.g. `my-essay.md`.
-2. Start it with a frontmatter block, then write in plain Markdown:
+Create a Markdown file in `content/articles/` with frontmatter followed by the essay:
 
-```
+```markdown
 ---
 title: My Essay Title
 subtitle: An optional subtitle
@@ -48,44 +44,20 @@ slug: my-essay
 dek: A one-line description shown in article lists
 ---
 
-Your first paragraph. Just write. No HTML, no escaped quotes.
-
-Your second paragraph. Use "quotes" freely, *italics*, and footnotes[^1].
-
-[^1]: Footnotes are numbered automatically.
+Your essay begins here.
 ```
 
-3. Run the build:
+Supported frontmatter:
 
-```
-node build.js
-```
+- `title`, `slug`, and `date` are required.
+- Non-center essays require `branch` and `parents`.
+- `subtitle`, `dek`, `eyebrow`, and `updated` are optional.
+- `center: true` marks the founding centerpiece.
 
-4. `dist/index.html` is your updated site. Deploy it.
+Topic keys:
 
-### Frontmatter fields
+- Economics: `labor`, `monetary`, `fiscal`, `markets`
+- Culture: `education`, `community`, `justice`, `identity`
+- Governance: `elections`, `institutions`, `foreign`, `ruleoflaw`
 
-- `title`      (required) the headline
-- `slug`       (required) the URL-safe id; must be unique
-- `date`       (required) YYYY-MM-DD; controls sort order
-- `branch`     (required for articles) economics | culture | governance
-- `parents`    (required for articles) list of topic keys, e.g. [elections, institutions]
-- `subtitle`   (optional) shown under the title on the article page
-- `dek`        (optional) shown in article lists and feeds
-- `eyebrow`    (optional) small label above the title
-- `center: true`  marks the centerpiece instead of using branch/parents
-
-### Topic keys per branch
-
-- economics:  labor, monetary, fiscal, markets
-- culture:    education, community, justice, identity
-- governance: elections, institutions, foreign, ruleoflaw
-
-## Editing structure (branches, principles, topic names)
-
-Edit `content/config.js`, then rebuild. You will rarely need this.
-
-## Deploying
-
-`dist/index.html` is fully self-contained. Upload it anywhere that serves
-static files. (Deployment steps are covered separately.)
+After editing content, run `npm test` and commit the regenerated `docs/` output with the source changes. GitHub Pages serves the `docs/` directory.

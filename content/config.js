@@ -1,6 +1,6 @@
 const siteConfig = {
   economics: {
-    color: '#c59a32', wheel: '#8a6a14', wheelLabel: '#a98222', wheelLabelInner: '#b3913d', wheelActive: '#a98222',
+    color: '#c59a32', wheel: '#8a6a14', wheelLabel: '#caa24b', wheelLabelInner: '#caa24b', wheelActive: '#caa24b',
     light: '#6b520f', dark: '#6b520f', wheelInk: '#4a3809', label: 'Economics',
     principles: [
       'The economy exists to use limited resources for human good.',
@@ -11,7 +11,7 @@ const siteConfig = {
     parents: [['labor','Labor'],['monetary','Monetary'],['fiscal','Fiscal'],['markets','Markets']]
   },
   culture: {
-    color: '#d27a52', wheel: '#a0522d', wheelLabel: '#c16c47', wheelLabelInner: '#c87e5d', wheelActive: '#c16c47',
+    color: '#d27a52', wheel: '#a0522d', wheelLabel: '#df9875', wheelLabelInner: '#df9875', wheelActive: '#df9875',
     light: '#7c3f22', dark: '#7c3f22', wheelInk: '#5c2c15', label: 'Culture',
     principles: [
       'People are not born knowing how to live.',
@@ -22,7 +22,7 @@ const siteConfig = {
     parents: [['education','Education'],['community','Community'],['justice','Justice'],['identity','Identity']]
   },
   governance: {
-    color: '#6f9ac7', wheel: '#1e3a5f', wheelLabel: '#5e91c4', wheelLabelInner: '#719ecb', wheelActive: '#5e91c4',
+    color: '#6f9ac7', wheel: '#1e3a5f', wheelLabel: '#7da8d1', wheelLabelInner: '#7da8d1', wheelActive: '#7da8d1',
     light: '#16293f', dark: '#16293f', wheelInk: '#0e1c2c', label: 'Governance',
     principles: [
       'Government exists to do for the people what they cannot do well alone.',

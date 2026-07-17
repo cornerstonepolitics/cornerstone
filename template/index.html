@@ -10,237 +10,24 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-5C9RRZTK');</script>
   <!-- End Google Tag Manager -->
-  <title>Cornerstone</title>
+  <title>/*__TITLE__*/</title>
+  /*__HEAD_META__*/
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <meta name="description" content="Independent essays on the systems shaping American politics.">
-  <meta property="og:site_name" content="Cornerstone">
-  <meta property="og:type" content="article">
-  <meta name="twitter:card" content="summary_large_image">
-  <style>
-/*__STYLES__*/
-  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap">
+  <link rel="stylesheet" href="/assets/styles.css?v=/*__STYLE_VERSION__*/">
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5C9RRZTK"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <div id="app">
-  <header class="nav">
-    <a class="nav-logo" href="/" data-nav>Cornerstone</a>
-    <nav class="nav-links" aria-label="Sections">
-      <a style="color:var(--economics-on-dark)" href="/economics/" data-nav>Economics</a>
-      <a style="color:var(--culture-on-dark)" href="/culture/" data-nav>Culture</a>
-      <a style="color:var(--governance-on-dark)" href="/governance/" data-nav>Governance</a>
-      <a style="color:var(--text-muted-on-dark)" href="/recent/" data-nav>Recent</a>
-    </nav>
-  </header>
-
-  <!-- ============================================================
-       WHEEL VIEW
-       The wheel is permanent. Home, branch and topic are all states
-       of THIS view: the wheel stays put and only the warm section
-       beneath it changes. Articles and Recent are separate views.
-       ============================================================ -->
-  <main id="wheel-view" class="view">
-
-
-    <p class="wheel-hint">Select a section to explore.</p>
-
-    <div class="wheel-stage">
-      <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"
-           role="group" aria-labelledby="wheelDesc">
-        <!-- No <title> here. An SVG <title> renders as a native browser tooltip
-             on hover of the whole graphic, which put a "Cornerstone navigation"
-             box over the wheel. <desc> carries the accessible name instead: it
-             is announced by screen readers and never shown as a tooltip. -->
-        <desc id="wheelDesc">Cornerstone navigation. A wheel with the Cornerstone mission at the centre, three branches (Economics, Culture, Governance), and four topics within each branch. Every section is also listed as a link below.</desc>
-        <defs>
-          <!-- The wheel's stone. This gradient is anchored at the wheel's centre,
-               so the inner edge of the branch ring (r=102, ~34% out) used to land
-               on a near-white stop. That produced a pale halo hugging the centre
-               stone, with the wedge's dark stroke just outside it — and the eye
-               read those two edges as a double ring.
-
-               The inner stops now start at a mid tone, so the ring meets the
-               centre stone with no bright fringe. The outer half is unchanged:
-               the wheel still falls to #2b2823 at the rim exactly as before. -->
-          <radialGradient id="marble" gradientUnits="userSpaceOnUse" cx="310" cy="310" r="298">
-            <stop offset="0%" stop-color="#c9c2b4"/><stop offset="20%" stop-color="#c3bcae"/>
-            <stop offset="34%" stop-color="#bab2a3"/><stop offset="52%" stop-color="#a8a294"/>
-            <stop offset="70%" stop-color="#79746a"/><stop offset="86%" stop-color="#4c483f"/>
-            <stop offset="100%" stop-color="#2b2823"/>
-          </radialGradient>
-          <radialGradient id="centerStone" cx="50%" cy="45%" r="60%">
-            <stop offset="0%" stop-color="#ffffff"/><stop offset="60%" stop-color="#f0ece3"/><stop offset="100%" stop-color="#e2ddd1"/>
-          </radialGradient>
-          <radialGradient id="selectionGlow" gradientUnits="userSpaceOnUse" cx="310" cy="245" r="340">
-            <stop offset="0%" stop-color="#fff9ee" stop-opacity="0.50"/>
-            <stop offset="36%" stop-color="#fff3df" stop-opacity="0.34"/>
-            <stop offset="68%" stop-color="#ecd8b7" stop-opacity="0.18"/>
-            <stop offset="100%" stop-color="#e0c499" stop-opacity="0.00"/>
-          </radialGradient>
-          <linearGradient id="selectionBeam" gradientUnits="userSpaceOnUse" x1="310" y1="180" x2="310" y2="618">
-            <stop offset="0%" stop-color="#fffaf0" stop-opacity="0.08"/>
-            <stop offset="35%" stop-color="#fff0d6" stop-opacity="0.18"/>
-            <stop offset="70%" stop-color="#f1dbb4" stop-opacity="0.28"/>
-            <stop offset="100%" stop-color="#e4c595" stop-opacity="0.22"/>
-          </linearGradient>
-          <filter id="softLight" x="-25%" y="-25%" width="150%" height="150%">
-            <feGaussianBlur stdDeviation="5"/>
-          </filter>
-        </defs>
-        <g id="wheelRoot"></g>
-        <path id="selectionBeamPath" d="M575.870,463.500 A307,307 0 0,1 44.130,463.500 L218.201,363.000 A106,106 0 0,0 401.799,363.000 Z" fill="url(#selectionBeam)" opacity="0.50" pointer-events="none"/>
-        <path id="selectionLight" d="M575.870,463.500 A307,307 0 0,1 44.130,463.500 L218.201,363.000 A106,106 0 0,0 401.799,363.000 Z" fill="url(#selectionGlow)" filter="url(#softLight)"/>
-        <!-- The centre stone sits directly in the wheel. It used to carry an
-             8-unit grey collar AND a 2-unit band on top of that, which read as
-             two light outlines stacked around the middle. Both are gone. The
-             single carved rim below (#centerRim) is the only edge. -->
-        <circle cx="310" cy="310" r="100" fill="url(#centerStone)" pointer-events="none"/>
-        <a href="/cornerstone/" class="center-link" role="link" data-nav>
-          <desc>Cornerstone: the founding essay</desc>
-          <circle id="centerHit" cx="310" cy="310" r="100" fill="#000" opacity="0" pointer-events="all"/>
-          <text x="310" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">SERVE THE</text>
-          <text x="310" y="302" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-soft" pointer-events="none">LONG-TERM</text>
-          <text x="310" y="319" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">INTERESTS OF</text>
-          <text x="310" y="336" text-anchor="middle" font-family="Georgia,serif" font-size="11" letter-spacing="2" class="center-text center-text-strong" pointer-events="none">THE WHOLE</text>
-        </a>
-        <circle id="centerRim" cx="310" cy="310" r="100" fill="none" stroke="#a9a294" stroke-opacity="0.8" stroke-width="1.4" pointer-events="none"/>
-      </svg>
-    </div>
-
-    <!-- Mobile-only topic links. The twelve outer labels are hidden on
-         phones; after a branch is chosen its topics appear here as
-         large, readable links. -->
-    <nav id="mobile-topics" class="mobile-topics" aria-label="Topics in this branch" hidden></nav>
-
-    <!-- Real semantic hierarchy for keyboard and screen readers. -->
-    <nav class="wheel-index" aria-label="All sections">
-      <ul>
-        <li><a href="/cornerstone/" data-nav>Cornerstone</a></li>
-        <li><a href="/economics/" data-nav>Economics</a>
-          <ul>
-            <li><a href="/economics/labor/" data-nav>Labor</a></li>
-            <li><a href="/economics/monetary/" data-nav>Monetary</a></li>
-            <li><a href="/economics/fiscal/" data-nav>Fiscal</a></li>
-            <li><a href="/economics/markets/" data-nav>Markets</a></li>
-          </ul>
-        </li>
-        <li><a href="/culture/" data-nav>Culture</a>
-          <ul>
-            <li><a href="/culture/education/" data-nav>Education</a></li>
-            <li><a href="/culture/community/" data-nav>Community</a></li>
-            <li><a href="/culture/justice/" data-nav>Justice</a></li>
-            <li><a href="/culture/identity/" data-nav>Identity</a></li>
-          </ul>
-        </li>
-        <li><a href="/governance/" data-nav>Governance</a>
-          <ul>
-            <li><a href="/governance/elections/" data-nav>Elections</a></li>
-            <li><a href="/governance/institutions/" data-nav>Institutions</a></li>
-            <li><a href="/governance/foreign-policy/" data-nav>Foreign Policy</a></li>
-            <li><a href="/governance/rule-of-law/" data-nav>Rule of Law</a></li>
-          </ul>
-        </li>
-      </ul>
-    </nav>
-
-    <!-- ==========================================================
-         THE WARM SECTION. Never blank. Swapped in place by the
-         router. Full-width, hard black-to-beige edge, no card.
-         ========================================================== -->
-    <section id="wheel-content" class="warm-surface" aria-live="polite">
-      <div class="warm-inner" id="wheel-content-inner"></div>
-    </section>
-  </main>
-
-  <!-- ============================================================
-       READING VIEWS (wheel not shown)
-       ============================================================ -->
-  <main id="recent" class="view">
-    <div class="page-head">
-      <div class="page-wrap">
-        <a class="back-btn" href="/" data-nav>&larr; Home</a>
-        <div class="page-eyebrow">Recent</div>
-        <h1 id="recent-title" class="page-title">Latest from Cornerstone</h1>
-      </div>
-    </div>
-    <section class="warm-surface">
-      <div class="warm-inner">
-        <div id="feed-list" class="article-list"></div>
-      </div>
-    </section>
-  </main>
-
-  <main id="article-page" class="view article-view"><article class="page-wrap article-shell">
-    <!-- 1. breadcrumb  2. metadata  3. title  4. optional deck  5. body -->
-    <nav id="article-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
-    <div id="article-eyebrow" class="article-meta-line"></div>
-    <h1 id="article-title" class="article-title-display"></h1>
-    <div id="article-subtitle" class="article-subtitle-display"></div>
-    <div class="page-rule"></div>
-    <div id="article-body" class="article-content"></div>
-
-    <!-- Endmatter: sources, copy link, one quiet way back, one related essay.
-         No recommendation grids, no social rails. -->
-    <footer class="article-end">
-      <div id="article-sources" class="sources-block"></div>
-      <div class="end-actions">
-        <button type="button" id="copy-link" class="copy-link">Copy link</button>
-        <span id="copy-status" class="copy-status" role="status" aria-live="polite"></span>
-      </div>
-      <div id="article-back" class="end-back"></div>
-      <div id="article-related" class="end-related"></div>
-    </footer>
-  </article></main>
-
-  <main id="notfound-page" class="view">
-    <div class="page-head">
-      <div class="page-wrap">
-        <div class="page-eyebrow">Not found</div>
-        <h1 id="notfound-title" class="page-title">This page could not be found.</h1>
-      </div>
-    </div>
-    <section class="warm-surface">
-      <div class="warm-inner">
-        <ul class="notfound-links">
-          <li><a href="/" data-nav>Home</a></li>
-          <li><a href="/recent/" data-nav>Recent</a></li>
-          <li><a href="/economics/" data-nav>Economics</a></li>
-          <li><a href="/culture/" data-nav>Culture</a></li>
-          <li><a href="/governance/" data-nav>Governance</a></li>
-        </ul>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-mark">
-        <div class="footer-name">Cornerstone</div>
-        <p class="footer-line">Serve the long-term interests of the American people.</p>
-      </div>
-      <nav class="footer-nav" aria-label="Footer">
-        <a href="/recent/" data-nav>Recent</a>
-        <a href="/economics/" data-nav>Economics</a>
-        <a href="/culture/" data-nav>Culture</a>
-        <a href="/governance/" data-nav>Governance</a>
-        <a href="mailto:cornerstoneproject7@gmail.com">Contact</a>
-      </nav>
-    </div>
-  </footer>
+  /*__HEADER__*/
+  /*__MAIN__*/
+  /*__FOOTER__*/
 </div>
-
-<script>
-/*__CONFIG__*/
-</script>
-<script>
-/*__ARTICLES__*/
-</script>
-<script>
-/*__WHEEL__*/
-</script>
+<script src="/assets/site.js?v=/*__SITE_VERSION__*/" defer></script>
+/*__PAGE_SCRIPTS__*/
 </body>
 </html>
