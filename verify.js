@@ -67,6 +67,26 @@ assert(!notFound.includes('rel="canonical"'), '404 page must not declare the hom
 for (const asset of ['styles.css', 'site.js', 'wheel.js', 'site-data.js']) {
   assert(fs.existsSync(path.join(DOCS, 'assets', asset)), `Missing shared asset ${asset}.`);
 }
+
+const wheelScript = fs.readFileSync(path.join(DOCS, 'assets', 'wheel.js'), 'utf8');
+const sharedStyles = fs.readFileSync(path.join(DOCS, 'assets', 'styles.css'), 'utf8');
+assert(
+  wheelScript.includes('wedge(R_IN0, R_IN1, start, end)'),
+  'The branch ring no longer matches the original wheel geometry.'
+);
+assert(
+  wheelScript.includes('branch.parents.forEach'),
+  'The complete twelve-topic outer ring must be drawn at every viewport width.'
+);
+assert(
+  !wheelScript.includes('mobileMedia.matches'),
+  'Mobile must use the complete wheel instead of a replacement three-wedge layout.'
+);
+assert(
+  !sharedStyles.includes('.mobile-topics:not([hidden])'),
+  'Mobile must not replace the outer ring with a separate topic grid.'
+);
+
 assert(fs.existsSync(path.join(DOCS, 'sitemap.xml')), 'Missing sitemap.xml.');
 assert(fs.existsSync(path.join(DOCS, 'robots.txt')), 'Missing robots.txt.');
 assert(fs.existsSync(path.join(DOCS, '.nojekyll')), 'Missing .nojekyll.');

@@ -28,7 +28,6 @@
   const R_IN1 = 197;
   const R_OUT0 = 197;
   const R_OUT1 = 306;
-  const mobileMedia = window.matchMedia('(max-width: 560px)');
   const twoLine = { 'Foreign Policy': ['Policy', 'Foreign'], 'Rule of Law': ['Rule of', 'Law'] };
   const oneLineSmall = { Institutions: 13 };
 
@@ -89,7 +88,6 @@
   }
 
   function buildWheel() {
-    const mobile = mobileMedia.matches;
     let svg = `<circle cx="${CX}" cy="${CY}" r="${R_OUT1}" fill="url(#marble)"/>`;
     let defs = '';
 
@@ -98,23 +96,17 @@
       const center = 180 + branchIndex * 120;
       const start = center - 60;
       const end = center + 60;
-      const branchOuterRadius = mobile ? R_OUT1 : R_IN1;
-
       svg += `<path class="branch-glow" data-branch="${branchKey}" d="${wedge(R_IN0, R_OUT1, start, end)}" fill="#fff8ea" opacity="0" pointer-events="none"/>`;
       svg += `<a href="${branchUrl(branchKey)}" class="wedge-link" data-wheel-nav aria-label="${esc(branch.label)}">`
-        + `<path class="wedge branch-wedge" data-branch="${branchKey}" d="${wedge(R_IN0, branchOuterRadius, start, end)}" fill="url(#marble)" stroke="#000" onmouseenter="hoverBranch('${branchKey}')" onmouseleave="clearHover()"/>`
+        + `<path class="wedge branch-wedge" data-branch="${branchKey}" d="${wedge(R_IN0, R_IN1, start, end)}" fill="url(#marble)" stroke="#000" onmouseenter="hoverBranch('${branchKey}')" onmouseleave="clearHover()"/>`
         + '</a>';
 
-      const labelRadius = mobile
-        ? R_IN0 + (R_OUT1 - R_IN0) * 0.48
-        : R_IN0 + (R_IN1 - R_IN0) * 0.58;
+      const labelRadius = R_IN0 + (R_IN1 - R_IN0) * 0.58;
       const branchPath = `branch-path-${branchIndex}`;
       defs += `<path id="${branchPath}" fill="none" d="${outwardArc(labelRadius, center + 43, center - 43)}"/>`;
       const branchFontSize = branchKey === 'governance' ? 20 : 22;
       const branchTracking = branchKey === 'governance' ? 2.2 : 3.2;
-      svg += `<text font-family="Georgia,serif" font-size="${branchFontSize}" letter-spacing="${branchTracking}" font-weight="700" class="branch-label branch-label-${branchKey}" data-branch="${branchKey}" fill="${branch.wheelLabel}" pointer-events="none"><textPath href="#${branchPath}" startOffset="50%" text-anchor="middle">${branch.label.toUpperCase()}</textPath></text>`;
-
-      if (mobile) return;
+      svg += `<text font-family="Georgia,serif" font-size="${branchFontSize}" letter-spacing="${branchTracking}" font-weight="700" class="branch-label branch-label-${branchKey}" data-branch="${branchKey}" fill="${branch.wheelLabelInner || branch.wheelLabel}" pointer-events="none"><textPath href="#${branchPath}" startOffset="50%" text-anchor="middle">${branch.label.toUpperCase()}</textPath></text>`;
 
       const segment = 120 / branch.parents.length;
       branch.parents.forEach(([topicKey, label], topicIndex) => {
@@ -151,9 +143,7 @@
     });
 
     svg += `<circle cx="${CX}" cy="${CY}" r="${R_OUT1}" fill="none" stroke="#000" stroke-opacity="0.38" stroke-width="1.6" pointer-events="none"/>`;
-    if (!mobile) {
-      svg += `<circle cx="${CX}" cy="${CY}" r="${R_IN1}" fill="none" stroke="#000" stroke-opacity="0.3" stroke-width="1.15" pointer-events="none"/>`;
-    }
+    svg += `<circle cx="${CX}" cy="${CY}" r="${R_IN1}" fill="none" stroke="#000" stroke-opacity="0.3" stroke-width="1.15" pointer-events="none"/>`;
     [120, 240, 360].forEach(degrees => {
       const [x0, y0] = pol(R_IN0, degrees);
       const [x1, y1] = pol(R_OUT1, degrees);
@@ -339,16 +329,8 @@
   function setMobileTopics(branchKey) {
     const nav = document.getElementById('mobile-topics');
     if (!nav) return;
-    if (!branchKey) {
-      nav.hidden = true;
-      nav.innerHTML = '';
-      return;
-    }
-    const branch = data[branchKey];
-    nav.innerHTML = branch.parents.map(([topic, label]) =>
-      `<a href="${topicUrl(branchKey, topic)}" data-wheel-nav style="--accent:${branch.color}">${esc(label)}</a>`
-    ).join('');
-    nav.hidden = false;
+    nav.hidden = true;
+    nav.innerHTML = '';
   }
 
   function prefersReducedMotion() {
@@ -480,11 +462,6 @@
     }
   }
 
-  function rebuildForViewport() {
-    buildWheel();
-    spinTo(activeBranch, false);
-  }
-
   function esc(value) {
     return String(value)
       .replace(/&/g, '&amp;')
@@ -499,6 +476,4 @@
   render(currentRoute, { first: true });
   if (currentRoute.kind === 'home' && shouldSettle()) settleWheel();
 
-  if (mobileMedia.addEventListener) mobileMedia.addEventListener('change', rebuildForViewport);
-  else if (mobileMedia.addListener) mobileMedia.addListener(rebuildForViewport);
 }());
