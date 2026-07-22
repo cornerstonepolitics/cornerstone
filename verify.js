@@ -20,6 +20,7 @@ function hrefToFile(href) {
   const pathname = href.split('#')[0].split('?')[0];
   if (!pathname || pathname === '/') return path.join(DOCS, 'index.html');
   if (pathname.startsWith('/assets/')) return path.join(DOCS, pathname.slice(1));
+  if (path.posix.extname(pathname)) return path.join(DOCS, pathname.slice(1));
   return path.join(DOCS, pathname.slice(1), 'index.html');
 }
 
@@ -36,6 +37,10 @@ for (const file of htmlFiles) {
   assert(html.includes('meta name="description"'), `${relative} is missing a description.`);
   assert(html.includes('meta property="og:title"'), `${relative} is missing Open Graph metadata.`);
   assert(html.includes('meta name="twitter:title"'), `${relative} is missing Twitter metadata.`);
+  assert(html.includes('href="/favicon.ico"'), `${relative} is missing the ICO favicon.`);
+  assert(html.includes('href="/favicon-32x32.png"'), `${relative} is missing the 32px favicon.`);
+  assert(html.includes('href="/apple-touch-icon.png"'), `${relative} is missing the Apple touch icon.`);
+  assert(html.includes('href="/site.webmanifest"'), `${relative} is missing the web app manifest.`);
   assert(!html.includes('const ARTICLES'), `${relative} embeds the global article database.`);
   assert(Buffer.byteLength(html) < 60000, `${relative} is unexpectedly large.`);
 
@@ -67,6 +72,22 @@ assert(!notFound.includes('rel="canonical"'), '404 page must not declare the hom
 for (const asset of ['styles.css', 'site.js', 'wheel.js', 'site-data.js']) {
   assert(fs.existsSync(path.join(DOCS, 'assets', asset)), `Missing shared asset ${asset}.`);
 }
+
+for (const icon of [
+  'favicon.ico',
+  'favicon-16x16.png',
+  'favicon-32x32.png',
+  'apple-touch-icon.png',
+  'android-chrome-192x192.png',
+  'android-chrome-512x512.png',
+  'site.webmanifest'
+]) {
+  assert(fs.existsSync(path.join(DOCS, icon)), `Missing favicon asset ${icon}.`);
+}
+
+const manifest = JSON.parse(fs.readFileSync(path.join(DOCS, 'site.webmanifest'), 'utf8'));
+assert.equal(manifest.name, 'Cornerstone Politics', 'Manifest has the wrong application name.');
+assert.equal(manifest.icons.length, 2, 'Manifest must include 192px and 512px icons.');
 
 const wheelScript = fs.readFileSync(path.join(DOCS, 'assets', 'wheel.js'), 'utf8');
 const sharedStyles = fs.readFileSync(path.join(DOCS, 'assets', 'styles.css'), 'utf8');

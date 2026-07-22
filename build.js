@@ -19,6 +19,7 @@ marked.use(footnote());
 const ROOT = __dirname;
 const ARTICLES_DIR = path.join(ROOT, 'content', 'articles');
 const TEMPLATE_DIR = path.join(ROOT, 'template');
+const STATIC_DIR = path.join(ROOT, 'static');
 const DIST_DIR = path.join(ROOT, 'docs');
 const ASSETS_DIR = path.join(DIST_DIR, 'assets');
 const BASE_URL = 'https://cornerstonepolitics.org';
@@ -682,6 +683,7 @@ function build() {
   };
 
   fs.mkdirSync(ASSETS_DIR, { recursive: true });
+  fs.cpSync(STATIC_DIR, DIST_DIR, { recursive: true });
   writeFile(path.join(ASSETS_DIR, 'styles.css'), styles);
   writeFile(path.join(ASSETS_DIR, 'site.js'), siteScript);
   writeFile(path.join(ASSETS_DIR, 'wheel.js'), wheelScript);
@@ -703,7 +705,7 @@ function build() {
 
   console.log(`Built ${routes.length + 1} page(s) into docs/`);
   console.log(`  ${articles.length} article(s): ${articles.map(article => article.slug).join(', ')}`);
-  console.log('  Shared assets: styles.css, site.js, wheel.js, site-data.js');
+  console.log('  Shared assets: styles.css, site.js, wheel.js, site-data.js, favicon package');
   console.log('  SEO: canonical metadata, social metadata, structured data, sitemap.xml, robots.txt');
 }
 
