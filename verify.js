@@ -73,6 +73,10 @@ assert(
   legacyCenter.includes('rel="canonical" href="https://cornerstonepolitics.org/"'),
   'The legacy center route must canonicalize to the homepage.'
 );
+assert(
+  fs.readFileSync(path.join(ROOT, 'template', 'wheel.js'), 'utf8').includes("route.kind === 'center'"),
+  'Client-side metadata must preserve the legacy center canonical.'
+);
 
 const article = fs.readFileSync(path.join(DOCS, 'unnatural-selection', 'index.html'), 'utf8');
 assert(article.includes('<article class="page-wrap article-shell">'), 'Essay lacks article semantics.');
@@ -135,5 +139,41 @@ assert(
   sitemap.includes('<loc>https://cornerstonepolitics.org/cornerstone/essay/</loc>'),
   'The founding essay must remain listed in the sitemap.'
 );
+
+const placeholderRoutes = [
+  'economics',
+  'economics/labor',
+  'economics/monetary',
+  'economics/fiscal',
+  'economics/markets',
+  'culture',
+  'culture/education',
+  'culture/community',
+  'culture/justice',
+  'culture/identity',
+  'governance/foreign-policy',
+  'governance/rule-of-law'
+];
+
+for (const route of placeholderRoutes) {
+  const html = fs.readFileSync(path.join(DOCS, ...route.split('/'), 'index.html'), 'utf8');
+  assert(
+    html.includes('name="robots" content="noindex,follow"'),
+    `${route} must remain visible but be excluded from search indexing.`
+  );
+  assert(
+    !sitemap.includes(`<loc>https://cornerstonepolitics.org/${route}/</loc>`),
+    `${route} must not be listed in the sitemap while it is a placeholder.`
+  );
+}
+
+for (const route of ['governance', 'governance/elections', 'governance/institutions']) {
+  const html = fs.readFileSync(path.join(DOCS, ...route.split('/'), 'index.html'), 'utf8');
+  assert(!html.includes('name="robots" content="noindex'), `${route} contains an essay and must be indexable.`);
+  assert(
+    sitemap.includes(`<loc>https://cornerstonepolitics.org/${route}/</loc>`),
+    `${route} contains an essay and must remain listed in the sitemap.`
+  );
+}
 
 console.log(`Verified ${htmlFiles.length} HTML pages and ${allFiles.length} generated files.`);

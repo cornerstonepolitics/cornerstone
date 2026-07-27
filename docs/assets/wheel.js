@@ -363,9 +363,39 @@
     return { title: 'Cornerstone', description: payload.defaultDescription };
   }
 
+  function isPlaceholderRoute(route) {
+    if (route.kind === 'branch') {
+      return !articles.some(article => !article.center && article.branch === route.branch);
+    }
+    if (route.kind === 'topic') {
+      return !articles.some(article =>
+        !article.center &&
+        article.branch === route.branch &&
+        article.parents.includes(route.topic)
+      );
+    }
+    return false;
+  }
+
+  function updateRobotsMeta(noindex) {
+    let robots = document.querySelector('meta[name="robots"]');
+    if (noindex) {
+      if (!robots) {
+        robots = document.createElement('meta');
+        robots.setAttribute('name', 'robots');
+        document.head.appendChild(robots);
+      }
+      robots.setAttribute('content', 'noindex,follow');
+    } else if (robots) {
+      robots.remove();
+    }
+  }
+
   function updateDocumentMeta(route) {
     const meta = metaForRoute(route);
-    const url = `${payload.baseUrl}${window.location.pathname}`;
+    const url = route.kind === 'center'
+      ? `${payload.baseUrl}/`
+      : `${payload.baseUrl}${window.location.pathname}`;
     document.title = meta.title;
     setMeta('meta[name="description"]', 'content', meta.description);
     setMeta('meta[property="og:title"]', 'content', meta.title);
@@ -375,6 +405,7 @@
     setMeta('meta[name="twitter:description"]', 'content', meta.description);
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) canonical.href = url;
+    updateRobotsMeta(isPlaceholderRoute(route));
     updateHeaderCurrent(route);
   }
 
