@@ -360,7 +360,7 @@
       const label = parentLabel(route.branch, route.topic);
       return { title: `${label} — ${branch.label} — Cornerstone`, description: `Independent essays on ${label.toLowerCase()} within ${branch.label.toLowerCase()} from Cornerstone.` };
     }
-    return { title: 'Cornerstone', description: payload.defaultDescription };
+    return { title: payload.defaultTitle, description: payload.defaultDescription };
   }
 
   function isPlaceholderRoute(route) {

@@ -58,6 +58,10 @@ for (const file of htmlFiles) {
 const home = fs.readFileSync(path.join(DOCS, 'index.html'), 'utf8');
 assert(!home.includes('This page could not be found.'), 'Homepage contains the 404 view.');
 assert(!home.includes('The officeholder does not have to be bought.'), 'Homepage embeds full article bodies.');
+assert(
+  home.includes('<title>Cornerstone Politics — Essays on American Politics</title>'),
+  'Homepage title must identify both the publication and its subject.'
+);
 assert(home.includes('"@type":"WebSite"'), 'Homepage is missing WebSite structured data.');
 assert(
   home.includes('href="/#cornerstone" class="center-link"'),
