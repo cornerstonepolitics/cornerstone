@@ -214,6 +214,24 @@ function sortArticles(articles) {
   return [...articles].sort((a, b) => b.date.localeCompare(a.date));
 }
 
+function articlesForRoute(route, articles) {
+  if (route.kind === 'branch') {
+    return articles.filter(article => !article.center && article.branch === route.branch);
+  }
+  if (route.kind === 'topic') {
+    return articles.filter(article =>
+      !article.center &&
+      article.branch === route.branch &&
+      article.parents.includes(route.topic)
+    );
+  }
+  return articles;
+}
+
+function isPlaceholderRoute(route, articles) {
+  return ['branch', 'topic'].includes(route.kind) && articlesForRoute(route, articles).length === 0;
+}
+
 function pageMeta(route, dir, articles) {
   let title = 'Cornerstone';
   let description = DEFAULT_DESCRIPTION;
@@ -250,7 +268,7 @@ function pageMeta(route, dir, articles) {
       : route.kind === 'center'
         ? `${BASE_URL}/`
         : canonicalForDir(dir),
-    noindex: route.kind === 'notfound'
+    noindex: route.kind === 'notfound' || isPlaceholderRoute(route, articles)
   };
 }
 
@@ -651,18 +669,16 @@ function renderPage(shell, route, dir, articles, routeMap, centerSlug, versions)
 }
 
 function lastModifiedForRoute(route, articles) {
-  let relevant = articles;
-  if (route.kind === 'branch') relevant = articles.filter(article => article.branch === route.branch);
-  if (route.kind === 'topic') {
-    relevant = articles.filter(article => article.branch === route.branch && article.parents.includes(route.topic));
-  }
+  let relevant = articlesForRoute(route, articles);
   if (route.kind === 'article') relevant = articles.filter(article => article.slug === route.slug);
   const dates = relevant.flatMap(article => [article.date, article.updated].filter(Boolean)).sort();
   return dates.at(-1) || null;
 }
 
 function renderSitemap(routes, articles) {
-  const urls = routes.filter(({ route }) => route.kind !== 'center').map(({ dir, route }) => {
+  const urls = routes.filter(({ route }) =>
+    route.kind !== 'center' && !isPlaceholderRoute(route, articles)
+  ).map(({ dir, route }) => {
     const lastmod = lastModifiedForRoute(route, articles);
     return `  <url>\n    <loc>${escapeXml(canonicalForDir(dir))}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}\n  </url>`;
   }).join('\n');
