@@ -353,12 +353,12 @@
   function metaForRoute(route) {
     if (route.kind === 'branch') {
       const label = data[route.branch].label;
-      return { title: `${label} — Cornerstone`, description: `Independent essays and principles on ${label.toLowerCase()} from Cornerstone.` };
+      return { title: `${label} — Cornerstone`, description: `Essays and principles on ${label.toLowerCase()} from Cornerstone.` };
     }
     if (route.kind === 'topic') {
       const branch = data[route.branch];
       const label = parentLabel(route.branch, route.topic);
-      return { title: `${label} — ${branch.label} — Cornerstone`, description: `Independent essays on ${label.toLowerCase()} within ${branch.label.toLowerCase()} from Cornerstone.` };
+      return { title: `${label} — ${branch.label} — Cornerstone`, description: `Essays on ${label.toLowerCase()} within ${branch.label.toLowerCase()} from Cornerstone.` };
     }
     return { title: payload.defaultTitle, description: payload.defaultDescription };
   }

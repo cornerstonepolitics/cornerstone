@@ -62,6 +62,10 @@ assert(
   home.includes('<title>Cornerstone Politics — Essays on American Politics</title>'),
   'Homepage title must identify both the publication and its subject.'
 );
+assert(
+  home.includes('meta name="description" content="Essays examining the systems, incentives, and principles that shape American politics."'),
+  'Homepage description must describe the publication without making a positioning claim.'
+);
 assert(home.includes('"@type":"WebSite"'), 'Homepage is missing WebSite structured data.');
 assert(
   home.includes('href="/#cornerstone" class="center-link"'),

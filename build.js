@@ -24,7 +24,7 @@ const DIST_DIR = path.join(ROOT, 'docs');
 const ASSETS_DIR = path.join(DIST_DIR, 'assets');
 const BASE_URL = 'https://cornerstonepolitics.org';
 const DEFAULT_TITLE = 'Cornerstone Politics — Essays on American Politics';
-const DEFAULT_DESCRIPTION = 'Independent essays on the systems shaping American politics.';
+const DEFAULT_DESCRIPTION = 'Essays examining the systems, incentives, and principles that shape American politics.';
 
 const { siteConfig, branchOrder, cornerstonePrinciples } = require(
   path.join(ROOT, 'content', 'config.js')
@@ -241,12 +241,12 @@ function pageMeta(route, dir, articles) {
   if (route.kind === 'branch') {
     const label = siteConfig[route.branch].label;
     title = `${label} — Cornerstone`;
-    description = `Independent essays and principles on ${label.toLowerCase()} from Cornerstone.`;
+    description = `Essays and principles on ${label.toLowerCase()} from Cornerstone.`;
   } else if (route.kind === 'topic') {
     const branch = siteConfig[route.branch];
     const label = branch.parents.find(([key]) => key === route.topic)[1];
     title = `${label} — ${branch.label} — Cornerstone`;
-    description = `Independent essays on ${label.toLowerCase()} within ${branch.label.toLowerCase()} from Cornerstone.`;
+    description = `Essays on ${label.toLowerCase()} within ${branch.label.toLowerCase()} from Cornerstone.`;
   } else if (route.kind === 'article') {
     const article = articles.find(candidate => candidate.slug === route.slug);
     title = `${article ? article.title : 'Essay'} — Cornerstone`;
@@ -254,7 +254,7 @@ function pageMeta(route, dir, articles) {
     type = 'article';
   } else if (route.kind === 'recent') {
     title = 'Recent — Cornerstone';
-    description = 'Recent independent essays on the systems shaping American politics.';
+    description = 'Recent essays on the systems shaping American politics.';
   } else if (route.kind === 'notfound') {
     title = 'Page not found — Cornerstone';
     description = 'The requested page could not be found.';
