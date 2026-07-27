@@ -59,6 +59,20 @@ const home = fs.readFileSync(path.join(DOCS, 'index.html'), 'utf8');
 assert(!home.includes('This page could not be found.'), 'Homepage contains the 404 view.');
 assert(!home.includes('The officeholder does not have to be bought.'), 'Homepage embeds full article bodies.');
 assert(home.includes('"@type":"WebSite"'), 'Homepage is missing WebSite structured data.');
+assert(
+  home.includes('href="/#cornerstone" class="center-link"'),
+  'The wheel center must link to the Cornerstone overview.'
+);
+assert(
+  home.includes('<div class="center-row" id="cornerstone">'),
+  'The Cornerstone overview needs a stable fragment target.'
+);
+
+const legacyCenter = fs.readFileSync(path.join(DOCS, 'cornerstone', 'index.html'), 'utf8');
+assert(
+  legacyCenter.includes('rel="canonical" href="https://cornerstonepolitics.org/"'),
+  'The legacy center route must canonicalize to the homepage.'
+);
 
 const article = fs.readFileSync(path.join(DOCS, 'unnatural-selection', 'index.html'), 'utf8');
 assert(article.includes('<article class="page-wrap article-shell">'), 'Essay lacks article semantics.');
@@ -111,5 +125,15 @@ assert(
 assert(fs.existsSync(path.join(DOCS, 'sitemap.xml')), 'Missing sitemap.xml.');
 assert(fs.existsSync(path.join(DOCS, 'robots.txt')), 'Missing robots.txt.');
 assert(fs.existsSync(path.join(DOCS, '.nojekyll')), 'Missing .nojekyll.');
+
+const sitemap = fs.readFileSync(path.join(DOCS, 'sitemap.xml'), 'utf8');
+assert(
+  !sitemap.includes('<loc>https://cornerstonepolitics.org/cornerstone/</loc>'),
+  'The duplicate center route must not be listed in the sitemap.'
+);
+assert(
+  sitemap.includes('<loc>https://cornerstonepolitics.org/cornerstone/essay/</loc>'),
+  'The founding essay must remain listed in the sitemap.'
+);
 
 console.log(`Verified ${htmlFiles.length} HTML pages and ${allFiles.length} generated files.`);
