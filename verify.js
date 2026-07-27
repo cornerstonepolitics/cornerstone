@@ -96,6 +96,18 @@ assert(article.includes('<article class="page-wrap article-shell">'), 'Essay lac
 assert(article.includes('"@type":"Article"'), 'Essay is missing Article structured data.');
 assert(!article.includes('This page could not be found.'), 'Essay contains the 404 view.');
 
+const cornerstoneEssay = fs.readFileSync(path.join(DOCS, 'cornerstone', 'essay', 'index.html'), 'utf8');
+assert(
+  cornerstoneEssay.includes('Defending what you are building without striking first requires strength.'),
+  'Cornerstone essay is missing the finalized persuasion passage.'
+);
+assert(
+  cornerstoneEssay.includes('Only persuasion removes the reason to fight. Force creates new reasons for conflict.'),
+  'Cornerstone essay is missing the finalized force-and-persuasion contrast.'
+);
+assert(!cornerstoneEssay.includes('claude.ai'), 'Cornerstone essay contains a temporary drafting link.');
+assert(!cornerstoneEssay.includes('meta-updated'), 'Cornerstone essay must not display a revision label.');
+
 const notFound = fs.readFileSync(path.join(DOCS, '404.html'), 'utf8');
 assert(notFound.includes('name="robots" content="noindex,follow"'), '404 page must be noindex.');
 assert(!notFound.includes('rel="canonical"'), '404 page must not declare the homepage as canonical.');
