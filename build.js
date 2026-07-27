@@ -23,6 +23,7 @@ const STATIC_DIR = path.join(ROOT, 'static');
 const DIST_DIR = path.join(ROOT, 'docs');
 const ASSETS_DIR = path.join(DIST_DIR, 'assets');
 const BASE_URL = 'https://cornerstonepolitics.org';
+const DEFAULT_TITLE = 'Cornerstone Politics — Essays on American Politics';
 const DEFAULT_DESCRIPTION = 'Independent essays on the systems shaping American politics.';
 
 const { siteConfig, branchOrder, cornerstonePrinciples } = require(
@@ -233,7 +234,7 @@ function isPlaceholderRoute(route, articles) {
 }
 
 function pageMeta(route, dir, articles) {
-  let title = 'Cornerstone';
+  let title = DEFAULT_TITLE;
   let description = DEFAULT_DESCRIPTION;
   let type = 'website';
 
@@ -645,6 +646,7 @@ function buildSiteData(articles, routeMap) {
     routeMap,
     articles: articles.map(({ body, ...metadata }) => metadata),
     baseUrl: BASE_URL,
+    defaultTitle: DEFAULT_TITLE,
     defaultDescription: DEFAULT_DESCRIPTION
   };
 }
