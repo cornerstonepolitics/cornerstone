@@ -67,7 +67,7 @@ function jsonForHtml(value) {
 }
 
 function hash(value) {
-  return crypto.createHash('sha256').update(value).digest('hex').slice(0, 12);
+  return crypto.createHash('sha256').update(value.replace(/\r\n/g, '\n')).digest('hex').slice(0, 12);
 }
 
 function fmtDate(iso) {
@@ -245,7 +245,11 @@ function pageMeta(route, dir, articles) {
     title,
     description,
     type,
-    canonical: route.kind === 'notfound' ? null : canonicalForDir(dir),
+    canonical: route.kind === 'notfound'
+      ? null
+      : route.kind === 'center'
+        ? `${BASE_URL}/`
+        : canonicalForDir(dir),
     noindex: route.kind === 'notfound'
   };
 }
@@ -377,7 +381,7 @@ function renderArticleList(list, mode, emptyText, routeMap, centerSlug) {
 function renderHomeContent(articles, routeMap, centerSlug) {
   const center = articles.find(article => article.center);
   const posts = sortArticles(articles.filter(article => !article.center)).slice(0, 3);
-  const feature = center ? `<div class="center-row">
+  const feature = center ? `<div class="center-row" id="cornerstone">
     <a class="center-row-title" href="${articleUrl(center, centerSlug)}">${escapeHtml(center.title)}</a>
     <time class="center-row-date" datetime="${center.date}">${fmtDate(center.date)}</time>
     <a class="center-row-link" href="${articleUrl(center, centerSlug)}">Read essay</a>
@@ -658,7 +662,7 @@ function lastModifiedForRoute(route, articles) {
 }
 
 function renderSitemap(routes, articles) {
-  const urls = routes.map(({ dir, route }) => {
+  const urls = routes.filter(({ route }) => route.kind !== 'center').map(({ dir, route }) => {
     const lastmod = lastModifiedForRoute(route, articles);
     return `  <url>\n    <loc>${escapeXml(canonicalForDir(dir))}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}\n  </url>`;
   }).join('\n');
