@@ -36,6 +36,11 @@ for (const file of htmlFiles) {
   assert.equal(count(html, /<h1\b/g), 1, `${relative} must contain exactly one h1.`);
   assert(html.includes('meta name="description"'), `${relative} is missing a description.`);
   assert(html.includes('meta property="og:title"'), `${relative} is missing Open Graph metadata.`);
+  assert(html.includes('meta property="og:image"'), `${relative} is missing the social-sharing image.`);
+  assert(html.includes('meta property="og:image:width" content="1200"'), `${relative} has the wrong social image width.`);
+  assert(html.includes('meta property="og:image:height" content="630"'), `${relative} has the wrong social image height.`);
+  assert(html.includes('meta name="twitter:card" content="summary_large_image"'), `${relative} must use a large social preview.`);
+  assert(html.includes('meta name="twitter:image"'), `${relative} is missing the Twitter sharing image.`);
   assert(html.includes('meta name="twitter:title"'), `${relative} is missing Twitter metadata.`);
   assert(html.includes('href="/favicon.ico"'), `${relative} is missing the ICO favicon.`);
   assert(html.includes('href="/favicon-32x32.png"'), `${relative} is missing the 32px favicon.`);
@@ -98,6 +103,13 @@ assert(!notFound.includes('rel="canonical"'), '404 page must not declare the hom
 for (const asset of ['styles.css', 'site.js', 'wheel.js', 'site-data.js']) {
   assert(fs.existsSync(path.join(DOCS, 'assets', asset)), `Missing shared asset ${asset}.`);
 }
+
+const socialCardPath = path.join(DOCS, 'assets', 'cornerstone-social-card.png');
+assert(fs.existsSync(socialCardPath), 'Missing the default social-sharing image.');
+const socialCard = fs.readFileSync(socialCardPath);
+assert.equal(socialCard.toString('ascii', 1, 4), 'PNG', 'Social-sharing image must be a PNG file.');
+assert.equal(socialCard.readUInt32BE(16), 1200, 'Social-sharing image must be 1200 pixels wide.');
+assert.equal(socialCard.readUInt32BE(20), 630, 'Social-sharing image must be 630 pixels tall.');
 
 for (const icon of [
   'favicon.ico',
