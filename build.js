@@ -25,6 +25,8 @@ const ASSETS_DIR = path.join(DIST_DIR, 'assets');
 const BASE_URL = 'https://cornerstonepolitics.org';
 const DEFAULT_TITLE = 'Cornerstone Politics — Essays on American Politics';
 const DEFAULT_DESCRIPTION = 'Essays examining the systems, incentives, and principles that shape American politics.';
+const SOCIAL_IMAGE_URL = `${BASE_URL}/assets/cornerstone-social-card.png`;
+const SOCIAL_IMAGE_ALT = 'Cornerstone Politics — Essays on American Politics';
 
 const { siteConfig, branchOrder, cornerstonePrinciples } = require(
   path.join(ROOT, 'content', 'config.js')
@@ -281,9 +283,16 @@ function renderHeadMeta(meta, route, articles) {
     `<meta property="og:type" content="${meta.type}">`,
     `<meta property="og:title" content="${escapeHtml(meta.title)}">`,
     `<meta property="og:description" content="${escapeHtml(meta.description)}">`,
-    `<meta name="twitter:card" content="summary">`,
+    `<meta property="og:image" content="${SOCIAL_IMAGE_URL}">`,
+    `<meta property="og:image:width" content="1200">`,
+    `<meta property="og:image:height" content="630">`,
+    `<meta property="og:image:type" content="image/png">`,
+    `<meta property="og:image:alt" content="${SOCIAL_IMAGE_ALT}">`,
+    `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${escapeHtml(meta.title)}">`,
-    `<meta name="twitter:description" content="${escapeHtml(meta.description)}">`
+    `<meta name="twitter:description" content="${escapeHtml(meta.description)}">`,
+    `<meta name="twitter:image" content="${SOCIAL_IMAGE_URL}">`,
+    `<meta name="twitter:image:alt" content="${SOCIAL_IMAGE_ALT}">`
   ];
 
   if (meta.canonical) {
