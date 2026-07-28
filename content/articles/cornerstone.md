@@ -33,7 +33,7 @@ Force and persuasion are both gambles. Win with force and you get what you wante
 
 Persuasion changes the belief itself. It is slow, and while it works, the other side can gather force. Defending what you are building without striking first requires strength. Only persuasion removes the reason to fight. Force creates new reasons for conflict.
 
-An idea must be planted, given room, and tended. Crowded, starved, or forgotten, it never matures, and an idea that never matures spreads to no one. Power does not give itself up. Once an idea outgrows the forces against it, they bend to it or break.
+An idea must be planted, given room, and tended. Crowded, starved, or forgotten, it never matures, and an idea that never matures spreads to no one. Power does not give itself up, but once an idea outgrows the forces against it, they bend to it or break.
 
 What turns every system away from its principles is human nature: the self-interest in every faction pulling away from the whole. The only thing that holds against it is shared sacrifice. Each side gives up something of its own, and they build something new with the parts. No side can destroy it without destroying something it helped build.
 
